@@ -12,6 +12,8 @@
     "bignumber.js": "^4.1.0",
     "bitcoind-rpc": "^0.7.0",
     "express": "^4.16.2",
-    "web3": "^1.0.0-beta.24"
+    "q": "^1.5.1",
+    "web3": "^1.0.0-beta.24",
+    "web3_extended": "^1.0.0"
   }
 }
