@@ -2,7 +2,6 @@
 
 > 目前API功能尚未开发完成，本文档预先制定基本API，上线后会有较大变动
 
-***
 
 ## 获取地址
 
@@ -23,7 +22,6 @@ curl -X POST --data '{"currency":"btc"}' http://bitgogogo.com/api/v1/getaddress
 {"err":null,"msg":"1CQaJB4WvbLdD8eSe6ZrvXX4KkAELEJy7J"}
 ```
 
-***
 
 ## 充值
 充值完成的信息由第三方消息队列系统提供
@@ -42,7 +40,6 @@ curl -X POST --data '{"currency":"btc"}' http://bitgogogo.com/api/v1/getaddress
 }
 ```
 
-***
 
 ## 提现
 
