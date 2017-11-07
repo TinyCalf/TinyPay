@@ -29,7 +29,6 @@ var web3 = web3_extended.create(options);
 //    eth.getBalance("0x52c53b4d74f7aa5846e001084814c4fd223c56cc");
 
 
-
 //test
 //newAccount((err, ret) => {console.log(ret)});
 
@@ -37,7 +36,6 @@ var web3 = web3_extended.create(options);
 发送资金
 */
 //newAccount((err, ret) => {console.log(ret)});
-
 
 var tx = {
   from:  "0x52c53b4d74f7aa5846e001084814c4fd223c56cc",
@@ -76,7 +74,7 @@ var sendTransaction = (from, to, value, callback) => {
 }
 
 
-/*******************************************************************************
+/************************************************************web3*******************
 
 私有函数模块
 

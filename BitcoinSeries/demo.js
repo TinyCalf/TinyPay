@@ -99,20 +99,45 @@ var tbtcrpc = new RPC({
 
 
 //获取某账户的比特比地址
-tbtcrpc.getAddressesByAccount("user1",function (err, ret) {
+// tbtcrpc.getAddressesByAccount("user1",function (err, ret) {
+// 	if(err) {
+// 		console.log(err);
+// 	}
+//
+//   console.log(ret);
+// });
+
+btcrpc.getNewAddress("",function (err, ret) {
 	if(err) {
 		console.log(err);
 	}
   console.log(ret);
+  console.log("btc");
 });
 
-//获取某账户总余额度
-tbtcrpc.getReceivedByAccount("user1",function (err, ret) {
+ltcrpc.getNewAddress("",function (err, ret) {
 	if(err) {
 		console.log(err);
 	}
   console.log(ret);
+  console.log("ltc");
 });
+
+bccrpc.getNewAddress("",function (err, ret) {
+	if(err) {
+		console.log(err);
+	}
+  console.log(ret);
+  console.log("bcc");
+});
+
+// //获取某账户总余额度
+// tbtcrpc.getReceivedByAccount("user1",function (err, ret) {
+// 	if(err) {
+// 		console.log(err);
+// 	}
+//   console.log(ret);
+// });
 
 // tbtcrpc.getBalance("",function (err, ret) {
 // 	if(err) {
