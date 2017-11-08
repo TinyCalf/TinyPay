@@ -26,6 +26,18 @@ exports.updateCheckedHeight = (name, height) => {
 }
 
 /*
+查询某币种已记录高度
+*/
+exports.getCheckedHeight = (name) => {
+  return new Promise ( (resolve, reject) => {
+    Currency.findOne({name:name}, (err,ret)=>{
+      if(err) reject(err);
+      resolve(ret.lastCheckedHeight);
+    })
+  });
+}
+
+/*
 查询某币信息
 */
 exports.checkCurrencyByName = (name) => {

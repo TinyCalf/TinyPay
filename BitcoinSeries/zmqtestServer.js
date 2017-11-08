@@ -6,7 +6,7 @@ console.log('Producer bound to port 1999')
 
 var num = 0 ;
 setInterval(() => {
-  sock.send("num is"+ num);
+  sock.send(['txs',"num is"+ num]);
   console.log('now num is '+ num);
   num ++;
-}, 1000);
+}, 100);
