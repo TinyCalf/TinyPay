@@ -76,6 +76,7 @@ const ltcDuration = 2 * 60 * 1000 // 2分钟
 const bccDuration = 2 * 60 * 1000 // 2分钟
 
 console.log('Start dealing BTC..');
+_dealer('btc').catch(err=>console.log(err))
 setInterval(
   ()=>{
     _dealer('btc').catch(err=>console.log(err))
