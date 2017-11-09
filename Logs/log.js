@@ -1,4 +1,6 @@
 const chalk = require('chalk');
+var fs = require('fs');
+var path = require('path');
 
 module.exports = (tag) => {
   return {
@@ -42,6 +44,13 @@ const _getFullTime = () => {
   return new Date().Format("yyyy-MM-dd hh:mm:ss");
 }
 
+/*
+记录到日志中
+*/
+var _log = function(msg){
+	var date = _getYMD();
+	fs.appendFile(__dirname + "/files/" + date + ".log", msg + "\n", null );
+}
 
 /*
 输出并打印 type = info | warn | err
@@ -61,6 +70,7 @@ var _print = (tag, type=null, msg) => {
     + chalk.magenta.bold(tag) + " "
     + colortype + " "
     + msg;
+  _log(fulllog);
   console.log(colorlog);
   return;
 }
