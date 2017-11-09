@@ -51,15 +51,16 @@ exports.checkCurrencyByName = (name) => {
 }
 
 /*
-创建新币
+创建新币 如果创建过了不要返回错误
 */
 exports.createNewCurrency = (name) => {
   return new Promise ( (resolve, reject) => {
     var newcurr = new Currency();
     newcurr.name = name;
     newcurr.save((err,ret)=>{
-      if(err) reject(err);
-      resolve(ret);
+      //11000表示重复创建错误，忽略
+      if(err && err.code != 11000) reject(err);
+      resolve();
     })
   });
 }

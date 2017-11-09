@@ -2,8 +2,9 @@ module.exports = {
   db:{
     host: "mongodb://localhost:27017/bitgogogo",
   },
-  BitcoinSeries: {
-    btc:{
+  BitcoinSeries: [
+    {
+      name:'btc',
     	protocol:"http",
     	host:'120.92.91.36',
     	port:'8332',
@@ -12,7 +13,8 @@ module.exports = {
       txCheckDuration: 5 * 60 * 1000,// 5min
       category:'prod',
     },
-    bcc:{
+    {
+      name:'bcc',
     	protocol:"http",
     	host:'120.92.91.36',
     	port:'10081',
@@ -21,7 +23,8 @@ module.exports = {
       txCheckDuration: 2 * 60 * 1000,// 2min
       category:'prod',
     },
-    ltc:{
+    {
+      name:'ltc',
     	protocol:"http",
     	host:'120.92.91.36',
     	port:'10000',
@@ -30,7 +33,8 @@ module.exports = {
       txCheckDuration: 2 * 60 * 1000,// 2min
       category:'prod',
     },
-    rbtc:{
+    {
+      name:'rbtc',
     	protocol:"http",
     	host:'120.92.91.36',
     	port:'10084',
@@ -39,5 +43,5 @@ module.exports = {
       txCheckDuration: 1000,// 1sec
       category:'test',
     }
-  },
+  ],
 }
