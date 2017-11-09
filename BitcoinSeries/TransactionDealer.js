@@ -100,6 +100,4 @@ setInterval(
   bccDuration
 )
 
-
-
 //db.updateCheckedHeight('btc',1000)

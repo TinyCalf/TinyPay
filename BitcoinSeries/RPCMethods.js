@@ -27,10 +27,20 @@ var _ltcrpc = new RPC({
 	pass:'ebo123',
 });
 
+//RBTC
+var _rbtcrpc = new RPC({
+	protocol:"http",
+	host:'120.92.91.36',
+	port:'10084',
+	user:'ebo',
+	pass:'ebo123',
+});
+
 var _rpcs = {
   btc:_btcrpc,
   ltc:_ltcrpc,
-  bcc:_bccrpc
+  bcc:_bccrpc,
+	rbtc:_rbtcrpc
 }
 
 

@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
-mongoose.connect('mongodb://localhost:27017/bitgogogo');
+const host = require("../config.js").db.host;
+mongoose.connect(host);
 
 /*******************************************************************************
 
