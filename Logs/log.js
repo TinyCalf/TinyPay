@@ -56,6 +56,7 @@ var _log = function(msg){
 输出并打印 type = info | warn | err
 */
 var _print = (tag, type=null, msg) => {
+  msg = JSON.stringify(msg)
   var time = '[' + _getHMS() + ']';
   type = type.toUpperCase();
   var colortype = "";

@@ -1,4 +1,5 @@
-var RPC = require('bitcoind-rpc');
+var RPC = require('bitcoind-rpc')
+var log = require('../Logs/log.js')("BitcoinSeriesRPC")
 
 //BTC
 var _btcrpc = new RPC({
@@ -44,6 +45,8 @@ var _rpcs = {
 }
 
 
+
+
 /*******************************************************************************
 
 Block相关
@@ -76,7 +79,7 @@ exports.getHeightByBlockHash = (name, hash) => {
 
 
 /*
-从某个块开始获取本节点相关交易 （HASH）
+从某个块开始获取本节点相关交易 至少一个确认数
 */
 exports.getTxsSinceBlockHash = (name, hash) => {
   return new Promise ( (resolve, reject) => {
@@ -105,16 +108,10 @@ exports.getTxsSinceBlock = (name, height) => {
   });
 }
 
-
-
-
-
-
-
-
-
-
-
+//
+//
+//
+//
 // this.getHeightByBlockHash('btc', '00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048')
 // .then( txs => console.log(txs) )
 // .catch ( err => console.log(err))

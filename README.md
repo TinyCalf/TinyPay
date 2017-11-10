@@ -4,6 +4,12 @@
 
 ## 环境搭建
 
+### 安装
+
+```bash
+npm install
+```
+
 ### Mongodb
 
 本项目使用mngodb作为数据库，可直接通过linux安装：

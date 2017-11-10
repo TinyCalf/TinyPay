@@ -1,6 +1,12 @@
-var eth = require("./EthereumSeries/demo.js");
+var BitcoinSeriesinit = require('./BitcoinSeries/init.js')
+var BitcoinSeriesTxsDealer = require('./BitcoinSeries/TransactionDealer.js')
+var log = require('./Logs/log.js')('index')
 
-eth.getBlock(48, (err, ret) => {
-  console.log(err);
-  console.log(ret);
-});
+BitcoinSeriesinit.init()
+.then ( ()=>{
+  return BitcoinSeriesTxsDealer.start()
+})
+.then ( ()=>{
+
+})
+.catch ( (err)=>log.err(err) )
