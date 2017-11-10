@@ -1,112 +1,108 @@
-# Bitgogogo API 文档初稿
+## 常用RPC端口
 
-> 目前API功能尚未开发完成，本文档预先制定基本API，上线后会有较大变动
+### Bitcoin系列
 
+目前已知下列数字货币拥有与比特币一致的RPC接口： BTC | LTC | BCC 。这些货币可统一按照比特币官方文档接入，地址为：https://bitcoin.org/en/developer-reference#listsinceblock<br>
+本节将着重介绍常用的RPC方法
 
-## 获取地址
+#### 基本访问形式
+由于编程语言较多，这里举出curl访问接口的形式。其他接口为了示例的简洁，使用cli命令的形式
 
-#### METHOD: POST
-#### URL: http://bitgogogo.com/api/v1/getaddress
-#### PARAMS :
-* currency (String 货币名称，目前包括 btc / ltc / bcc / eth /etc )
+##### 访问参数
+* rpcuser rpc用户名
+* rpcpassword rpc密码
+* request 请求，JSON形式，参照下方
+* host rpc接口地址
 
-#### EXSAMPLE
-
+##### 访问示例
+如下，request以JSON形式，包含需要访问的方法 *method* 方法所需参数 *params* 和自定义 *id* ，该示例为获取区块哈系值
 ```bash
-curl -X POST --data '{"currency":"btc"}' http://bitgogogo.com/api/v1/getaddress
+curl --user ':my_secret_password' --data-binary '''
+  {
+      "method": "getblockhash",
+      "params": [0],
+      "id": "foo"
+  }''' \
+  --header 'Content-Type: text/plain;' localhost:8332
 ```
 
-#### RESPONSE
+##### 返回参数
+* result 返回结果
+* error 错误信息
+* id 请求时使用的id
 
-```bash
-{"err":null,"msg":"1CQaJB4WvbLdD8eSe6ZrvXX4KkAELEJy7J"}
-```
-
-
-## 充值
-充值完成的信息由第三方消息队列系统提供
-
-#### RESPONSE
-
-* txid (交易id，需要记录用于查询确认数)
-* to (本次交易目标地址，该地址应该为曾从getaddress方法获取并记录的地址，用于标记该地址输入某一用户)
-* amount (货币数量)
-
+##### 返回示例
+如上访问实例应返回如下JSON格式结果：
 ```bash
 {
-  "txid":"8f559cd6554956bc631026f904df4c9cb7aad8d8c14f4a3ed1d9c8f0cb19be82",
-  "to":"34otGUJWrgcdL1ny5u2DYxAh9dCJBjBLbN",
-  "amount":8000000
+    "result": "000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f",
+    "error": null,
+    "id": "foo"
 }
 ```
 
+#### GetInfo - 获取节点常用信息
 
-## 提现
-
-#### COMMENT
-对于提币上限本接口有固定限制，不同用户身份的不同每日上限由接入方自行完成
-
-#### METHOD: POST
-#### URL: http://bitgogogo.com/api/v1/withdraw
-#### PARAMS :
-* currency  (String 货币名称，目前包括 btc / ltc / bcc / eth /etc )
-* amount    (String 数量，以货币最小单位为单位，1BTC 即 100000000bit)
-* from      (String 本地用户地址，因从getaddress方法中获取并记录)
-* to        (String 用户提供的目标地址)
-
-
-#### EXSAMPLE
-
+##### 访问示例
 ```bash
-curl -X POST --data '{"currency":"btc","amount":50000000,"from":"1CQaJB4WvbLdD8eSe6ZrvXX4KkAELEJy7J","to":"34otGUJWrgcdL1ny5u2DYxAh9dCJBjBLbN"}' http://bitgogogo.com/api/v1/withdraw
+bitcoin-cli getinfo
 ```
 
-#### RESPONSE
+##### 返回参数
+| 参数名 | 数据类型 | 必要性 | 描述 |
+|-------|--------|---------|-----|
+| version | number | 必需 |  这个节点在其内部整数格式比特币核心的版本。例如，Bitcoin Core 0.9.2的整数版本号为90200 |
+| protocolversion | number | 必需 | 此节点使用的协议版本号。请参阅协议版本部分了解更多信息 |
+| walletversion | number | 可选 | 钱包的版本号。只有在支持钱包的情况下才会返回 |
+| balance | number | 可选 | 比特币余额 |
+| blocks | number | 必需 | 本地区块高度 |
+| timeoffset | number | 必需 | 节点时钟与计算机时钟的偏移（以UTC表示），以秒为单位。偏移量可能高达4200秒（70分钟） |
+| connections | number | 必需 | 连入节点数量 |
+| difficulty | number | 必需 | 最高块难度 |
+| testnet | bool | 必需 | 是否在测试网络中 |
+| paytxfee | number | 可选 | 千字节交易最低费用 |
+| relayfee | number | 必需 | 低优先级事务必须支付的最低费用才能使该节点将其接收到内存池中 |
+| errors | string | 必需 | 错误信息 |
 
-* txid      (String 本次交易的交易单号，可用于查询交易确认数)
-
+##### 返回示例
 ```bash
 {
-  "err":null,
-  "msg": {
-    "currency":"btc",
-    "txid":"8f559cd6554956bc631026f904df4c9cb7aad8d8c14f4a3ed1d9c8f0cb19be82"
-  }
+    "version" : 100000,
+    "protocolversion" : 70002,
+    "walletversion" : 60000,
+    "balance" : 1.27007770,
+    "blocks" : 315281,
+    "timeoffset" : 0,
+    "connections" : 9,
+    "proxy" : "",
+    "difficulty" : 1.00000000,
+    "testnet" : true,
+    "keypoololdest" : 1418924649,
+    "keypoolsize" : 101,
+    "paytxfee" : 0.00000000,
+    "relayfee" : 0.00001000,
+    "errors" : ""
 }
 ```
 
+#### GetNewAddress - 获取钱包新地址
 
+##### 访问参数
+| 参数名 | 数据类型 | 必要性 | 描述 |
+|-------|--------|---------|-----|
+| account | string | 可选 | 将地址放入的帐户名称。默认为默认帐户，一个空字符串（“”） |
 
-***
-
-## 查询交易信息
-
-#### COMMENT
-充值或者提现的地址由接入方自行记录，本接口提供对某一地址的查询以便获取交易确认信息
-
-#### METHOD: POST
-#### URL: http://bitgogogo.com/api/v1/checkaddress
-#### PARAMS :
-* currency  (String 货币名称，目前包括 btc / ltc / bcc / eth /etc )
-* address   (String 货币地址)
-* txid      (String 交易单号)
-
-#### EXSAMPLE
-
+##### 访问示例
 ```bash
-curl -X POST --data '{"currency":"btc","address":"1CQaJB4WvbLdD8eSe6ZrvXX4KkAELEJy7J","txid":"8f559cd6554956bc631026f904df4c9cb7aad8d8c14f4a3ed1d9c8f0cb19be82"}' http://bitgogogo.com/api/v1/checkaddress
+bitcoin-cli -testnet getnewaddress "doc test"
 ```
 
-#### RESPONSE
-* comfirmation (确认数)
-* amount (货币数量)
+##### 返回参数
+| 参数名 | 数据类型 | 必要性 | 描述 |
+|-------|--------|---------|-----|
+| result | string | 必需 | 新地址 |
 
-```bash
-{
-  "err":null,
-  "msg": {
-    "comfirmation":6，
-    "amount":50000000
-  }
-}
+##### 返回示例
+```
+mft61jjkmiEJwJ7Zw3r1h344D6aL1xwhma
 ```
