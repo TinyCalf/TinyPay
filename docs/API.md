@@ -1,3 +1,57 @@
+# 接收充值消息推送
+由于区块链的特殊性质，不能通过回调模式返回交易信息；通过txid核对交易单的形式效率也非常低，故通过消息队列的形式传递每一笔成功的交易。本项目采用ZeroMQ作为消息队列，ZeroMQ可支持nodejs、php、C++等变成环境，作为客户端安装相应的库或者插件即可快速接入。
+
+**连接主机**
+
+tcp://120.92.91.36:1999
+
+**返回参数**
+
+| 参数名 | 数据类型 | 描述 |
+|-------|--------|-----|
+| name | string | 交易币种名称 目前有 **btc** / **ltc** / **bcc** / **rbtc** |
+| category | string | 类型为发送或者接受 有 **receive** 和 **send** ，目前只返回 **receive**; 但是为了安全起见，建议接入时判断字段 |
+| address | string | 接收该交易的地址 |
+| amount | number | 充值币的数量，单位为BTC（或其他币） |
+| comfirmations | number | 确认数，接收方收到的绝大多数数据应该为1,并且确认数即使改变也不会重新发送本充值信息 |
+| txid | string | 交易单号 |
+
+**返回示例**
+
+```bash
+Worker connected to port 1999
+{"name":"rbtc"," category":"receive","address":"mxrxypc2q5kev8Bri3t9bzka8TXUXLCv9v","amount":0.04,"confirmations":3,"txid":"f2cf40a1d235bfcad70021c6cc9756194c5070ba21cf4d4a34f69d1b510fdaef"}
+{"name":"rbtc","category":"receive","address":"mxrxypc2q5kev8Bri3t9bzka8TXUXLCv9v","amount":0.05,"confirmations":3,"txid":"42eab14af3005c2ca093a180bfdfc07e06294bd40a764801c1a41647997b8c29"}
+{"name":"rbtc","category":"receive","address":"mxrxypc2q5kev8Bri3t9bzka8TXUXLCv9v","amount":0.06,"confirmations":3,"txid":"a556228d70ba4e1b0feafbd640c63ec161afa3a8e333e552a1798f950c2e7c0d"}
+```
+
+**nodejs接入示范**
+
+安装zmq模块：
+```bash
+npm install zmq --save
+```
+引用并连接主机：
+```javascript
+
+const zmq = require('zmq')
+const sock = zmq.socker('pull')
+
+sock.connect('tcp://120.92.91.36:1999')
+
+console.log('Worker connected to port 1999')
+
+sock.on('message', (msg) => {
+    console.log(msg.toString());
+});
+
+```
+
+
+
+
+
+
 # 常用RPC端口
 
 ## Bitcoin系列
@@ -44,7 +98,7 @@ curl --user ':my_secret_password' --data-binary '''
 }
 ```
 
-### GetInfo - 获取节点常用信息
+### GetInfo - 获取钱包信息
 
 **请求示例**
 
@@ -52,7 +106,8 @@ curl --user ':my_secret_password' --data-binary '''
 bitcoin-cli getinfo
 ```
 
-#### 返回参数
+**返回参数**
+
 | 参数名 | 数据类型 | 必要性 | 描述 |
 |-------|--------|---------|-----|
 | version | number | 必需 |  这个节点在其内部整数格式比特币核心的版本。例如，Bitcoin Core 0.9.2的整数版本号为90200 |
@@ -115,7 +170,7 @@ bitcoin-cli -testnet getnewaddress "doc test"
 mft61jjkmiEJwJ7Zw3r1h344D6aL1xwhma
 ```
 
-### SendToAddress - 向地址发送比特币
+### SendToAddress - 发送比特币
 
 **请求参数**
 
@@ -146,3 +201,110 @@ bitcoin-cli -testnet sendtoaddress mmXgiR6KAhZCyQ8ndr2BCfEq1wNG2UnyG6 \
 ```
 a2a2eb18cb051b5fe896a32b1cb20b179d981554b6bd7c5a956e56a0eecb04f0
 ```
+
+### ListTransactions - 批量查询交易
+
+**请求参数**
+
+| 参数名 | 数据类型 | 必要性 | 描述 |
+|-------|--------|---------|-----|
+| account | string | 可选 | 使用空字符串（“”）来获取默认帐户的交易。默认是*获取所有帐户的交易。 |
+| count  | number | 可选 | 要列出的最近事务的数量。默认是10 |
+| skip | number | 可选 | 要跳过的交易数量，默认是0|
+
+
+**请求示例**
+
+```bash
+bitcoin-cli -testnet listsinceblock \
+              00000000688633a503f69818a70eac281302e9189b1bb57a76a05c329fcda718 \
+              6
+```
+
+**返回参数**
+
+| 参数名 | 数据类型 | 必要性 | 描述 |
+|-------|--------|---------|-----|
+| result | array | 必需 | 包含所有交易 |
+| Payment | object | 必需 | 是否包含watchonly地址 |
+| account | string | 必需 | 账户名称 |
+| address | string | 可选 | 地址 |
+| category | string | 可选 | 分类，包含发送还是接受 |
+| amount | number |可选 | 货币数量 |
+| label | string|可选 | 备注，仅保存本地 |
+| fee | number |可选 | 交易费用 |
+| confirmations| number | 可选 | 确认数 |  
+| trusted | bool |可选 | 信任度 |
+| blockhash | string |可选 | 块哈系值 |
+| blockindex | number |可选 | 块包含的已确认交易数量 |
+| blocktime | string |可选 | 生成块的时间 |
+| txid | string |可选 | 交易单号 |
+| time | number |可选 | 交易时间 |
+| timereceived | number |可选 | 本地侦测到的确认时间 |
+| comment | string |可选 | 本地保存的交易注释 |
+| abandoned | bool |可选 | 是否被抛弃 |
+| lastblock | string | 必需 | 本次查询时的最高块高度 |
+
+**返回示例**
+
+```
+{
+    "transactions" : [
+        {
+            "account" : "doc test",
+            "address" : "mmXgiR6KAhZCyQ8ndr2BCfEq1wNG2UnyG6",
+            "category" : "receive",
+            "amount" : 0.10000000,
+            "vout" : 0,
+            "confirmations" : 76478,
+            "blockhash" : "000000000017c84015f254498c62a7c884a51ccd75d4dd6dbdcb6434aa3bd44d",
+            "blockindex" : 1,
+            "blocktime" : 1399294967,
+            "txid" : "85a98fdf1529f7d5156483ad020a51b7f3340e47448cf932f470b72ff01a6821",
+            "walletconflicts" : [
+            ],
+            "time" : 1399294967,
+            "timereceived" : 1418924714,
+            "bip125-replaceable": "no"		
+        },
+        {
+            "involvesWatchonly" : true,
+            "account" : "someone else's address2",
+            "address" : "n3GNqMveyvaPvUbH469vDRadqpJMPc84JA",
+            "category" : "receive",
+            "amount" : 0.00050000,
+            "vout" : 0,
+            "confirmations" : 34714,
+            "blockhash" : "00000000bd0ed80435fc9fe3269da69bb0730ebb454d0a29128a870ea1a37929",
+            "blockindex" : 11,
+            "blocktime" : 1411051649,
+            "txid" : "99845fd840ad2cc4d6f93fafb8b072d188821f55d9298772415175c456f3077d",
+            "walletconflicts" : [
+            ],
+            "time" : 1418695703,
+            "timereceived" : 1418925580,
+            "bip125-replaceable": "no"
+        }
+    ],
+    "lastblock" : "0000000000984add1a686d513e66d25686572c7276ec3e358a7e3e9f7eb88619"
+}
+```
+
+### AddNode - 增加连接节点
+
+**请求参数**
+
+| 参数名 | 数据类型 | 必要性 | 描述 |
+|-------|--------|---------|-----|
+| node | string | 必需 | 节点地址，如 “IP address:port” |
+| command  | string | 必需 | 增加或者取消， 有 add,remove,onetry三个指令 |
+
+**请求示例**
+
+```bash
+bitcoin-cli -testnet addnode 192.0.2.113:18333 onetry
+```
+
+**返回参数**
+
+无返回表示操作成功
