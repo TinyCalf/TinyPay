@@ -1,11 +1,11 @@
 # 接收充值消息推送
 由于区块链的特殊性质，不能通过回调模式返回交易信息；通过txid核对交易单的形式效率也非常低，故通过消息队列的形式传递每一笔成功的交易。本项目采用ZeroMQ作为消息队列，ZeroMQ可支持nodejs、php、C++等编程环境，作为客户端安装相应的库或者插件即可快速接入。
 
-**连接主机**
+### 连接主机
 
 tcp://120.92.91.36:1999
 
-**返回参数**
+### 返回参数
 
 | 参数名 | 数据类型 | 描述 |
 |-------|--------|-----|
@@ -16,7 +16,7 @@ tcp://120.92.91.36:1999
 | comfirmations | number | 确认数，接收方收到的绝大多数数据应该为1,并且确认数即使改变也不会重新发送本充值信息 |
 | txid | string | 交易单号 |
 
-**返回示例**
+### 返回示例
 
 ```bash
 Worker connected to port 1999
@@ -25,7 +25,7 @@ Worker connected to port 1999
 {"name":"rbtc","category":"receive","address":"mxrxypc2q5kev8Bri3t9bzka8TXUXLCv9v","amount":0.06,"confirmations":3,"txid":"a556228d70ba4e1b0feafbd640c63ec161afa3a8e333e552a1798f950c2e7c0d"}
 ```
 
-**nodejs接入示范**
+### nodejs接入示范
 
 安装zmq模块：
 ```bash
@@ -48,28 +48,22 @@ sock.on('message', (msg) => {
 ```
 
 
-
-
-
-
-# 常用RPC端口
-
-## Bitcoin系列
+# Bitcoin系列常用RPC端口
 
 目前已知下列数字货币拥有与比特币一致的RPC接口： BTC | LTC | BCC 。这些货币可统一按照比特币官方文档接入，地址为：https://bitcoin.org/en/developer-reference#listsinceblock<br>
 本节将着重介绍常用的RPC方法
 
-### 基本请求形式
+## 基本请求形式
 由于编程语言较多，这里举出curl请求接口的形式。其他接口为了示例的简洁，使用cli命令的形式
 
-**请求参数**
+### 请求参数
 
 * rpcuser rpc用户名
 * rpcpassword rpc密码
 * request 请求，JSON形式，参照下方
 * host rpc接口地址
 
-**请求示例**
+### 请求示例
 
 如下，request以JSON形式，包含需要请求的方法 *method* 方法所需参数 *params* 和自定义 *id* ，该示例为获取区块哈系值
 ```bash
@@ -82,12 +76,12 @@ curl --user ':my_secret_password' --data-binary '''
   --header 'Content-Type: text/plain;' localhost:8332
 ```
 
-#### 返回参数
+### 返回参数
 * result 返回结果
 * error 错误信息
 * id 请求时使用的id
 
-**返回示例**
+### 返回示例
 
 如上请求实例应返回如下JSON格式结果：
 ```bash
@@ -98,15 +92,15 @@ curl --user ':my_secret_password' --data-binary '''
 }
 ```
 
-### GetInfo - 获取钱包信息
+## GetInfo - 获取钱包信息
 
-**请求示例**
+### 请求示例
 
 ```bash
 bitcoin-cli getinfo
 ```
 
-**返回参数**
+### 返回参数
 
 | 参数名 | 数据类型 | 必要性 | 描述 |
 |-------|--------|---------|-----|
@@ -123,7 +117,7 @@ bitcoin-cli getinfo
 | relayfee | number | 必需 | 低优先级事务必须支付的最低费用才能使该节点将其接收到内存池中 |
 | errors | string | 必需 | 错误信息 |
 
-**返回示例**
+### 返回示例
 
 ```bash
 {
@@ -145,34 +139,34 @@ bitcoin-cli getinfo
 }
 ```
 
-### GetNewAddress - 获取钱包新地址
+## GetNewAddress - 获取钱包新地址
 
-**请求参数**
+### 请求参数
 
 | 参数名 | 数据类型 | 必要性 | 描述 |
 |-------|--------|---------|-----|
 | account | string | 可选 | 将地址放入的帐户名称。默认为默认帐户，一个空字符串（“”） |
 
-**请求示例**
+### 请求示例
 ```bash
 bitcoin-cli -testnet getnewaddress "doc test"
 ```
 
-**返回参数**
+### 返回参数
 
 | 参数名 | 数据类型 | 必要性 | 描述 |
 |-------|--------|---------|-----|
 | result | string | 必需 | 新地址 |
 
-**返回示例**
+### 返回示例
 
 ```
 mft61jjkmiEJwJ7Zw3r1h344D6aL1xwhma
 ```
 
-### SendToAddress - 发送比特币
+## SendToAddress - 发送比特币
 
-**请求参数**
+### 请求参数
 
 | 参数名 | 数据类型 | 必要性 | 描述 |
 |-------|--------|---------|-----|
@@ -183,28 +177,28 @@ mft61jjkmiEJwJ7Zw3r1h344D6aL1xwhma
 |subtractfeefromamont | bool | 可选 | 内扣交易费 |
 
 
-**请求示例**
+### 请求示例
 
 ```bash
 bitcoin-cli -testnet sendtoaddress mmXgiR6KAhZCyQ8ndr2BCfEq1wNG2UnyG6 \
   0.1 "sendtoaddress example" "Nemo From Example.com"
 ```
 
-**返回参数**
+### 返回参数
 
 | 参数名 | 数据类型 | 必要性 | 描述 |
 |-------|--------|---------|-----|
 | result | number | 必需 | 交易单号 |
 
-**返回示例**
+### 返回示例
 
 ```
 a2a2eb18cb051b5fe896a32b1cb20b179d981554b6bd7c5a956e56a0eecb04f0
 ```
 
-### ListTransactions - 批量查询交易
+## ListTransactions - 批量查询交易
 
-**请求参数**
+### 请求参数
 
 | 参数名 | 数据类型 | 必要性 | 描述 |
 |-------|--------|---------|-----|
@@ -213,7 +207,7 @@ a2a2eb18cb051b5fe896a32b1cb20b179d981554b6bd7c5a956e56a0eecb04f0
 | skip | number | 可选 | 要跳过的交易数量，默认是0|
 
 
-**请求示例**
+### 请求示例
 
 ```bash
 bitcoin-cli -testnet listsinceblock \
@@ -221,7 +215,7 @@ bitcoin-cli -testnet listsinceblock \
               6
 ```
 
-**返回参数**
+### 返回参数
 
 | 参数名 | 数据类型 | 必要性 | 描述 |
 |-------|--------|---------|-----|
@@ -245,7 +239,7 @@ bitcoin-cli -testnet listsinceblock \
 | abandoned | bool |可选 | 是否被抛弃 |
 | lastblock | string | 必需 | 本次查询时的最高块高度 |
 
-**返回示例**
+### 返回示例
 
 ```
 {
@@ -290,21 +284,21 @@ bitcoin-cli -testnet listsinceblock \
 }
 ```
 
-### AddNode - 增加连接节点
+## AddNode - 增加连接节点
 
-**请求参数**
+### 请求参数
 
 | 参数名 | 数据类型 | 必要性 | 描述 |
 |-------|--------|---------|-----|
 | node | string | 必需 | 节点地址，如 “IP address:port” |
 | command  | string | 必需 | 增加或者取消， 有 add,remove,onetry三个指令 |
 
-**请求示例**
+### 请求示例
 
 ```bash
 bitcoin-cli -testnet addnode 192.0.2.113:18333 onetry
 ```
 
-**返回参数**
+### 返回参数
 
 无返回表示操作成功
