@@ -1,7 +1,7 @@
 const zmq = require('zmq')
 const sock = zmq.socket('push')
 
-sock.bindSync('tcp://127.0.0.1:1999')
+sock.bindSync('tcp://0.0.0.0:1999')
 
 
 var log = require('../Logs/log.js')("ZMQ")
