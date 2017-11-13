@@ -76,12 +76,7 @@ curl --user ':my_secret_password' --data-binary '''
   --header 'Content-Type: text/plain;' localhost:8332
 ```
 
-<<<<<<< HEAD
-**返回参数**
-
-=======
 ### 返回参数
->>>>>>> 5408ec4632f6edadea2c25b318b90f2deb53a53d
 * result 返回结果
 * error 错误信息
 * id 请求时使用的id

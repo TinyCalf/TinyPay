@@ -50,7 +50,7 @@ const _getFullTime = () => {
 var _log = function(msg){
 	var date = _getYMD();
   // TODO 文件路径做成输入指定
-  fs.appendFile(path.resolve('./') + "/Logs/files/" + date + ".log", msg + "\n", null );
+  fs.appendFile(path.resolve('./') + "/Logs/files/" + date + ".log", msg + "\n", null ,(error) => { /* handle error */ });
 
 }
 

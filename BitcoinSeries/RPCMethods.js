@@ -108,6 +108,28 @@ exports.getTxsSinceBlock = (name, height) => {
   });
 }
 
+/*******************************************************************************
+
+Wallet相关
+
+********************************************************************************/
+
+/*
+获取某币钱包新地址 name => address
+*/
+exports.getnewaddress = (name) => {
+	return new Promise ( (resolve, reject) => {
+		_rpcs[name].getnewaddress('', (err, ret) => {
+        if(err)reject(err);
+				if(ret && ret.result){
+					resolve(ret.result);
+				}
+				reject(name + " getnewaddress returned nothing")
+    });
+  });
+}
+
+
 //
 //
 //

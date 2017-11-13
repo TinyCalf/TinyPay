@@ -4,13 +4,17 @@
   "description": "bitgogogo",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node build.js",
+    "start": "node index.js",
+    "daemon": "nohup node index.js &"
   },
   "author": "Jonathan-ZHU",
   "license": "ISC",
   "dependencies": {
     "bignumber.js": "^4.1.0",
     "bitcoind-rpc": "^0.7.0",
+    "body-parser": "^1.18.2",
     "chalk": "^2.3.0",
     "express": "^4.16.2",
     "mongoose": "^4.13.0",
@@ -21,5 +25,5 @@
   "devDependencies": {
     "bitcore-lib": "^0.15.0"
   },
-  "bin":"./index.js"
+  "bin": "./index.js"
 }

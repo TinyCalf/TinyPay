@@ -1,6 +1,9 @@
 const mongoose = require("mongoose");
 const host = require("../config.js").db.host;
-mongoose.connect(host);
+mongoose.connect(host, {useMongoClient:true});
+//这里加useMongoClient这个参数是为了防止mongoose一个bug导致的warn，详见
+//https://github.com/Automattic/mongoose/issues/5399
+var log = require('../Logs/log.js')("db")
 
 /*******************************************************************************
 
@@ -55,16 +58,24 @@ exports.checkCurrencyByName = (name) => {
 */
 exports.createNewCurrency = (name) => {
   return new Promise ( (resolve, reject) => {
-    var newcurr = new Currency();
-    newcurr.name = name;
-    newcurr.save((err,ret)=>{
-      //11000表示重复创建错误，忽略
-      if(err && err.code != 11000) reject(err);
-      resolve();
+    this.checkCurrencyByName(name)
+    .then(ret=>{
+      if(ret) {
+        log.info(name + " has been created! nothing done.")
+        resolve()
+        return;
+      }
+      //创建新币种
+      var newcurr = new Currency();
+      newcurr.name = name;
+      newcurr.save((err,ret)=>{
+        if(err) reject(err);
+        resolve();
+      })
     })
+    .catch(err=>{reject(err)})
   });
 }
-
 
 
 
