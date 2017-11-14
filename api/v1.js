@@ -1,4 +1,5 @@
 const btcrpc = require('../BitcoinSeries/RPCMethods')
+const ethrpc = require('../EthereumSeries/RPCMethods')
 const bodyParser = require('body-parser')
 const express = require("express");
 var app = express();
@@ -17,8 +18,9 @@ app.all('*', function(req, res, next) {
 
 // app.use(bodyParser)
 
-
-//获取钱包地址 btc | bcc | ltc
+/*
+获取钱包地址 btc | bcc | ltc | eth
+*/
 app.get('/v1/getnewaddress',function(req,res){
   var name = req.query.name
   var currency = config.currencies.find(x => {return x.name === name } )
@@ -40,7 +42,16 @@ app.get('/v1/getnewaddress',function(req,res){
       break
     }
     case 'ethereum':{
-
+      ethrpc.getNewAccount(currency.name)
+      .then( addr => {
+        log.info(currency.name + " getnewaddress " + addr)
+        res.send({err:0 ,msg:addr})
+      })
+      .catch ( err=> {
+        log.err(err)
+        res.send({err:-300 ,msg:err})
+      })
+      break
     }
     case 'indie':{
 
@@ -57,7 +68,9 @@ app.get('/v1/getnewaddress',function(req,res){
 //{"err":0,"msg":"13Cyy5MTWpfXjEmtf2uMif2EEq1eRgYFsj"}
 
 
+/*
 
+*/
 
 
 app.listen(config.apiv1.port);

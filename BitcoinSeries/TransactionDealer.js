@@ -77,40 +77,8 @@ var _dealer = (name) => {
   })
 }
 
-
-// //开始每隔一段时间查看新的区块链子信息
-// const btcDuration = 5 * 60 * 1000 // 5分钟
-// const ltcDuration = 2 * 60 * 1000 // 2分钟
-// const bccDuration = 2 * 60 * 1000 // 2分钟
-//
-// console.log('Start dealing BTC..');
-// _dealer('btc').catch(err=>console.log(err))
-// setInterval(
-//   ()=>{
-//     _dealer('btc').catch(err=>console.log(err))
-//   },// .then( ()=>{console.log("success")})
-// // .catch ( (err)=>{console.log(err)})
-//   btcDuration
-// )
-//
-// console.log('Start dealing LTC..');
-// setInterval(
-//   ()=>{
-//     _dealer('ltc').catch(err=>console.log(err))
-//   },
-//   ltcDuration
-// )
-//
-// console.log('Start dealing BCC..');
-// setInterval(
-//   ()=>{
-//     _dealer('bcc').catch(err=>console.log(err))
-//   },
-//   bccDuration
-// )
-
 /*
-
+循环函数
 */
 var _dealerLooper = (currency) => {
   return new Promise ( (resolve, reject) => {

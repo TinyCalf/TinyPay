@@ -115,19 +115,25 @@ Wallet相关
 ********************************************************************************/
 
 /*
-获取某币钱包新地址 name => address
+获取某币钱包新地址
+name => address
 */
 exports.getnewaddress = (name) => {
 	return new Promise ( (resolve, reject) => {
 		_rpcs[name].getnewaddress('', (err, ret) => {
-        if(err)reject(err);
+        if(err)reject(err)
 				if(ret && ret.result){
-					resolve(ret.result);
+					resolve(ret.result)
 				}
 				reject(name + " getnewaddress returned nothing")
     });
   });
 }
+
+
+/*
+
+*/
 
 
 //

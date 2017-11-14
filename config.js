@@ -92,6 +92,17 @@ module.exports = {
     	pass:'ebo123',
       txCheckDuration: 1000,// 1sec
       env:'test',
-    }
+    },
+    {
+      name:'eth',
+      category:'ethereum',
+    	protocol:"http",
+    	host:'120.92.91.36',
+    	port:'10084',
+    	user:'ebo',
+    	pass:'ebo123',
+      txCheckDuration: 1000,// 1sec
+      env:'test',
+    },
   ]
 }
