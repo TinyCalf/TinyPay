@@ -58,7 +58,6 @@ var _log = function(msg){
 输出并打印 type = info | warn | err
 */
 var _print = (tag, type=null, msg) => {
-  msg = JSON.stringify(msg)
   var time = '[' + _getHMS() + ']';
   type = type.toUpperCase();
   var colortype = "";
@@ -68,12 +67,18 @@ var _print = (tag, type=null, msg) => {
     case 'WARN':  colortype =chalk.yellowBright(type); break;
     default:      colortype =chalk.blueBright('INFO');
   }
-  var fulllog = time + " " + tag + " " + type + " " + msg;
+  var fulllog = time + " " + tag + " " + type + " ";
   var colorlog = chalk.blue(time) + " "
     + chalk.magenta.bold(tag) + " "
-    + colortype + " "
-    + msg;
-  _log(fulllog);
-  console.log(colorlog);
+    + colortype + " ";
+  if(type!="ERR"){
+    _log(fulllog + msg);
+    console.log(colorlog + msg);
+  } else if ( type=="ERR" ) {
+    _log(fulllog)
+    _log(msg.toString())
+    console.log(colorlog)
+    console.log(msg)
+  }
   return;
 }

@@ -1,0 +1,5 @@
+var rpc = require('./RPCMethods')
+var db = require('../Database/db')
+var zmq = require('../Zeromq/zmqServer')
+var config = require('../config.js')
+var log = require('../Logs/log.js')("EthereumSerises/TransactionDealer")
