@@ -23,7 +23,7 @@ exports.updateCheckedHeight = (name, height) => {
       }
     }
     Currency.findOneAndUpdate({name:name}, data, (err,ret)=>{
-      if(err) reject(err);
+      if(err) return reject(err);
       resolve();
     })
   });
@@ -35,7 +35,7 @@ exports.updateCheckedHeight = (name, height) => {
 exports.getCheckedHeight = (name) => {
   return new Promise ( (resolve, reject) => {
     Currency.findOne({name:name}, (err,ret)=>{
-      if(err) reject(err);
+      if(err) return reject(err);
       resolve(ret.lastCheckedHeight);
     })
   });
@@ -47,7 +47,7 @@ exports.getCheckedHeight = (name) => {
 exports.checkCurrencyByName = (name) => {
   return new Promise ( (resolve, reject) => {
     Currency.findOne({name:name}, (err,ret)=>{
-      if(err) reject(err);
+      if(err) return reject(err);
       resolve(ret);
     })
   });
@@ -69,50 +69,13 @@ exports.createNewCurrency = (name) => {
       var newcurr = new Currency();
       newcurr.name = name;
       newcurr.save((err,ret)=>{
-        if(err) reject(err);
+        if(err) return reject(err);
         resolve();
       })
     })
     .catch(err=>{reject(err)})
   });
 }
-
-
-
-
-
-
-
-
-/*
-初始化币种数据库
-*/
-// var currencies = ['btc','ltc','bcc'];
-// exports.initCurrenciesDB = ( callback ) => {
-//   var errors = [];
-//   var processcount = 0;
-//   for(var i = 0 ; i < currencies.length ; i++) {
-//     var nowcurr = currencies[i];
-//     //判断是否已经创建该币种
-//     var promiseFindOutIfExisted = new Promise((resolve, reject) => {
-//       processcount ++;
-//       Currency.findOne({name:'btc'}).exec((err,ret) => {
-//         if(err || ret) reject(err);
-//         resolve();
-//       });
-//     })
-//     //未创建则重新创建
-//     .then( () => {
-//       var newCurr = new Currency();
-//       newCurr.name = nowcurr;
-//       newCurr.save( (err,ret) => {
-//         if(err) errors.push(err);
-//         if(processcount >= currencies.length)
-//         callback(errors, null);
-//       });
-//     })
-//   }
-// }
 
 /*
 初始化某币种的数据库
@@ -121,7 +84,7 @@ exports.initCurrencyDB = ( name ,callback) => {
   //判断是否已经创建该币种
   var promiseFindOutIfExisted = new Promise((resolve, reject) => {
     Currency.findOne({name:name}).exec((err,ret) => {
-      if(err || ret) reject(err);
+      if(err || ret) return reject(err);
       resolve();
     });
   })
@@ -138,29 +101,54 @@ exports.initCurrencyDB = ( name ,callback) => {
   })
 }
 
-//this.initCurrencyDB( 'ltc' , (err,ret)=> {console.log(err,ret)})
+/*******************************************************************************
 
+以太坊系列账户相关 ETH | ETC  ETHAccounts ETCAccounts
 
-// this.initCurrenciesDB((err,ret)=> {console.log(err);})
+以太坊系列的货币账户地址都用独立的collection保存
 
+********************************************************************************/
+const ETHAccounts = require("./Models/ETHAccounts.model");
+/*
+增加以太坊账户
+name,address=>null
+"eth","0xlldlsafdhjsaa"=>null
+*/
+exports.addAccountOfEthereumSeries = (name, address) => {
+  return new Promise ( (resolve, reject) => {
+    /*暂时只有eth*/
+    name="eth"
+    var Nmodel = null
+    switch (name) {
+      case "eth": Nmodel=ETHAccounts;break;
+      default: return reject("invalid currency name!")
+    }
+    var newAccount = new Nmodel();
+    newAccount.address = address;
+    newAccount.save( (err,ret) => {
+      if(err) return reject(err)
+      resolve()
+    });
+  });
+}
 
-
-// var btc = new Currency();
-// btc.name = 'btc';
-// btc.lastCheckedHeight = 0;
-//
-// btc.save( (err,ret) => {
-//   if(err) console.log(err);
-//   console.log(ret);
-// } );
-
-
-// Currency.find({}).exec((err,ret) => {
-//   if(err) console.log(err);
-//   console.log(ret);
-// })
-
-// Currency.findOne({name:'btc'}).exec((err,ret) => {
-//   if(err) console.log(err);
-//   console.log(ret);
-// })
+/*
+查询某地址是否已经记录
+name(币种名称)，address=>
+null | {...}
+*/
+exports.checkHasAddress = (name, address) => {
+  return new Promise ( (resolve, reject) => {
+    /*暂时只有eth*/
+    name="eth"
+    var Nmodel = null
+    switch (name) {
+      case "eth": Nmodel = ETHAccounts;break;
+      default: return reject("invalid currency name!")
+    }
+    Nmodel.findOne({address:address}).exec((err,ret) => {
+      if(err) return reject(err);
+      resolve(ret);
+    });
+  });
+}

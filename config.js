@@ -97,12 +97,23 @@ module.exports = {
       name:'eth',
       category:'ethereum',
     	protocol:"http",
-    	host:'120.92.91.36',
-    	port:'10084',
-    	user:'ebo',
-    	pass:'ebo123',
+    	host:'127.0.0.1',
+    	port:'8545',
+    	user:'',
+    	pass:'',
       txCheckDuration: 1000,// 1sec
-      env:'test',
+      env:'prod',
     },
+    {
+      name:'etc',
+      category:'ethereum',
+    	protocol:"http",
+    	host:'127.0.0.1',
+    	port:'8546',
+    	user:'',
+    	pass:'',
+      txCheckDuration: 1000,// 1sec
+      env:'prod',
+    }
   ]
 }

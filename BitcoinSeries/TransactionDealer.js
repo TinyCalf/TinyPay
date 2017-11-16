@@ -6,7 +6,7 @@ var log = require('../Logs/log.js')("TransactionDealer")
 
 
 /*
-批量发送接受到的交易
+批量发送接受到的交易 TODO:node 8 以后还没有测试
 */
 var _zmqSendReceivedTxs = (name, txs) => {
   return new Promise ( (resolve, reject) => {

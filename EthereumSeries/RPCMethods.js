@@ -4,6 +4,7 @@ const rpcaddress = '127.0.0.1';
 const rpcport = '8545';
 const _PASSPHRASE = '77e7c96a'// 创建账户时的固定统一密码
 const log = require("../Logs/log")("EthereumSerises/RPCMethods")
+const db = require("../Database/db")
 var ethoptions = {
   host:"http://" + rpcaddress+ ":" + rpcport,
   personal:true,
@@ -207,10 +208,6 @@ var getAccounts = (name) => {
   })
 }
 
-// getAccounts()
-// .then(ret=>console.log(ret))
-// .catch(err=>log.err(err))
-
 /*
 创建新账户并获取其地址
 name    =>    address
@@ -222,7 +219,11 @@ exports.getNewAccount = (name) => {
     name = "eth"
     ethrpc.personal.newAccount(_PASSPHRASE,(err, ret) => {
       if(err) return reject(err)
-      resolve(ret)
+      //在数据库中添加该地址
+      if(!ret) return reject("getNewAccount returns with no result")
+      db.addAccountOfEthereumSeries(name, ret)
+      .then(()=>resolve(ret))
+      .catch(err=>reject(err))
     });
   })
 }
@@ -232,20 +233,42 @@ exports.getNewAccount = (name) => {
 // .then(ret=>console.log(ret))
 // .catch(err=>log.err(err))
 
-var looper = (times) => {
-    if (times <= 0) {
-      return
-    }
-    this.getNewAccount("eth")
-    .then(ret => {
-      log.info(times+ " " +ret)
-      times--;
-      looper(times)
-    })
-    .catch( err => log.err(err))
-}
+// var looper = (times) => {
+//     if (times <= 0) {
+//       return
+//     }
+//     this.getNewAccount("eth")
+//     .then(ret => {
+//       log.info(times+ " " +ret)
+//       times--;
+//       looper(times)
+//     })
+//     .catch( err => log.err(err))
+// }
+//
+// looper(1000);
+// looper(1000);
+// looper(1000);
+// looper(1000);
+// looper(1000);
+// looper(1000);
+// looper(1000);
+// looper(1000);
+// looper(1000);
+// looper(1000);
 
-looper(5);
+// var looper = (times) => {
+//     if (times <= 0) {
+//       return
+//     }
+//     this.getNewAccount("eth")
+//     .then(ret => {
+//       log.info(times+ " " +ret)
+//       times--;
+//       looper(times)
+//     })
+//     .catch( err => log.err(err))
+// }
 
 
 
