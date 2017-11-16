@@ -101,7 +101,7 @@ module.exports = {
     	port:'8545',
     	user:'',
     	pass:'',
-      txCheckDuration: 1000,// 1sec
+      txCheckDuration: 2 * 60 * 1000,// 2min
       env:'prod',
     },
     {
@@ -112,7 +112,7 @@ module.exports = {
     	port:'8546',
     	user:'',
     	pass:'',
-      txCheckDuration: 1000,// 1sec
+      txCheckDuration: 2 * 60 * 1000,//  2min
       env:'prod',
     }
   ]

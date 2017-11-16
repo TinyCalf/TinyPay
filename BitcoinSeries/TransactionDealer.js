@@ -14,7 +14,7 @@ var _zmqSendReceivedTxs = (name, txs) => {
       resolve()
       return
     }
-    (function loop(i) {
+    function loop(i) {
       const promise = new Promise( (resolve, reject) => {
         if(txs[i].category !== 'receive') {
           resolve()
@@ -25,7 +25,6 @@ var _zmqSendReceivedTxs = (name, txs) => {
           category:         txs[i].category,
           address:          txs[i].address,
           amount:           txs[i].amount,
-          confirmations:    txs[i].confirmations,
           txid:             txs[i].txid,
         }
         zmq.sendReceivedTxs(tx).then( ()=>resolve() )
@@ -34,7 +33,8 @@ var _zmqSendReceivedTxs = (name, txs) => {
       .then( () => {
         (i < txs.length-1) ? loop(i+1) : resolve()
       })
-    })(0)
+    }
+    loop(0)
   })
 }
 
