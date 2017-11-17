@@ -60,7 +60,6 @@ var zmqSendReceivedTxs = (name, txs) => {
           category:         "receive",
           address:          txs[i].to,
           amount:           rpc.fromWei( txs[i].value, 'ether').toString(),
-          //amount:           txs[i].value,
           txid:             txs[i].hash,
         }
         zmq.sendReceivedTxs(tx).then( ()=>resolve() )
@@ -174,5 +173,3 @@ exports.start = () => {
     .catch( err => reject(err))
   })
 }
-
-this.start()

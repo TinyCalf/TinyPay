@@ -66,7 +66,7 @@ var _print = (tag, type=null, msg) => {
     case 'INFO':  colortype =chalk.blueBright(type); break;
     case 'ERR':   colortype =chalk.redBright(type); break;
     case 'WARN':  colortype =chalk.yellowBright(type); break;
-    default:      {_log(msg);console.log(msg);return;}
+    default:      {_log(JSON.stringify(msg));console.log(JSON.stringify(msg));return;}
   }
   var fulllog = time + " " + tag + " " + type + " ";
   var colorlog = chalk.blue(time) + " "
