@@ -7,10 +7,6 @@ var zmq = require('../Zeromq/zmqServer')
 var config = require('../config.js')
 var log = require('../Logs/log.js')("EthereumSerises/TransactionDealer")
 var config = require('../config').currencies
-const web3_extended = require('web3_extended');
-
-
-
 /*
 筛选出所有交易中向本地充值的交易
 txs=>txs
@@ -63,11 +59,11 @@ var zmqSendReceivedTxs = (name, txs) => {
           name:             name,
           category:         "receive",
           address:          txs[i].to,
-          amount:           web3_extended.fromWei( txs[i].value, 'ether'),
+          amount:           rpc.fromWei( txs[i].value, 'ether').toString(),
+          //amount:           txs[i].value,
           txid:             txs[i].hash,
         }
         zmq.sendReceivedTxs(tx).then( ()=>resolve() )
-
       })
       .then( () => {
         (i < txs.length-1) ? loop(i+1) : resolve()
@@ -95,6 +91,7 @@ var dealWithOneBlock = (name, height) => {
       //整合交易信息并通过消息队列发送
       return zmqSendReceivedTxs(name, txs)
     })
+    .then(()=>{resolve()})
     .catch(err=>log.err(err))
   })
 }
@@ -168,8 +165,8 @@ exports.start = () => {
     log.info('Starting to deal with incoming transactions of ethereum series...')
     var seq = [];
     for (var i = 0 ; i < config.length ; i++) {
-      if (config[i].category = 'ethereum') {
-        seq.push ( _dealerLooper (config[i]) )
+      if (config[i].category == 'ethereum') {
+        seq.push ( dealerLooper (config[i]) )
       }
     }
     Promise.all(seq)

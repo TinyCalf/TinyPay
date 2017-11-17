@@ -6,7 +6,8 @@ module.exports = (tag) => {
   return {
     info:(msg) => _print(tag, 'info', msg),
     err:(msg) => _print(tag, 'err', msg),
-    warn:(msg) => _print(tag, 'warn', msg)
+    warn:(msg) => _print(tag, 'warn', msg),
+    print:(msg) => _print(tag, 'print', msg)
   };
 }
 
@@ -65,7 +66,7 @@ var _print = (tag, type=null, msg) => {
     case 'INFO':  colortype =chalk.blueBright(type); break;
     case 'ERR':   colortype =chalk.redBright(type); break;
     case 'WARN':  colortype =chalk.yellowBright(type); break;
-    default:      colortype =chalk.blueBright('INFO');
+    default:      {_log(msg);console.log(msg);return;}
   }
   var fulllog = time + " " + tag + " " + type + " ";
   var colorlog = chalk.blue(time) + " "

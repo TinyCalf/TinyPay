@@ -104,16 +104,16 @@ module.exports = {
       txCheckDuration: 2 * 60 * 1000,// 2min
       env:'prod',
     },
-    {
-      name:'etc',
-      category:'ethereum',
-    	protocol:"http",
-    	host:'127.0.0.1',
-    	port:'8546',
-    	user:'',
-    	pass:'',
-      txCheckDuration: 2 * 60 * 1000,//  2min
-      env:'prod',
-    }
+    // {
+    //   name:'etc',
+    //   category:'ethereum',
+    // 	protocol:"http",
+    // 	host:'127.0.0.1',
+    // 	port:'8546',
+    // 	user:'',
+    // 	pass:'',
+    //   txCheckDuration: 2 * 60 * 1000,//  2min
+    //   env:'prod',
+    // }
   ]
 }

@@ -14,6 +14,8 @@ var ethoptions = {
 
 var ethrpc = web3_extended.create(ethoptions);
 
+exports.fromWei = ethrpc.fromWei
+exports.toWei = ethrpc.toWei
 
 // ./geth --rpc --rpcapi "db,eth,net,web3,personal" console 2>> ./eth.log
 //

@@ -13,7 +13,7 @@ exports.sendReceivedTxs = (msg) => {
   return new Promise ( (resolve, reject) => {
     sock.send( JSON.stringify(msg) );
     log.info("zmq sent msg: ")
-    log.info(msg)
+    log.print(msg)
     resolve();
   })
 }
