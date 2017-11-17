@@ -1,7 +1,7 @@
 /*
 以太坊系列币种处理新增交易
 */
-var rpc = require('./RPCMethods')
+var Rpc = require('./Rpc')
 var db = require('../Database/db')
 var zmq = require('../Zeromq/zmqServer')
 var config = require('../config.js')
@@ -47,7 +47,7 @@ var selectLocalTxs = (name, txs) => {
 /*
 通过zmq发送所有新交易
 */
-var zmqSendReceivedTxs = (name, txs) => {
+var zmqSendReceivedTxs = (rpc, txs) => {
   return new Promise ( (resolve, reject) => {
     if(!txs[0]) {
       resolve()
@@ -56,7 +56,7 @@ var zmqSendReceivedTxs = (name, txs) => {
     function loop(i) {
       const promise = new Promise( (resolve, reject) => {
         var tx = {
-          name:             name,
+          name:             rpc.name,
           category:         "receive",
           address:          txs[i].to,
           amount:           rpc.fromWei( txs[i].value, 'ether').toString(),
@@ -76,19 +76,17 @@ var zmqSendReceivedTxs = (name, txs) => {
 处理单个区块上的交易信息
 name(币种),height（区块高）
 */
-var dealWithOneBlock = (name, height) => {
-  /*先假设只有eth*/
-  name = "eth"
+var dealWithOneBlock = (rpc, height) => {
   return new Promise ( (resolve, reject) => {
     //查询该高度上所有交易
     rpc.getTxByBlock(height)
     .then(txs=>{
       //筛选出充值到本地的交易
-      return selectLocalTxs(name, txs)
+      return selectLocalTxs(rpc.name, txs)
     })
     .then(txs=>{
       //整合交易信息并通过消息队列发送
-      return zmqSendReceivedTxs(name, txs)
+      return zmqSendReceivedTxs(rpc, txs)
     })
     .then(()=>{resolve()})
     .catch(err=>log.err(err))
@@ -100,11 +98,11 @@ var dealWithOneBlock = (name, height) => {
 从已记录高度到当前高度块之间的所有交易
 name
 */
-var dealWithUncheckedBlocks = (name, checkedHeight, lastHeight) => {
+var dealWithUncheckedBlocks = (rpc, checkedHeight, lastHeight) => {
   return new Promise ( (resolve, reject) => {
     if(checkedHeight>=lastHeight)  return resolve()
     var loop = (height) => {
-      dealWithOneBlock(name,height)
+      dealWithOneBlock(rpc,height)
       .then( () => {
         (height < lastHeight) ? loop(height+1) : resolve()
       })
@@ -117,12 +115,12 @@ var dealWithUncheckedBlocks = (name, checkedHeight, lastHeight) => {
 /*
 处理交易
 */
-var dealer = (name) => {
+var dealer = (rpc) => {
   return new Promise ( (resolve, reject) => {
     var checkedHeight = null;
     var lastHeight = null;
     //获取币种已记录高度
-    db.getCheckedHeight(name)
+    db.getCheckedHeight(rpc.name)
     .then( height => {
       checkedHeight = height
       //获取当前高度
@@ -131,11 +129,12 @@ var dealer = (name) => {
     .then( height =>{
       lastHeight = height
       //处理高度差之间的所有交易
-      return dealWithUncheckedBlocks(name, checkedHeight, lastHeight)
+      // console.log(rpc.name + " " + checkedHeight + " " + lastHeight )
+      return dealWithUncheckedBlocks(rpc, checkedHeight, lastHeight)
     })
     .then(()=>{
       //更新已记录高度
-      return db.updateCheckedHeight(name, lastHeight)
+      return db.updateCheckedHeight(rpc.name, lastHeight)
     })
     .catch(err=>reject(err))
   })
@@ -145,15 +144,14 @@ var dealer = (name) => {
 /*
 循环函数
 */
-var dealerLooper = (currency) => {
+var dealerLooper = (rpc, duration) => {
   return new Promise ( (resolve, reject) => {
-    log.info('Start dealing with ' + currency.name )
-    dealer(currency.name).catch(err=>log.err(err))
+    dealer(rpc).catch(err=>log.err(err))
     setInterval(
       ()=>{
-        dealer(currency.name).catch(err=>log.err(err))
+        dealer(rpc).catch(err=>log.err(err))
       },
-      currency.txCheckDuration
+      duration || 5000
     )
     resolve()
   })
@@ -163,9 +161,11 @@ exports.start = () => {
   return new Promise ( (resolve, reject) => {
     log.info('Starting to deal with incoming transactions of ethereum series...')
     var seq = [];
-    for (var i = 0 ; i < config.length ; i++) {
-      if (config[i].category == 'ethereum') {
-        seq.push ( dealerLooper (config[i]) )
+    for(var key in config) {
+      if (config[key].category == 'ethereum') {
+        log.info ('Start dealing with ' + key )
+        var rpc = new Rpc(key)
+        seq.push ( dealerLooper (rpc, config[key].txCheckDuration) )
       }
     }
     Promise.all(seq)

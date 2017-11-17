@@ -109,6 +109,7 @@ exports.initCurrencyDB = ( name ,callback) => {
 
 ********************************************************************************/
 const ETHAccounts = require("./Models/ETHAccounts.model");
+const ETCAccounts = require("./Models/ETCAccounts.model");
 /*
 增加以太坊账户
 name,address=>null
@@ -116,11 +117,10 @@ name,address=>null
 */
 exports.addAccountOfEthereumSeries = (name, address) => {
   return new Promise ( (resolve, reject) => {
-    /*暂时只有eth*/
-    name="eth"
     var Nmodel = null
     switch (name) {
-      case "eth": Nmodel=ETHAccounts;break;
+      case "eth": {Nmodel=ETHAccounts;break;}
+      case "etc": {Nmodel=ETCAccounts;break;}
       default: return reject("invalid currency name!")
     }
     var newAccount = new Nmodel();
@@ -139,11 +139,10 @@ null | {...}
 */
 exports.checkHasAddress = (name, address) => {
   return new Promise ( (resolve, reject) => {
-    /*暂时只有eth*/
-    name="eth"
     var Nmodel = null
     switch (name) {
-      case "eth": Nmodel = ETHAccounts;break;
+      case "eth": {Nmodel = ETHAccounts;break;}
+      case "etc": {Nmodel = ETCAccounts;break;}
       default: return reject("invalid currency name!")
     }
     Nmodel.findOne({address:address}).exec((err,ret) => {
