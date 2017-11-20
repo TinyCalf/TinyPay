@@ -11,10 +11,10 @@ var log = require('./Logs/log.js')('index')
 /*
 启动以太放系列消息队列
 */
-EthereumSeriesTxsDealer.start()
-.catch ( (err)=>log.err(err) )
+// EthereumSeriesTxsDealer.start()
+// .catch ( (err)=>log.err(err) )
 
 /*
 启动 api v1
 */
-// var apiv1 = require("./api/v1")
+var apiv1 = require("./api/v1")

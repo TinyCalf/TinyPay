@@ -1,51 +1,18 @@
 var RPC = require('bitcoind-rpc')
 var log = require('../Logs/log.js')("BitcoinSeriesRPC")
+var config = require("../config").currencies
 
-//BTC
-var _btcrpc = new RPC({
-	protocol:"http",
-	host:'120.92.91.36',
-	port:'8332',
-	user:'ebo',
-	pass:'ebo123',
-});
-
-//BCC
-var _bccrpc = new RPC({
-	protocol:"http",
-	host:'120.92.91.36',
-	port:'10081',
-	user:'ebo',
-	pass:'ebo123',
-});
-
-//LTC
-var _ltcrpc = new RPC({
-	protocol:"http",
-	host:'120.92.91.36',
-	port:'10000',
-	user:'ebo',
-	pass:'ebo123',
-});
-
-//RBTC
-var _rbtcrpc = new RPC({
-	protocol:"http",
-	host:'120.92.91.36',
-	port:'10084',
-	user:'ebo',
-	pass:'ebo123',
-});
-
-var _rpcs = {
-  btc:_btcrpc,
-  ltc:_ltcrpc,
-  bcc:_bccrpc,
-	rbtc:_rbtcrpc
+var rpcs = {}
+for(	currency in config	) {
+	if(	config[currency].category != "bitcoin"	) continue;
+	rpcs[currency] = new RPC({
+		protocol:		config[currency].protocol,
+		host:				config[currency].host,
+		port:				config[currency].port,
+		user:				config[currency].user,
+		pass:				config[currency].pass,
+	});
 }
-
-
-
 
 /*******************************************************************************
 
@@ -58,19 +25,20 @@ Block相关
 */
 exports.getHashByBlockHeight = (name, height) => {
   return new Promise ( (resolve, reject) => {
-    _rpcs[name].getBlockHash(height, (err, ret) => {
+    rpcs[name].getBlockHash(height, (err, ret) => {
         if(err)reject(err);
         resolve(ret.result);
     });
   });
 }
 
+
 /*
 通过块哈系获取高度
 */
 exports.getHeightByBlockHash = (name, hash) => {
   return new Promise ( (resolve, reject) => {
-    _rpcs[name].getBlock(hash, (err, ret) => {
+    rpcs[name].getBlock(hash, (err, ret) => {
         if(err) reject(err);
         resolve(ret.result.height);
     });
@@ -83,7 +51,7 @@ exports.getHeightByBlockHash = (name, hash) => {
 */
 exports.getTxsSinceBlockHash = (name, hash) => {
   return new Promise ( (resolve, reject) => {
-    _rpcs[name].listSinceBlock(hash, (err, ret) => {
+    rpcs[name].listSinceBlock(hash, (err, ret) => {
         if(err)reject(err);
         resolve(ret);
     });
@@ -120,26 +88,40 @@ name => address
 */
 exports.getnewaddress = (name) => {
 	return new Promise ( (resolve, reject) => {
-		_rpcs[name].getnewaddress('', (err, ret) => {
+		rpcs[name].getnewaddress('', (err, ret) => {
         if(err)reject(err)
 				if(ret && ret.result){
-					resolve(ret.result)
+					return resolve(ret.result)
 				}
-				reject(name + " getnewaddress returned nothing")
+				return reject(name + " getnewaddress returned nothing")
     });
   });
 }
 
-
 /*
-
+发送到某地址
+params:
+	name 货币名称 btc | bcc | ltc
+	fromAccount 帐号名称 "exchange9158"
+	toAddress 地址	"mx1BPrFw7B5R88k9qsLr3rQQkdHGbXyxhH"
+	amount 数量  0.01
+return：
+	txid 交易单号 f14ee5368c339644d3037d929bbe1f1544a532f8826c7b7288cb994b0b0ff5d8
 */
+exports.sendTransaction = (name, fromAccount, toAddress, amount) => {
+	return new Promise ( (resolve, reject) => {
+		rpcs[name].sendFrom(
+			fromAccount,
+			toAddress,
+			amount,
+			config[name].comfirmationsLimit,
+			(err, ret) => {
+        if(err) return reject(err)
+				resolve(ret.result)
+    })
+  })
+}
 
-
-//
-//
-//
-//
-// this.getHeightByBlockHash('btc', '00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048')
-// .then( txs => console.log(txs) )
-// .catch ( err => console.log(err))
+// this.sendTransaction("rbtc","","mpNQPrV8V9ZA9x5W9hDfYEvRnqh8GwwpqR",1)
+// .then(ret=>console.log(ret))
+// .catch(err=>console.log(err))

@@ -1,5 +1,5 @@
-const btcrpc = require('../BitcoinSeries/RPCMethods')
-const ethrpc = require('../EthereumSeries/RPCMethods')
+const BitcoinRPC = require('../BitcoinSeries/RPCMethods')
+const EthereumRPC = require('../EthereumSeries/Rpc')
 const bodyParser = require('body-parser')
 const express = require("express");
 var app = express();
@@ -16,23 +16,26 @@ app.all('*', function(req, res, next) {
     next();
 });
 
-// app.use(bodyParser)
+app.use(bodyParser.json())
 
 /*
-获取钱包地址 btc | bcc | ltc | eth
+获取钱包地址 btc | bcc | ltc | eth | etc
+CURL:
+  curl http://127.0.0.1:1990/v1/getnewaddress?name=btc
+RET:
+  {"err":0,"msg":"13Cyy5MTWpfXjEmtf2uMif2EEq1eRgYFsj"}
 */
 app.get('/v1/getnewaddress',function(req,res){
   var name = req.query.name
-  var currency = config.currencies.find(x => {return x.name === name } )
-  if(!currency) {
+  if(!config.currencies[name]) {
     res.send({err:-100,msg:'no such currency configured!'})
     return
   }
-  switch (currency.category){
+  switch (config.currencies[name].category){
     case 'bitcoin':{
-      btcrpc.getnewaddress(currency.name)
+      BitcoinRPC.getnewaddress(name)
       .then( addr => {
-        log.info(currency.name + " getnewaddress " + addr)
+        log.info(config.currencies[name] + " getnewaddress " + addr)
         res.send({err:0 ,msg:addr})
       })
       .catch ( err=> {
@@ -42,9 +45,10 @@ app.get('/v1/getnewaddress',function(req,res){
       break
     }
     case 'ethereum':{
-      ethrpc.getNewAccount(currency.name)
+      var rpc =new EthereumRPC(name)
+      rpc.getNewAccount()
       .then( addr => {
-        log.info(currency.name + " getnewaddress " + addr)
+        log.info(name + " getnewaddress " + addr)
         res.send({err:0 ,msg:addr})
       })
       .catch ( err=> {
@@ -64,14 +68,78 @@ app.get('/v1/getnewaddress',function(req,res){
     }
   }
 });
-//curl http://127.0.0.1:1990/v1/getnewaddress?name=btc
-//{"err":0,"msg":"13Cyy5MTWpfXjEmtf2uMif2EEq1eRgYFsj"}
+
 
 
 /*
-
+发送   btc | bcc | ltc | eth | etc
+POST:
+  name,
+  to,
+  amount
+RES:
+  txid
+CURL:
+  curl http://127.0.0.1:1990/v1/sendtransaction \
+  -H "Content-Type: application/json" \
+  -X POST -d '{"name":"rbtc","to":"mvxwWn74CWRxx99nJC3QxXsgYsDH68pvPN","amount":"1"}'
+RES:
+  {"err":0,"msg":"243538f6c233fdd16cfff0a798d0a0cddec672587260e01c88cb56967e0d97be"}
 */
+app.post('/v1/sendtransaction',function(req,res){
+  var name = req.body.name
+  var to = req.body.to
+  var amount = req.body.amount
+  if(!config.currencies[name])
+    return res.send({err:-100,msg:'no such currency configured!'})
+  var outcomeLimit = config.currencies[name].outcomeLimit;
+  if(amount > outcomeLimit)
+    return reject("amout out of limit!")
+  //区分币种
+  switch (config.currencies[name].category){
+    case 'bitcoin':{
+      BitcoinRPC.sendTransaction(name, "", to, amount)
+      .then( txid => {
+        log.info("sent " + amount + " " + name + " to " + to, "txid is " + txid)
+        res.send({err:0 ,msg:txid})
+      })
+      .catch ( err=> {
+        log.err(err)
+        res.send({err:-300 ,msg:err})
+      })
+      break
+    }
+    case 'ethereum':{
+      // var rpc =new EthereumRPC(name)
+      // rpc.sendTransaction(to, amount)
+      // .then( addr => {
+      //   log.info(name + " getnewaddress " + addr)
+      //   res.send({err:0 ,msg:addr})
+      // })
+      // .catch ( err=> {
+      //   log.err(err)
+      //   res.send({err:-300 ,msg:err})
+      // })
+      // break
+    }
+    case 'indie':{
 
+    }
+    default: {
+      var msg = 'incorrect category in server!'
+      log.err(msg)
+      res.send({err:-200,msg:msg})
+      return
+    }
+  }
+});
+
+// app.post('/test', function(req, res) {
+//     console.log(req.body.id);
+//     console.log(req.body.name);
+//     console.log(req.body.tel);
+// });
+//curl http://127.0.0.1:1990/test -H "Content-Type: application/json" -X POST -d '{"id":123123,"name":"fdsa","tel":"15061519070"}'
 
 app.listen(config.apiv1.port);
 log.info("API V1 listening on " + config.apiv1.port);

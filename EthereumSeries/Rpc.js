@@ -117,31 +117,56 @@ module.exports = function Rpc(name) {
     })
   }
 
+  /*
+  解锁账户
+  account
+  0xff7d1bbd14407128035a1e6a8287e4f2d74ce798
+  */
+  this.unlock = (account) => {
+    return new Promise ( (resolve, reject) => {
+      this.getRpc()
+      .personal
+      .unlockAccount(account, _PASSPHRASE, 300, (err,ret)=>{
+        if(err) return reject(err)
+        resolve()
+      })
+    })
+  }
 
+
+  /*
+  发送资金
+  0xff7d1bbd14407128035a1e6a8287e4f2d74ce798,
+  0x5cbc821662a16168974d4fa147720f0fde73d80b
+  1.2
+  */
+  this.sendTransaction = ( to, value) => {
+    return new Promise ( (resolve, reject) => {
+      this.unlock(from)
+      .then(() => {
+        //发送资金
+        value = this.getRpc().toWei( value, 'ether')
+        var tx = {
+          from:   config[name].mainAccount,
+          to:     to,
+          value:  value,
+        }
+        this.getRpc().eth.sendTransaction( tx, _PASSPHRASE, (err,ret) => {
+          if(err) return reject(err)
+          resolve()
+        });
+      })
+      .catch(err=>{return reject(err)})
+    })
+  }
+
+
+  /*
+
+  */
 }
 
 
-/*
-发送资金
-*/
-// var sendTransaction = (from, to, value, callback) => {
-//     //解锁本地from的地址
-//     var unlock = new Promise( (resolve, reject) => {
-//       _unlockAccount(from, (err, ret) => {
-//         (!err) ? resolve (ret) : reject(err);
-//       })
-//     });
-//
-//     value = web3.toWei( value, 'ether');
-//     var tx = {
-//       from:   from,
-//       to:     to,
-//       value:  value,
-//     };
-//     web3.eth.sendTransaction( tx, _PASSPHRASE, (err,ret) => {
-//       callback(err, ret);
-//     });
-// }
 
 
 /*******************************************************************************
