@@ -142,7 +142,7 @@ module.exports = function Rpc(name) {
   */
   this.sendTransaction = ( to, value) => {
     return new Promise ( (resolve, reject) => {
-      this.unlock(from)
+      this.unlock(config[name].mainAccount)
       .then(() => {
         //发送资金
         value = this.getRpc().toWei( value, 'ether')
@@ -153,7 +153,7 @@ module.exports = function Rpc(name) {
         }
         this.getRpc().eth.sendTransaction( tx, _PASSPHRASE, (err,ret) => {
           if(err) return reject(err)
-          resolve()
+          resolve(ret)
         });
       })
       .catch(err=>{return reject(err)})

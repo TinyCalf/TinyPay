@@ -7,6 +7,7 @@ module.exports = {
     whitelist:["0.0.0.0"]
   },
   currencies:{
+    /****************************比特币系列**************************************/
     // btc:{
     //   category:'bitcoin',
     // 	protocol:"http",
@@ -58,11 +59,13 @@ module.exports = {
     	protocol:"http",
     	host:'127.0.0.1',
     	port:'8546',
-      mainAccount:'0xff7d1bbd14407128035a1e6a8287e4f2d74ce798',
+      mainAccount:'0xae75d8fd4eb3b47e41783437cb8d7f3d1bfed290',
       //主钱包地址，所有存在的交易将汇总到这里
       coldWalletAccount:'', //冷钱包地址，超过上限的币将打到这个地址
       mainLimit:10,         //主钱包存储上限
       txCheckDuration: 1000,//  2min
+      outcomeLimit:100, // 最大提币上限
+      comfirmationsLimit:6, // 交易确认数
       env:'prod',
     },
     eth:{
@@ -75,6 +78,8 @@ module.exports = {
       coldWalletAccount:'', //冷钱包地址，超过上限的币将打到这个地址
       mainLimit:10,         //主钱包存储上限
       txCheckDuration: 1000,// 2min
+      outcomeLimit:100, // 最大提币上限
+      comfirmationsLimit:6, // 交易确认数
       env:'prod',
     },
     // retc:{

@@ -72,11 +72,11 @@ app.get('/v1/getnewaddress',function(req,res){
 
 
 /*
-发送   btc | bcc | ltc | eth | etc
+发送
 POST:
-  name,
-  to,
-  amount
+  name, btc | bcc | ltc | eth | etc
+  to,   发送到的地址
+  amount 数量
 RES:
   txid
 CURL:
@@ -85,6 +85,7 @@ CURL:
   -X POST -d '{"name":"rbtc","to":"mvxwWn74CWRxx99nJC3QxXsgYsDH68pvPN","amount":"1"}'
 RES:
   {"err":0,"msg":"243538f6c233fdd16cfff0a798d0a0cddec672587260e01c88cb56967e0d97be"}
+  {"err":0,"msg":"0x17a8074ccc2437f2732fd3c8ca33d90da47c06fb12cdbbe41253d4b39e56f745"}
 */
 app.post('/v1/sendtransaction',function(req,res){
   var name = req.body.name
@@ -110,17 +111,17 @@ app.post('/v1/sendtransaction',function(req,res){
       break
     }
     case 'ethereum':{
-      // var rpc =new EthereumRPC(name)
-      // rpc.sendTransaction(to, amount)
-      // .then( addr => {
-      //   log.info(name + " getnewaddress " + addr)
-      //   res.send({err:0 ,msg:addr})
-      // })
-      // .catch ( err=> {
-      //   log.err(err)
-      //   res.send({err:-300 ,msg:err})
-      // })
-      // break
+      var rpc = new EthereumRPC(name)
+      rpc.sendTransaction(to, amount)
+      .then( txid => {
+        log.info("sent " + amount + " " + name + " to " + to, "txid is " + txid)
+        res.send({err:0 ,msg:txid})
+      })
+      .catch ( err=> {
+        log.err(err)
+        res.send({err:-300 ,msg:err})
+      })
+      break
     }
     case 'indie':{
 
