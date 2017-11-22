@@ -5,7 +5,7 @@ const express = require("express");
 var app = express();
 const config = require('../config.js')
 const log = require("../Logs/log")("apiv1")
-var ipaddr = require('ipaddr.js');
+var ipaddr = require('ipaddr.js'); // ip转换用
 
 //设置跨与访问
 app.all('*', function(req, res, next) {
@@ -154,13 +154,6 @@ app.post('/v1/sendtransaction',function(req,res){
     }
   }
 });
-
-// app.post('/test', function(req, res) {
-//     console.log(req.body.id);
-//     console.log(req.body.name);
-//     console.log(req.body.tel);
-// });
-//curl http://127.0.0.1:1990/test -H "Content-Type: application/json" -X POST -d '{"id":123123,"name":"fdsa","tel":"15061519070"}'
 
 app.listen(config.apiv1.port);
 log.info("API V1 listening on " + config.apiv1.port);
