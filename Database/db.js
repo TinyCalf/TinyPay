@@ -56,7 +56,7 @@ exports.checkCurrencyByName = (name) => {
 /*
 创建新币 如果创建过了不要返回错误
 */
-exports.createNewCurrency = (name) => {
+exports.createNewCurrency = (name, height) => {
   return new Promise ( (resolve, reject) => {
     this.checkCurrencyByName(name)
     .then(ret=>{
@@ -68,6 +68,7 @@ exports.createNewCurrency = (name) => {
       //创建新币种
       var newcurr = new Currency();
       newcurr.name = name;
+      newcurr.lastCheckedHeight = height;
       newcurr.save((err,ret)=>{
         if(err) return reject(err);
         resolve();

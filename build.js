@@ -13,8 +13,8 @@ var initCurrencyDatabase = () => {
   return new Promise ( (resolve, reject) => {
     log.info("Start initializing database...");
     var seq = [];
-    for (var i = 0 ; i < config.length ; i++) {
-      seq.push ( db.createNewCurrency(config[i].name) )
+    for (var key in config) {
+      seq.push ( db.createNewCurrency(key, config[key].comfirmationsLimit) )
     }
     Promise.all(seq)
     .then ( () => {
