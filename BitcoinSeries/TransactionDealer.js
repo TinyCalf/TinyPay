@@ -1,9 +1,11 @@
 var rpc = require('./RPCMethods')
 var db = require('../Database/db')
 var zmq = require('../Zeromq/zmqServer')
-var config = require('../config.js').BitcoinSeries
+var config = require('../config.js').currencies
 var log = require('../Logs/log.js')("TransactionDealer")
 
+
+//{"name":"rbtc","category":"receive","address":"mh9oXQSwPg8Fb4W3cyHBtP2UHjFq4Se9Nx","amount":9,"confirmations":10,"txid":"a19f9ed983ec170a6f69d048217596839068fb01f1fd5df9f48eea3bc161e0fb"}
 
 /*
 批量发送接受到的交易 TODO:node 8 以后还没有测试
@@ -25,6 +27,7 @@ var _zmqSendReceivedTxs = (name, txs) => {
           category:         txs[i].category,
           address:          txs[i].address,
           amount:           txs[i].amount,
+          confirmations:    txs[i].confirmations,
           txid:             txs[i].txid,
         }
         zmq.sendReceivedTxs(tx).then( ()=>resolve() )
@@ -49,13 +52,13 @@ var _dealer = (name) => {
     db.getCheckedHeight(name)
     .then( height => {
       //查询区块链上该高度之后的相关交易
-      return rpc.getTxsSinceBlock(name,height-1)
+      return rpc.getTxsSinceBlock(name,height-config[name].comfirmationsLimit)
     })
     .then( ret => {
       var txs = ret.result.transactions
       //排除所有确认数等于0的
       for ( var i = 0 ; i < txs.length ; i ++ ) {
-        if(txs[i].confirmations > 0)
+        if(txs[i].confirmations >= config[name].comfirmationsLimit)
         transactions.push(txs[i]);
       }
       var lastblock = ret.result.lastblock
@@ -80,15 +83,15 @@ var _dealer = (name) => {
 /*
 循环函数
 */
-var _dealerLooper = (currency) => {
+var _dealerLooper = (name) => {
   return new Promise ( (resolve, reject) => {
-    log.info('Start dealing with ' + currency.name )
-    _dealer(currency.name).catch(err=>log.err(err))
+    log.info('Start dealing with ' + name )
+    _dealer(name).catch(err=>log.err(err))
     setInterval(
       ()=>{
-        _dealer(currency.name).catch(err=>log.err(err))
+        _dealer(name).catch(err=>log.err(err))
       },
-      currency.txCheckDuration
+      config[name].txCheckDuration
     )
     resolve()
   })
@@ -98,22 +101,12 @@ exports.start = () => {
   return new Promise ( (resolve, reject) => {
     log.info('Starting to deal with incoming transactions of bitcoin series...')
     var seq = [];
-    for (var i = 0 ; i < config.length ; i++) {
-      seq.push ( _dealerLooper (config[i]) )
+    for (var key in config) {
+      if(config[key].category === "bitcoin" )
+        seq.push ( _dealerLooper (key) )
     }
     Promise.all(seq)
     .then ( () => resolve() )
     .catch( err => reject(err))
   })
 }
-
-
-
-
-
-
-
-
-
-
-//db.updateCheckedHeight('btc',1000)

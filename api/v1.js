@@ -35,7 +35,7 @@ app.get('/v1/getnewaddress',function(req,res){
     case 'bitcoin':{
       BitcoinRPC.getnewaddress(name)
       .then( addr => {
-        log.info(config.currencies[name] + " getnewaddress " + addr)
+        log.info(name + " getnewaddress " + addr)
         res.send({err:0 ,msg:addr})
       })
       .catch ( err=> {

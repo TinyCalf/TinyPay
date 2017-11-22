@@ -65,6 +65,7 @@ module.exports = {
       mainLimit:10,         //主钱包存储上限
       txCheckDuration: 1000,//  2min
       outcomeLimit:100, // 最大提币上限
+      incomeLimit:0.01, // 最小充值下限
       comfirmationsLimit:6, // 交易确认数
       env:'prod',
     },
@@ -79,6 +80,7 @@ module.exports = {
       mainLimit:10,         //主钱包存储上限
       txCheckDuration: 1000,// 2min
       outcomeLimit:100, // 最大提币上限
+      incomeLimit:0.01, // 最小充值下限
       comfirmationsLimit:6, // 交易确认数
       env:'prod',
     },
