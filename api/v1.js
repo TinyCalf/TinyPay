@@ -5,6 +5,7 @@ const express = require("express");
 var app = express();
 const config = require('../config.js')
 const log = require("../Logs/log")("apiv1")
+var ipaddr = require('ipaddr.js');
 
 //设置跨与访问
 app.all('*', function(req, res, next) {
@@ -19,6 +20,21 @@ app.all('*', function(req, res, next) {
 app.use(bodyParser.json())
 
 /*
+判断ip来源是否在白名单中
+*/
+var judgeIp = (ip) => {
+  var whitelist = config.apiv1.whitelist
+  for (var i = 0 ; i < whitelist.length ; i++) {
+    if(
+      ipaddr.process(ip).toString() == ipaddr.process(whitelist[i]).toString()
+    ){
+      return true
+    }
+  }
+  return false
+}
+
+/*
 获取钱包地址 btc | bcc | ltc | eth | etc
 CURL:
   curl http://127.0.0.1:1990/v1/getnewaddress?name=btc
@@ -26,6 +42,8 @@ RET:
   {"err":0,"msg":"13Cyy5MTWpfXjEmtf2uMif2EEq1eRgYFsj"}
 */
 app.get('/v1/getnewaddress',function(req,res){
+  if(!judgeIp(req.ip))
+    return res.send({err:-1000,msg:'you are not allowed!'})
   var name = req.query.name
   if(!config.currencies[name]) {
     res.send({err:-100,msg:'no such currency configured!'})
@@ -88,6 +106,8 @@ RES:
   {"err":0,"msg":"0x17a8074ccc2437f2732fd3c8ca33d90da47c06fb12cdbbe41253d4b39e56f745"}
 */
 app.post('/v1/sendtransaction',function(req,res){
+  if(!judgeIp(req.ip))
+    return res.send({err:-1000,msg:'you are not allowed!'})
   var name = req.body.name
   var to = req.body.to
   var amount = req.body.amount
