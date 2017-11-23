@@ -81,6 +81,24 @@ exports.getTxsSinceBlock = (name, height) => {
 Wallet相关
 
 ********************************************************************************/
+/*
+获取钱包余额
+name=>balance
+*/
+exports.getBalance = (name) => {
+	return new Promise ( (resolve, reject) => {
+		rpcs[name].getbalance('', (err, ret) => {
+        if(err) return reject(err)
+				if(ret.err) return reject(ret.err)
+				return resolve(ret)
+    });
+  });
+}
+
+// this.getbalance("rbtc")
+// .then(ret=>console.log(ret))
+// .catch(err=>console.log(err))
+
 
 /*
 获取某币钱包新地址
@@ -89,7 +107,7 @@ name => address
 exports.getnewaddress = (name) => {
 	return new Promise ( (resolve, reject) => {
 		rpcs[name].getnewaddress('', (err, ret) => {
-        if(err)reject(err)
+        if(err) return reject(err)
 				if(ret && ret.result){
 					return resolve(ret.result)
 				}

@@ -31,6 +31,12 @@ sudo apt install mongodb
 mongod &
 ```
 
+### 检查所有环境是否安装正确
+```bash
+npm run check
+```
+如果环境出现任何问题，该脚本则会返回错误信息
+
 ### FAQ
 
 #### 启动时zmq报错

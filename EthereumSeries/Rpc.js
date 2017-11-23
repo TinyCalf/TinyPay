@@ -90,9 +90,9 @@ module.exports = function Rpc(name) {
     '0x9c5192907bf1b6e3e84669bcdb2d3cd608b9f543', ]
 
   */
-  var getAccounts = () => {
+  this.getAccounts = () => {
     return new Promise ( (resolve, reject) => {
-      this.getRpc().getAccounts( (err, ret) => {
+      this.getRpc().eth.getAccounts( (err, ret) => {
         if(err) return reject(err)
         resolve(ret)
       })

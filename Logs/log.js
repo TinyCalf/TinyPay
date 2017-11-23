@@ -81,7 +81,7 @@ var _print = (tag, type=null, msg) => {
   } else if ( type=="ERR") {
     _log(fulllog)
     _log(msg.toString())
-    console.log(colorlog)
+    console.log(colorlog + msg)
     console.log(msg)
   } else if ( type=="PRINT") {
     _log(fulllog + JSON.stringify(msg))
