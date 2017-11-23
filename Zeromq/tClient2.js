@@ -1,13 +1,11 @@
 // subber.js
 var zmq = require('zmq')
-  , sock = zmq.socket('sub');
+  , sock = zmq.socket('pull');
 
-sock.connect('tcp://127.0.0.1:3000');
-sock.subscribe('tx');
-console.log('Subscriber connected to port 3000');
+sock.connect('tcp://120.92.192.127:1999');
+console.log('Subscriber connected to port 1999');
 
-sock.on('message', function(topic, message) {
-  topic = topic.toString();
+sock.on('message', function(message) {
   message = message.toString();
-  console.log('received a message related to:', topic, 'containing message:', message);
+  console.log(message);
 });

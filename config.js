@@ -26,6 +26,7 @@ module.exports = {
     	user:'ebo',
     	pass:'ebo123',
       txCheckDuration: 2 * 60 * 1000,// 2min
+      comfirmationsLimit:6, // 交易确认数
       env:'prod',
     },
     // ltc:{
