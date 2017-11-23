@@ -7,7 +7,8 @@ module.exports = (tag) => {
     info:(msg) => _print(tag, 'info', msg),
     err:(msg) => _print(tag, 'err', msg),
     warn:(msg) => _print(tag, 'warn', msg),
-    print:(msg) => _print(tag, 'print', msg)
+    print:(msg) => _print(tag, 'print', msg),
+    success:(msg) => _print(tag, 'success', msg),
   };
 }
 
@@ -51,7 +52,7 @@ const _getFullTime = () => {
 var _log = function(msg){
 	var date = _getYMD();
   // TODO 文件路径做成输入指定
-  fs.appendFile(path.resolve('./') + "/Logs/files/" + date + ".log", msg + "\n", null ,(error) => { /* handle error */ });
+  fs.appendFile(path.resolve('./') + "/Logs/files/" + date + ".log", msg + "\n", null ,(error) => {});
 
 }
 
@@ -66,20 +67,25 @@ var _print = (tag, type=null, msg) => {
     case 'INFO':  colortype =chalk.blueBright(type); break;
     case 'ERR':   colortype =chalk.redBright(type); break;
     case 'WARN':  colortype =chalk.yellowBright(type); break;
-    default:      {_log(JSON.stringify(msg));console.log(JSON.stringify(msg));return;}
+    case 'SUCCESS': colortype =chalk.greenBright(type); break;
+    case 'PRINT': colortype = "";break;
+    default:      return;
   }
   var fulllog = time + " " + tag + " " + type + " ";
   var colorlog = chalk.blue(time) + " "
     + chalk.magenta.bold(tag) + " "
     + colortype + " ";
-  if(type!="ERR"){
+  if(type!="ERR" && type!="PRINT"){
     _log(fulllog + msg);
     console.log(colorlog + msg);
-  } else if ( type=="ERR" ) {
+  } else if ( type=="ERR") {
     _log(fulllog)
     _log(msg.toString())
     console.log(colorlog)
     console.log(msg)
+  } else if ( type=="PRINT") {
+    _log(fulllog + JSON.stringify(msg))
+    console.log(colorlog + JSON.stringify(msg))
   }
   return;
 }
