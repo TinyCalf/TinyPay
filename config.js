@@ -49,6 +49,7 @@ module.exports = {
     	user:'ebo',
     	pass:'ebo123',
       txCheckDuration: 1000, // 1sec
+      incomeLimit:0.01, // 最小充值提现下限
       outcomeLimit:1, // 最大提币上限
       comfirmationsLimit:6, // 交易确认数
       env:'test',
@@ -61,13 +62,11 @@ module.exports = {
     	protocol:"http",
     	host:'127.0.0.1',
     	port:'8546',
-      mainAccount:'0xae75d8fd4eb3b47e41783437cb8d7f3d1bfed290',
-      //主钱包地址，所有存在的交易将汇总到这里
-      coldWalletAccount:'', //冷钱包地址，超过上限的币将打到这个地址
-      mainLimit:10,         //主钱包存储上限
+      //coldWalletAccount:'', //冷钱包地址，超过上限的币将打到这个地址
+      //mainLimit:10,         //主钱包存储上限
       txCheckDuration: 1000,//  2min
+      incomeLimit:1, // 最小充值提现下限
       outcomeLimit:100, // 最大提币上限
-      incomeLimit:0.01, // 最小充值下限
       comfirmationsLimit:6, // 交易确认数
       env:'test',
     },
@@ -76,7 +75,6 @@ module.exports = {
     // 	protocol:"http",
     // 	host:'127.0.0.1',
     // 	port:'8545',
-    //   mainAccount:'0xc1a897977ce8e0e821b573a0f27a256fb1fc1235',
     //   //主钱包地址，所有存在的交易将汇总到这里
     //   coldWalletAccount:'', //冷钱包地址，超过上限的币将打到这个地址
     //   mainLimit:10,         //主钱包存储上限
@@ -91,7 +89,6 @@ module.exports = {
     // 	protocol:"http",
     // 	host:'127.0.0.1',
     // 	port:'8546',
-    //   mainAccount:'0xff7d1bbd14407128035a1e6a8287e4f2d74ce798',
     //   //主钱包地址，所有存在的交易将汇总到这里
     //   coldWalletAccount:'', //冷钱包地址，超过上限的币将打到这个地址
     //   mainLimit:10,         //主钱包存储上限
@@ -103,7 +100,6 @@ module.exports = {
     // 	protocol:"http",
     // 	host:'127.0.0.1',
     // 	port:'8545',
-    //   mainAccount:'0xc1a897977ce8e0e821b573a0f27a256fb1fc1235',
     //   //主钱包地址，所有存在的交易将汇总到这里
     //   coldWalletAccount:'', //冷钱包地址，超过上限的币将打到这个地址
     //   mainLimit:10,         //主钱包存储上限

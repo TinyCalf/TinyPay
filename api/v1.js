@@ -104,6 +104,10 @@ CURL:
 RES:
   {"err":0,"msg":"243538f6c233fdd16cfff0a798d0a0cddec672587260e01c88cb56967e0d97be"}
   {"err":0,"msg":"0x17a8074ccc2437f2732fd3c8ca33d90da47c06fb12cdbbe41253d4b39e56f745"}
+CURL:
+  curl http://127.0.0.1:1990/v1/sendtransaction \
+  -H "Content-Type: application/json" \
+  -X POST -d '{"name":"etc","to":"0x1237b5d3023960c66bed5996fa2fb69c8eed6ed0","amount":"100"}'
 */
 app.post('/v1/sendtransaction',function(req,res){
   if(!judgeIp(req.ip))
@@ -114,8 +118,11 @@ app.post('/v1/sendtransaction',function(req,res){
   if(!config.currencies[name])
     return res.send({err:-100,msg:'no such currency configured!'})
   var outcomeLimit = config.currencies[name].outcomeLimit;
+  var incomeLimit = config.currencies[name].incomeLimit;
   if(amount > outcomeLimit)
-    return res.send("amout out of limit!")
+    return res.send({err:-500,msg:"amout out of limit!"})
+  if(amount < incomeLimit)
+    return res.send({err:-600,msg:"amout less than limit"})
   //区分币种
   switch (config.currencies[name].category){
     case 'bitcoin':{
@@ -126,7 +133,7 @@ app.post('/v1/sendtransaction',function(req,res){
       })
       .catch ( err=> {
         log.err(err)
-        res.send({err:-300 ,msg:err})
+        res.send({err:-300 ,msg:err.toString()})
       })
       break
     }
@@ -139,7 +146,7 @@ app.post('/v1/sendtransaction',function(req,res){
       })
       .catch ( err=> {
         log.err(err)
-        res.send({err:-300 ,msg:err})
+        res.send({err:-300 ,msg:err.toString()})
       })
       break
     }

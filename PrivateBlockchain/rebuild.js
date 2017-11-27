@@ -27,7 +27,9 @@ var rebuildRBTC = () => {
   return new Promise( (resolve, reject) => {
     //重启脚本
     console.log("RBTC重建区块链")
-    child_process.execFile( path + 'RBTC/rebuild', [], function(error, stdout, stderr){
+    child_process.execFile(
+      path + 'RBTC/rebuild', [],
+      (error, stdout, stderr) => {
       //数据库高度更新
       console.log("RBTC数据库高度更新")
       db.updateCheckedHeight("rbtc", 10)
@@ -51,7 +53,7 @@ var rebuildRETC = () => {
     setTimeout( ()=>{
       //数据库高度更新
       console.log("RETC数据库高度更新")
-      db.updateCheckedHeight("retc", 10)
+      db.updateCheckedHeight("etc", 10)
       .then( ()=>{
         //删除ETC的账户数据库
         console.log("删除RETC的账户数据库")
@@ -85,7 +87,7 @@ exports.start = () => {
     })
     .then( ()=>{
       console.log("RBTC私有链重建成功")
-      resolve("ok")
+      resolve()
       //process.exit()
     })
     .catch( (err)=> {

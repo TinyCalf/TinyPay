@@ -100,6 +100,22 @@ module.exports = function Rpc(name) {
   }
 
   /*
+  获取主钱包地址，即accounts第一条
+  */
+  this.getMainAccount = () => {
+    return new Promise ( (resolve, reject) => {
+      this.getAccounts()
+      .then( (ret)=>{
+        if(!ret[0]) return reject("no main account!")
+        resolve(ret[0])
+      })
+      .catch( err=> {
+        reject(err)
+      })
+    })
+  }
+
+  /*
   创建新账户并获取其地址
   name    =>    address
   eth     =>    0x2e4df2e71b58e1fd372857b0e17e6f3cfd475f3e
@@ -142,12 +158,17 @@ module.exports = function Rpc(name) {
   */
   this.sendTransaction = ( to, value) => {
     return new Promise ( (resolve, reject) => {
-      this.unlock(config[name].mainAccount)
+      var mainAccount = null
+      this.getMainAccount()
+      .then((ret)=>{
+        mainAccount = ret
+        return this.unlock(ret)
+      })
       .then(() => {
         //发送资金
         value = this.getRpc().toWei( value, 'ether')
         var tx = {
-          from:   config[name].mainAccount,
+          from:   mainAccount,
           to:     to,
           value:  value,
         }
