@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# 停止节点运行
+pkill geth
+
+sleep 1
+
+# 节点重新运行
+nohup $DIR/geth --dev --rpcport 8546 --mine --miner-threads 2 --rpc --rpccorsdomain "*" --datadir "$DIR/data" --rpcapi "personal,db,eth,net,web3" &
+
+sleep 1
+ 
+exit 0

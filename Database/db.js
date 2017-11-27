@@ -102,6 +102,19 @@ exports.initCurrencyDB = ( name ,callback) => {
   })
 }
 
+/*
+删除某币的数据库
+*/
+exports.delCurrency = (name) => {
+  return new Promise( (resolve, reject) => {
+    var conditions = {name:name}
+    Currency.remove(conditions, (err) => {
+      if(err) return reject(err)
+      resolve("deleted!")
+    })
+  })
+}
+
 /*******************************************************************************
 
 以太坊系列账户相关 ETH | ETC  ETHAccounts ETCAccounts
@@ -151,4 +164,17 @@ exports.checkHasAddress = (name, address) => {
       resolve(ret);
     });
   });
+}
+
+/*
+清空ETC的accounts数据表，该方法目前仅可应用于测试环境
+*/
+exports.clearETCAccounts = () => {
+  return new Promise( (resolve, reject) => {
+    var conditions = {}
+    ETCAccounts.remove(conditions, (err) => {
+      if(err) return reject(err)
+      resolve("deleted!")
+    })
+  })
 }

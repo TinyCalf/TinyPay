@@ -115,7 +115,7 @@ app.post('/v1/sendtransaction',function(req,res){
     return res.send({err:-100,msg:'no such currency configured!'})
   var outcomeLimit = config.currencies[name].outcomeLimit;
   if(amount > outcomeLimit)
-    return reject("amout out of limit!")
+    return res.send("amout out of limit!")
   //区分币种
   switch (config.currencies[name].category){
     case 'bitcoin':{
@@ -157,3 +157,6 @@ app.post('/v1/sendtransaction',function(req,res){
 
 app.listen(config.apiv1.port);
 log.info("API V1 listening on " + config.apiv1.port);
+
+//抛出app实例给测试脚本用
+exports.app = app

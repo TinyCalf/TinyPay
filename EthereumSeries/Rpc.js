@@ -160,6 +160,17 @@ module.exports = function Rpc(name) {
     })
   }
 
+  /*
+  dev网络开启挖矿
+  */
+  // this.startMiner = () => {
+  //   return new Promise ( (resolve, reject) => {
+  //     this.getRpc().miner.start( 1, (err,ret) => {
+  //       if(err) return reject(err)
+  //       resolve()
+  //     })
+  //   })
+  // }
 
   /*
 

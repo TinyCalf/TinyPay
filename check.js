@@ -1,6 +1,9 @@
 var log = require("./Logs/log")('check')
 var config = require("./config")
 
+
+//TODO：测试node版本
+//TODO:测试zmq是否可以启动
 /*
 测试mongodb
 */
