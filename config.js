@@ -26,7 +26,7 @@ module.exports = {
     // 	user:'ebo',
     // 	pass:'ebo123',
     //   txCheckDuration: 2 * 60 * 1000,// 2min
-    //   comfirmationsLimit:6, // 交易确认数
+    //   confirmationsLimit:6, // 交易确认数
     //   env:'prod',
     // },
     // ltc:{
@@ -38,7 +38,7 @@ module.exports = {
     // 	pass:'ebo123',
     //  txCheckDuration: 2 * 60 * 1000,// 2min
     //  outcomeLimit:1, // 最大提币上限
-    //  comfirmationsLimit:6 // 交易确认数
+    //  confirmationsLimit:6 // 交易确认数
     //  env:'prod',
     // },
     rbtc:{
@@ -51,7 +51,7 @@ module.exports = {
       txCheckDuration: 1000, // 1sec 新交易查询间隔，如果是测试币就设置低一点
       incomeLimit:0.01, // 最小充值提现下限
       outcomeLimit:1, // 最大提币上限
-      comfirmationsLimit:6, // 交易确认数
+      confirmationsLimit:6, // 交易确认数
       env:'test',
     },
 
@@ -67,7 +67,7 @@ module.exports = {
       txCheckDuration: 1000,//  2min
       incomeLimit:1, // 最小充值提现下限
       outcomeLimit:100, // 最大提币上限
-      comfirmationsLimit:6, // 交易确认数
+      confirmationsLimit:6, // 交易确认数
       env:'test',
     },
     // eth:{
@@ -81,7 +81,7 @@ module.exports = {
     //   txCheckDuration: 1000,// 2min
     //   outcomeLimit:100, // 最大提币上限
     //   incomeLimit:0.01, // 最小充值下限
-    //   comfirmationsLimit:6, // 交易确认数
+    //   confirmationsLimit:6, // 交易确认数
     //   env:'prod',
     // },
     // retc:{

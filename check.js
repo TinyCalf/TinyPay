@@ -68,8 +68,12 @@ var checkRPC = () => {
 
 
 //测试mongo
-checkMongo().then(ret=>log.success(ret)).catch(err=>log.err(err))
+checkMongo().then(ret=>{
+  return checkRPC()
+}).catch(err=>log.err(err))
 //测试所有注册的货币的 RPC
-checkRPC()
-.then(ret=>log.info("completed! check above if there is an err."))
+.then(ret=>{
+  log.info("completed! check above if there is an err.")
+  process.exit(0)
+})
 .catch(err=>log.err(err))

@@ -14,7 +14,7 @@ var initCurrencyDatabase = () => {
     log.info("Start initializing database...");
     var seq = [];
     for (var key in config) {
-      seq.push ( db.createNewCurrency(key, config[key].comfirmationsLimit) )
+      seq.push ( db.createNewCurrency(key, config[key].confirmationsLimit) )
     }
     Promise.all(seq)
     .then ( () => {

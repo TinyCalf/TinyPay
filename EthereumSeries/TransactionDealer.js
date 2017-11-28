@@ -104,7 +104,7 @@ var dealWithUncheckedBlocks = (rpc, checkedHeight, lastHeight) => {
     var loop = (height) => {
       dealWithOneBlock(rpc,height)
       .then( () => {
-        (height < lastHeight) ? loop(height+1) : resolve()
+        (height < lastHeight-1) ? loop(height+1) : resolve()
       })
       .catch(err=>reject(err))
     }
@@ -129,8 +129,9 @@ var dealer = (rpc) => {
     .then( height =>{
       lastHeight = height
       //处理高度差之间的所有交易
+      var cfmts = config[rpc.name].confirmationsLimit
       // console.log(rpc.name + " " + checkedHeight + " " + lastHeight )
-      return dealWithUncheckedBlocks(rpc, checkedHeight, lastHeight)
+      return dealWithUncheckedBlocks(rpc, checkedHeight-cfmts, lastHeight-cfmts)
     })
     .then(()=>{
       //更新已记录高度

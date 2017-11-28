@@ -132,7 +132,7 @@ exports.sendTransaction = (name, fromAccount, toAddress, amount) => {
 			fromAccount,
 			toAddress,
 			amount,
-			config[name].comfirmationsLimit,
+			config[name].confirmationsLimit,
 			(err, ret) => {
         if(err) return reject(err)
 				resolve(ret.result)

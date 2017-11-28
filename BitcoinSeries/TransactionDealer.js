@@ -52,13 +52,13 @@ var _dealer = (name) => {
     db.getCheckedHeight(name)
     .then( height => {
       //查询区块链上该高度之后的相关交易
-      return rpc.getTxsSinceBlock(name,height-config[name].comfirmationsLimit)
+      return rpc.getTxsSinceBlock(name,height-config[name].confirmationsLimit)
     })
     .then( ret => {
       var txs = ret.result.transactions
       //排除所有确认数等于0的
       for ( var i = 0 ; i < txs.length ; i ++ ) {
-        if(txs[i].confirmations >= config[name].comfirmationsLimit)
+        if(txs[i].confirmations >= config[name].confirmationsLimit)
         transactions.push(txs[i]);
       }
       var lastblock = ret.result.lastblock
