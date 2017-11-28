@@ -133,7 +133,7 @@ app.post('/v1/sendtransaction',function(req,res){
       })
       .catch ( err=> {
         log.err(err)
-        res.send({err:-300 ,msg:err.toString()})
+        res.send({err:err.code ,msg:err.message})
       })
       break
     }

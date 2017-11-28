@@ -48,7 +48,7 @@ module.exports = {
     	port:'10084',
     	user:'ebo',
     	pass:'ebo123',
-      txCheckDuration: 1000, // 1sec
+      txCheckDuration: 1000, // 1sec 新交易查询间隔，如果是测试币就设置低一点
       incomeLimit:0.01, // 最小充值提现下限
       outcomeLimit:1, // 最大提币上限
       comfirmationsLimit:6, // 交易确认数

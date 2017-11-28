@@ -4,7 +4,7 @@
   "description": "bitgogogo",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha --reporter mochawesome && node ./showreport",
+    "test": "./node_modules/mocha/bin/mocha --reporter mochawesome",
     "build": "node build.js",
     "check": "node check.js",
     "start": "node index.js",

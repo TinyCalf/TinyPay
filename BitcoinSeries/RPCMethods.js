@@ -140,6 +140,19 @@ exports.sendTransaction = (name, fromAccount, toAddress, amount) => {
   })
 }
 
+/*
+regtest环境下产生区块
+*/
+exports.generate = (name, number) => {
+	return new Promise ( (resolve, reject) => {
+		rpcs[name].generate(
+			number,
+			(err, ret) => {
+				if(err) return reject(err)
+				resolve(ret.result)
+		})
+	})
+}
 // this.sendTransaction("rbtc","","mpNQPrV8V9ZA9x5W9hDfYEvRnqh8GwwpqR",1)
 // .then(ret=>console.log(ret))
 // .catch(err=>console.log(err))
