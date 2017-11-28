@@ -112,6 +112,8 @@ CURL:
 app.post('/v1/sendtransaction',function(req,res){
   if(!judgeIp(req.ip))
     return res.send({err:-1000,msg:'you are not allowed!'})
+  if(!req.body.name || !req.body.to || !req.body.amount)
+    return res.send({err:-900,msg:'lack of params'})
   var name = req.body.name
   var to = req.body.to
   var amount = req.body.amount

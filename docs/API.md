@@ -1,19 +1,98 @@
+
+# 全局参数
+目前有以下参数可由Bitgogogo管理员修改，各项目按需提交修改申请
+
+| 参数名称 | 描述 |
+|-------|--------|
+| incomeLimit | 最小充值提现下限，每个币种都可以设置，如BTC默认为0.01 |
+| outcomeLimit | 最大提币上限，每个币种都可以设置，如BTC默认为1 |
+| currencies | 接口开放的币种，目前包括 **btc** / **ltc** / **bcc** / **rbtc** /  **etc** / **eth** 跟据项目会有不同|
+
+# 获取新的钱包地址
+获取指定币种的新钱包地址，该新地址有服务器主钱包产生，该地址每次请求都是唯一的
+
+### 请求地址
+GET http://YOUR_GIVEN_IP_ADDRESS:1990/v1/getnewaddress
+<br>(YOUR_GIVEN_IP_ADDRESS为Bitgogogo部署服务器的ip，需要向管理员索要)
+<br>所有请求的数据形式为JSON，下同
+
+### 请求参数
+
+| 参数名 | 数据类型 | 必要性 | 描述 |
+|-------|--------|---------|-----|
+| name | string | 必需 | 币种的名称， 目前包括 **btc** / **ltc** / **bcc** / **rbtc** /  **etc** / **eth**|
+
+
+### 返回参数
+
+| 参数名 | 数据类型  | 描述 |
+|-------|--------|---------|-----|
+| err | number  |  错误码，如果为0则表示没有错误 |
+| msg | string  |  如果err为0， msg即为获取到的新地址，如果err不为0，msg即为错误信息 |
+
+
+
+### 请求示例
+
+```bash
+curl http://YOUR_GIVEN_IP_ADDRESS:1990/v1/getnewaddress?name=btc
+# 返回结果为： {"err":0,"msg":"13Cyy5MTWpfXjEmtf2uMif2EEq1eRgYFsj"}
+```
+
+### 接入建议
+获取到该地址之后，作为接入方需要做的一般是将该地址和用户绑定，以便区分每个地址对应的用户。而且如果需要接入多个币种，需要区分每个地址属于哪个币种。
+
+# 发起提现交易
+向指定地址发送交易，该交易由服务器主钱包向外发送，一般用于用户提现，在测试环境下可以发送给由上一个接口getnewaddress产生的地址，但是在正式环境中不建议这样做，因为会产生额外的费用
+
+### 请求地址
+POST http://YOUR_GIVEN_IP_ADDRESS:1990/v1/getnewaddress
+<br>(YOUR_GIVEN_IP_ADDRESS为Bitgogogo部署服务器的ip，需要向管理员索要)
+<br>所有请求的数据形式为JSON，下同
+
+### 请求参数
+
+| 参数名 | 数据类型 | 必要性 | 描述 |
+|-------|--------|---------|-----|
+| name | string | 必需 | 币种的名称， 目前包括 **btc** / **ltc** / **bcc** / **rbtc** /  **etc** / **eth** |
+| to | string | 必需 | 该比交易的目标地址，形如 "13Cyy5MTWpfXjEmtf2uMif2EEq1eRgYFsj" |
+| amount | string | 必需 | 需要交易的币的数量 |
+
+
+### 返回参数
+
+| 参数名 | 数据类型  | 描述 |
+|-------|--------|---------|-----|
+| err | number  |  错误码，如果为0则表示没有错误 |
+| msg | string  |  如果err为0， msg即为交易的交易单号，如果err不为0，msg即为错误信息。 交易单号用于查询交易，如果不需要该功能则不需要记录交易单号，或者仅仅只是记录到日志中|
+
+### 请求示例
+
+```bash
+  curl http://YOUR_GIVEN_IP_ADDRESS:1990/v1/sendtransaction \
+  -H "Content-Type: application/json" \
+  -X POST -d '{"name":"rbtc","to":"mvxwWn74CWRxx99nJC3QxXsgYsDH68pvPN","amount":"1"}'
+  # 返回结果为： {"err":0,"msg":"243538f6c233fdd16cfff0a798d0a0cddec672587260e01c88cb56967e0d97be"}
+```
+
+### 接入建议
+该接口用于用户提现，注意做amount的控制，有最大最小额度限制
+
 # 接收充值消息推送
-由于区块链的特殊性质，不能通过回调模式返回交易信息；通过txid核对交易单的形式效率也非常低，故通过消息队列的形式传递每一笔成功的交易。本项目采用ZeroMQ作为消息队列，ZeroMQ可支持nodejs、php、C++等编程环境，作为客户端安装相应的库或者插件即可快速接入。
+由于区块链的特殊性质，不能通过回调模式返回交易信息；通过txid核对交易单的形式效率也非常低，故通过消息队列的形式传递每一笔成功的交易。本项目采用ZeroMQ作为消息队列，ZeroMQ可支持nodejs、php、C++等环境，作为客户端安装相应的库或者插件即可快速接入。
 
 ### 连接主机
-
-tcp://120.92.91.36:1999
+tcp://YOUR_GIVEN_IP_ADDRESS:1999
 
 ### 返回参数
 
 | 参数名 | 数据类型 | 描述 |
 |-------|--------|-----|
-| name | string | 交易币种名称 目前有 **btc** / **ltc** / **bcc** / **rbtc** |
+| name | string | 交易币种名称 目前有 **btc** / **ltc** / **bcc** / **rbtc** /  **etc** / **eth** |
 | category | string | 类型为发送或者接受 有 **receive** 和 **send** ，目前只返回 **receive**; 但是为了安全起见，建议接入时判断字段 |
 | address | string | 接收该交易的地址 |
 | amount | number | 充值币的数量，单位为BTC（或其他币） |
-| comfirmations | number | 确认数，接收方收到的绝大多数数据应该为1,并且确认数即使改变也不会重新发送本充值信息 |
+| comfirmations | number | 确认数，接收方收到的绝大多数数据应该为1,并且确认数即使改变也不会重新发送本充值信息，以太放系列暂时不携带该信息。本接口目前只返回确认数已经达到要求的交易|
 | txid | string | 交易单号 |
 
 ### 返回示例
@@ -25,9 +104,15 @@ Worker connected to port 1999
 {"name":"rbtc","category":"receive","address":"mxrxypc2q5kev8Bri3t9bzka8TXUXLCv9v","amount":0.06,"confirmations":3,"txid":"a556228d70ba4e1b0feafbd640c63ec161afa3a8e333e552a1798f950c2e7c0d"}
 ```
 
-### nodejs接入示范
+### 接入建议
+该消息队列会传递所有成功的**充值交易**,如果消息发送时您的zmq客户端不在线，则在下次客户端上线的时候依然可以接受该消息。当客户端侦听到该消息并完成处理以后，该消息将**永远不会重新发送**。如果确实发现漏发消息的情况，可联系Bitgogogo管理员查看日志文件。 接受到该信息时，作为接入端应该判断该交易地址(address)属于哪一个用户，获取充值的币的数量(amount)并在自建数据库中添加用户的余额（无论是充值成数字货币，还是自己平台的货币，根据自己的业务逻辑处理该笔充值即可）。 ZeroMQ的搭建在各个平台和不同编程环境下不同，需要根据情况选择。ZeroMQ官网地址 http://zeromq.org/
 
-安装zmq模块：
+### nodejs接入示范
+安装zmq运行环境
+```bash
+sudo apt-get install libzmq3-dev build-essential
+```
+npm中安装zmq模块：
 ```bash
 npm install zmq --save
 ```
@@ -37,12 +122,13 @@ npm install zmq --save
 const zmq = require('zmq')
 const sock = zmq.socker('pull')
 
-sock.connect('tcp://120.92.91.36:1999')
+sock.connect('tcp://YOUR_GIVEN_IP_ADDRESS:1999')
 
 console.log('Worker connected to port 1999')
 
 sock.on('message', (msg) => {
-    console.log(msg.toString());
+    console.log(msg.toString());// {"name":"rbtc","category":"receive","address":"mxrxypc2q5kev8Bri3t9bzka8TXUXLCv9v","amount":0.06,"confirmations":3,"txid":"a556228d70ba4e1b0feafbd640c63ec161afa3a8e333e552a1798f950c2e7c0d"}
+    //在这里处理该笔交易，该函数结束后则不会再次接收到该交易
 });
 
 ```
