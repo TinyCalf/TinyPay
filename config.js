@@ -16,6 +16,9 @@ module.exports = {
     	user:'ebo',
     	pass:'ebo123',
       txCheckDuration: 5 * 60 * 1000,// 5min
+      incomeLimit:0.01, // 最小充值提现下限
+      outcomeLimit:1, // 最大提币上限
+      confirmationsLimit:6, // 交易确认数
       env:'prod',
     },
     // bcc:{
