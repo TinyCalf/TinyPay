@@ -20,8 +20,6 @@ module.exports = function Rpc(name) {
     debug:true,
   }
 
-
-
   this.getRpc = () => web3_extended.create(this.options)
   this.toWei = this.getRpc().toWei
   this.fromWei = this.getRpc().fromWei
@@ -116,6 +114,72 @@ module.exports = function Rpc(name) {
   }
 
   /*
+  获取当前 gas价格 单位wei
+  */
+  this.getGasPrice = () => {
+    return new Promise ( (resolve, reject) => {
+      this.getRpc().eth.getGasPrice(  (err, ret) => {
+        if(err) return reject(err)
+        //ret = Number(this.fromWei(ret))
+        resolve(ret)
+      })
+    })
+  }
+
+  /*
+  计算交易需要花费的 gas wei
+  tx
+  {
+  to:
+  from:
+  value:
+  }
+  */
+  this.estimateGas = (tx) => {
+    return new Promise ( (resolve, reject) => {
+      this.getRpc().eth.estimateGas(  tx ,(err, ret) => {
+        if(err) return reject(err)
+        //ret = Number(this.fromWei(ret))
+        resolve(ret)
+      })
+    })
+  }
+
+  /*
+  计算交易总花费 单位 wei
+  */
+  // this.getFee = () => {
+  //   return new Promise ( (resolve, reject) => {
+  //     var gas = null
+  //     var gasPrice = null
+  //     this.getGasPrice()
+  //     .then(ret=>{
+  //       gasPrice = ret
+  //       return this.estimateGas()
+  //     })
+  //     .then(ret=>{
+  //       gas = ret
+  //       resolve( gasPrice * gas )
+  //     })
+  //     .catch(err=>reject(err))
+  //   })
+  // }
+
+
+
+  /*
+  获取账户余额 wei
+  */
+  this.getBalance = (account) => {
+    return new Promise ( (resolve, reject) => {
+      this.getRpc().eth.getBalance( account ,(err, ret) => {
+        if(err) return reject(err)
+        resolve( ret )
+      })
+    })
+  }
+
+  /*
   创建新账户并获取其地址
   name    =>    address
   eth     =>    0x2e4df2e71b58e1fd372857b0e17e6f3cfd475f3e
@@ -151,7 +215,7 @@ module.exports = function Rpc(name) {
 
 
   /*
-  发送资金
+  提现发送资金 从主钱包发送到
   0xff7d1bbd14407128035a1e6a8287e4f2d74ce798,
   0x5cbc821662a16168974d4fa147720f0fde73d80b
   1.2
@@ -178,6 +242,82 @@ module.exports = function Rpc(name) {
         });
       })
       .catch(err=>{return reject(err)})
+    })
+  }
+
+  /*
+  发送普通交易
+  tx
+  {
+  from:
+  to:
+  value:
+  gas:
+  gasPrice:
+  }
+  */
+  this.sendNormalTransaction = (tx) => {
+    return new Promise ( (resolve, reject) => {
+      this.unlock(tx.from)
+      .then(() => {
+        this.getRpc().eth.sendTransaction( tx, _PASSPHRASE, (err,ret) => {
+          if(err) return reject(err)
+          resolve(ret)
+        });
+      })
+      .catch(err=>{return reject(err)})
+    })
+  }
+
+  /*
+  回收账户资金到主账户
+  PARAMS：
+    account 账户
+    minLimit 下限 单位ether
+  RETURN:
+    null
+  */
+  this.sendToMainAccount = ( account, minLimit) => {
+    return new Promise ( (resolve, reject) => {
+      var balance = null
+      var gas = null
+      var gasPrice = null
+      var mainAccount = null
+      this.getBalance(account)
+      .then(ret=>{
+        balance = ret
+        //获取主钱包
+        return this.getMainAccount()
+      })
+      .then(ret=>{
+        mainAccount = ret
+        //获取费用
+        return this.getGasPrice()
+      })
+      .then(ret=>{
+        gasPrice = ret
+        tx = {
+          from:account,
+          to:mainAccount,
+          value:balance
+        }
+        return this.estimateGas(tx)
+      })
+      .then(ret=>{
+        gas = ret
+        tx = {
+          from:account,
+          to:mainAccount,
+          value:balance-gas*gasPrice,
+          gas:gas,
+          gasPrice:gasPrice
+        }
+        if(tx.value < minLimit) reject(new Error("amout below limit"))
+        //发送交易到主钱包
+        return this.sendNormalTransaction( tx)
+      })
+      .then(ret=>resolve(ret))
+      .catch(err=>reject(err))
     })
   }
 

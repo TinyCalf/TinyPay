@@ -8,19 +8,19 @@ module.exports = {
   },
   currencies:{
     /****************************比特币系列**************************************/
-    btc:{
-      category:'bitcoin',
-    	protocol:"http",
-    	host:'127.0.0.1',
-    	port:'8332',
-    	user:'ebo',
-    	pass:'ebo123',
-      txCheckDuration: 5 * 60 * 1000,// 5min
-      incomeLimit:0.01, // 最小充值提现下限
-      outcomeLimit:1, // 最大提币上限
-      confirmationsLimit:6, // 交易确认数
-      env:'prod',
-    },
+    // btc:{
+    //   category:'bitcoin',
+    // 	protocol:"http",
+    // 	host:'127.0.0.1',
+    // 	port:'8332',
+    // 	user:'ebo',
+    // 	pass:'ebo123',
+    //   txCheckDuration: 5 * 60 * 1000,// 5min
+    //   incomeLimit:0.01, // 最小充值提现下限
+    //   outcomeLimit:1, // 最大提币上限
+    //   confirmationsLimit:6, // 交易确认数
+    //   env:'prod',
+    // },
     // bcc:{
     //   category:'bitcoin',
     // 	protocol:"http",
@@ -60,19 +60,19 @@ module.exports = {
 
     /****************************以太坊系列**************************************/
     //TODO： 主钱包地址为数据库第一条，之后需要全部删除
-    // etc:{
-    //   category:'ethereum',
-    // 	protocol:"http",
-    // 	host:'127.0.0.1',
-    // 	port:'8546',
-    //   //coldWalletAccount:'', //冷钱包地址，超过上限的币将打到这个地址
-    //   //mainLimit:10,         //主钱包存储上限
-    //   txCheckDuration: 1000,//  2min
-    //   incomeLimit:1, // 最小充值提现下限
-    //   outcomeLimit:100, // 最大提币上限
-    //   confirmationsLimit:6, // 交易确认数
-    //   env:'test',
-    // },
+    etc:{
+      category:'ethereum',
+    	protocol:"http",
+    	host:'127.0.0.1',
+    	port:'8546',
+      //coldWalletAccount:'', //冷钱包地址，超过上限的币将打到这个地址
+      //mainLimit:10,         //主钱包存储上限
+      txCheckDuration: 1000,//  2min
+      incomeLimit:1, // 最小充值提现下限
+      outcomeLimit:100, // 最大提币上限
+      confirmationsLimit:6, // 交易确认数
+      env:'test',
+    },
     // eth:{
     //   category:'ethereum',
     // 	protocol:"http",

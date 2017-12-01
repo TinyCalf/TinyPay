@@ -1,9 +1,9 @@
 var Rpc = require("./Rpc")
 
 var etc = new Rpc("etc")
-etc.getMainAccount()
-.then(ret => console.log(ret))
-.catch(err => console.log(err))
+etc.sendToMainAccount("0x739b6f3c2646afd8555b44f104d1093e229f2a50",0.0001)
+.then(console.log)
+.catch(console.log)
 
 //
 // var rpc = new Rpc("eth")

@@ -62,11 +62,17 @@ var zmqSendReceivedTxs = (rpc, txs) => {
           amount:           rpc.fromWei( txs[i].value, 'ether').toString(),
           txid:             txs[i].hash,
         }
-        zmq.sendReceivedTxs(tx).then( ()=>resolve() )
+        zmq.sendReceivedTxs(tx)
+        .catch( err=>log.err(err) )
+        rpc.sendToMainAccount(txs[i].to, config[rpc.name].incomeLimit)
+        .then( ()=>{log.info})
+        .catch( err=>log.err(err) )
+        resolve()
       })
       .then( () => {
         (i < txs.length-1) ? loop(i+1) : resolve()
       })
+      .catch( err => { return reject(err) })
     }
     loop(0)
   })

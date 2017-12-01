@@ -2,7 +2,7 @@
 var zmq = require('zmq')
   , sock = zmq.socket('pull');
 
-sock.connect('tcp://127.0.0.1:1999');
+sock.connect('tcp://120.92.192.127:1999');
 console.log('Subscriber connected to port 1999');
 
 sock.on('message', function(message) {
@@ -10,4 +10,4 @@ sock.on('message', function(message) {
   console.log(message);
 });
 
-sock.disconnect('tcp://127.0.0.1:1999')
+// sock.disconnect('tcp://127.0.0.1:1999')
