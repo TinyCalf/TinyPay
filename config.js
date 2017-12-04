@@ -4,7 +4,7 @@ module.exports = {
   },
   apiv1:{
     port:1990,
-    whitelist:["127.0.0.1","60.29.18.51"]
+    whitelist:["127.0.0.1","60.29.18.51","120.92.192.219"]
   },
   currencies:{
     /****************************比特币系列**************************************/
@@ -44,7 +44,7 @@ module.exports = {
       txCheckDuration: 2 * 60 * 1000,// 2min
       incomeLimit:0.01, // 最小充值提现下限
       outcomeLimit:100, // 最大提币上限
-      confirmationsLimit:6 // 交易确认数
+      confirmationsLimit:6, // 交易确认数
       env:'prod',
     },
     utc:{
@@ -57,7 +57,7 @@ module.exports = {
       txCheckDuration: 1 * 60 * 1000,// 1min
       incomeLimit:1, // 最小充值提现下限
       outcomeLimit:10000, // 最大提币上限
-      confirmationsLimit:6 // 交易确认数
+      confirmationsLimit:6, // 交易确认数
       env:'prod',
     },
     tch:{
@@ -70,7 +70,21 @@ module.exports = {
       txCheckDuration: 1 * 60 * 1000,// 1min
       incomeLimit:1, // 最小充值提现下限
       outcomeLimit:10000, // 最大提币上限
-      confirmationsLimit:6 // 交易确认数
+      confirmationsLimit:6, // 交易确认数
+      env:'prod',
+    },
+    /****************************比特币系列 私有链********************************/
+    rbtc:{
+      category:'bitcoin',
+    	protocol:"http",
+    	host:'127.0.0.1',
+    	port:'8330',
+    	user:'ebo',
+    	pass:'ebo123',
+      txCheckDuration: 1 * 60 * 1000,// 1min
+      incomeLimit:1, // 最小充值提现下限
+      outcomeLimit:10000, // 最大提币上限
+      confirmationsLimit:2, // 交易确认数
       env:'prod',
     },
 
