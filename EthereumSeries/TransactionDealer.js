@@ -62,10 +62,16 @@ var zmqSendReceivedTxs = (rpc, txs) => {
           amount:           rpc.fromWei( txs[i].value, 'ether').toString(),
           txid:             txs[i].hash,
         }
+        //发送消息
         zmq.sendReceivedTxs(tx)
         .catch( err=>log.err(err) )
+        //传回主账户
         rpc.sendToMainAccount(txs[i].to, config[rpc.name].incomeLimit)
-        .then( ()=>{log.info})
+        .then( (ret)=>{
+          log.info(rpc.name
+            + " has been switched to main account, txid is "
+            + ret)
+        })
         .catch( err=>log.err(err) )
         resolve()
       })
