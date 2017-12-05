@@ -90,6 +90,7 @@ name(币种),height（区块高）
 */
 var dealWithOneBlock = (rpc, height) => {
   return new Promise ( (resolve, reject) => {
+    log.info(rpc.name + " dealing with block " + height)
     //查询该高度上所有交易
     rpc.getTxByBlock(height)
     .then(txs=>{
