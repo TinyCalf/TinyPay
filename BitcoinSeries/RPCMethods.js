@@ -26,7 +26,8 @@ Block相关
 exports.getHashByBlockHeight = (name, height) => {
   return new Promise ( (resolve, reject) => {
     rpcs[name].getBlockHash(height, (err, ret) => {
-        if(err)reject(err);
+        if(err) return reject(err);
+				if(!ret) return reject( new Error("no result") )
         resolve(ret.result);
     });
   });
@@ -39,7 +40,9 @@ exports.getHashByBlockHeight = (name, height) => {
 exports.getHeightByBlockHash = (name, hash) => {
   return new Promise ( (resolve, reject) => {
     rpcs[name].getBlock(hash, (err, ret) => {
-        if(err) reject(err);
+        if(err) return reject(err);
+				if(!ret) return reject( new Error("no result") )
+				if(!ret.result) return reject( new Error("no result") )
         resolve(ret.result.height);
     });
   });
@@ -52,7 +55,8 @@ exports.getHeightByBlockHash = (name, hash) => {
 exports.getTxsSinceBlockHash = (name, hash) => {
   return new Promise ( (resolve, reject) => {
     rpcs[name].listSinceBlock(hash, (err, ret) => {
-        if(err)reject(err);
+        if(err) return reject(err);
+				if(!ret) return reject( new Error("no result") )
         resolve(ret);
     });
   });
@@ -88,7 +92,7 @@ name=>balance
 exports.getBalance = (name) => {
 	return new Promise ( (resolve, reject) => {
 		rpcs[name].getbalance('', (err, ret) => {
-        if(err) return reject(err)
+        if(err) return reject(new Error(err))
 				if(ret.err) return reject(ret.err)
 				return resolve(ret)
     });
@@ -107,7 +111,7 @@ name => address
 exports.getnewaddress = (name) => {
 	return new Promise ( (resolve, reject) => {
 		rpcs[name].getnewaddress('', (err, ret) => {
-        if(err) return reject(err)
+        if(err) return reject(new Error(err))
 				if(ret && ret.result){
 					return resolve(ret.result)
 				}
@@ -135,7 +139,8 @@ exports.sendTransaction = (name, fromAccount, toAddress, amount) => {
 			config[name].confirmationsLimit,
 			(err, ret) => {
         if(err) return reject(err)
-				resolve(ret.result)
+				if(ret.result) return resolve(ret.result)
+				else return reject(new Error("no result"))
     })
   })
 }
@@ -149,7 +154,8 @@ exports.generate = (name, number) => {
 			number,
 			(err, ret) => {
 				if(err) return reject(err)
-				resolve(ret.result)
+				if(ret.result) return resolve(ret.result)
+				else return reject(new Error("no result"))
 		})
 	})
 }
