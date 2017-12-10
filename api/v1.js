@@ -107,7 +107,7 @@ RES:
 CURL:
   curl http://127.0.0.1:1990/v1/sendtransaction \
   -H "Content-Type: application/json" \
-  -X POST -d '{"name":"etc","to":"0x149f1427270eebc51c960e20f565a47257a0708b","amount":"100"}'
+  -X POST -d '{"name":"etc","to":"0x7e369de308d913d6a4177527bd307583f6405427","amount":"100"}'
 */
 app.post('/v1/sendtransaction',function(req,res){
   if(!judgeIp(req.ip))

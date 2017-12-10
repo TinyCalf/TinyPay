@@ -47,7 +47,7 @@ var selectLocalTxs = (name, txs) => {
 /*
 通过zmq发送所有新交易
 */
-var zmqSendReceivedTxs = (rpc, txs) => {
+var zmqSendReceivedTxs = (rpc, txs, confirmations) => {
   return new Promise ( (resolve, reject) => {
     if(!txs[0]) {
       resolve()
@@ -60,19 +60,22 @@ var zmqSendReceivedTxs = (rpc, txs) => {
           category:         "receive",
           address:          txs[i].to,
           amount:           rpc.fromWei( txs[i].value, 'ether').toString(),
+          confirmations:    confirmations,
           txid:             txs[i].hash,
         }
         //发送消息
         zmq.sendReceivedTxs(tx)
         .catch( err=>log.err(err) )
-        //传回主账户
-        rpc.sendToMainAccount(txs[i].to, config[rpc.name].incomeLimit)
-        .then( (ret)=>{
-          log.info(rpc.name
-            + " has been switched to main account, txid is "
-            + ret)
-        })
-        .catch( err=>log.err(err) )
+        //如果达到确认数传回主账户
+        if(confirmations>=config[rpc.name].confirmationsLimit) {
+          rpc.sendToMainAccount(txs[i].to, config[rpc.name].incomeLimit)
+          .then( (ret)=>{
+            log.info(rpc.name
+              + " has been switched to main account, txid is "
+              + ret)
+          })
+          .catch( err=>log.err(err) )
+        }
         resolve()
       })
       .then( () => {
@@ -88,7 +91,7 @@ var zmqSendReceivedTxs = (rpc, txs) => {
 处理单个区块上的交易信息
 name(币种),height（区块高）
 */
-var dealWithOneBlock = (rpc, height) => {
+var dealWithOneBlock = (rpc, height, lastHeight) => {
   return new Promise ( (resolve, reject) => {
     log.info(rpc.name + " dealing with block " + height)
     //查询该高度上所有交易
@@ -99,7 +102,7 @@ var dealWithOneBlock = (rpc, height) => {
     })
     .then(txs=>{
       //整合交易信息并通过消息队列发送
-      return zmqSendReceivedTxs(rpc, txs)
+      return zmqSendReceivedTxs(rpc, txs, lastHeight-height)
     })
     .then(()=>{resolve()})
     .catch(err=>log.err(err))
@@ -115,7 +118,7 @@ var dealWithUncheckedBlocks = (rpc, checkedHeight, lastHeight) => {
   return new Promise ( (resolve, reject) => {
     if(checkedHeight>=lastHeight)  return resolve()
     var loop = (height) => {
-      dealWithOneBlock(rpc,height)
+      dealWithOneBlock(rpc, height, lastHeight)
       .then( () => {
         (height < lastHeight-1) ? loop(height+1) : resolve()
       })
@@ -144,7 +147,7 @@ var dealer = (rpc) => {
       //处理高度差之间的所有交易
       var cfmts = config[rpc.name].confirmationsLimit
       // console.log(rpc.name + " " + checkedHeight + " " + lastHeight )
-      return dealWithUncheckedBlocks(rpc, checkedHeight-cfmts, lastHeight-cfmts)
+      return dealWithUncheckedBlocks(rpc, checkedHeight-cfmts, lastHeight)
     })
     .then(()=>{
       //更新已记录高度

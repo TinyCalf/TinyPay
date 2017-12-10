@@ -58,7 +58,7 @@ var _dealer = (name) => {
       var txs = ret.result.transactions
       //排除所有确认数等于0的
       for ( var i = 0 ; i < txs.length ; i ++ ) {
-        if(txs[i].confirmations >= config[name].confirmationsLimit)
+        if(txs[i].confirmations > 0)
         transactions.push(txs[i]);
       }
       var lastblock = ret.result.lastblock
