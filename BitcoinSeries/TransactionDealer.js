@@ -31,7 +31,7 @@ var _zmqSendReceivedTxs = (name, txs) => {
           txid:             txs[i].txid,
         }
         zmq.sendReceivedTxs(tx).then( ()=>resolve() )
-
+        db.addTxLog(tx.name, tx.txid, null, tx.address, tx.amount).catch(err=>log.err(err))
       })
       .then( () => {
         (i < txs.length-1) ? loop(i+1) : resolve()

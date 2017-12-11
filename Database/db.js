@@ -178,3 +178,28 @@ exports.clearETCAccounts = () => {
     })
   })
 }
+
+/*******************************************************************************
+
+log 数据库
+
+********************************************************************************/
+
+const Income = require("./Models/Income.model");
+
+exports.addTxLog = (name, txid, to, from, amount) => {
+  return new Promise ( (resolve, reject) => {
+      //创建新币种
+      var income = new Income();
+      income.name = name;
+      income.txid = txid;
+      income.to = to;
+      income.from = from;
+      income.amount = amount;
+      income.time = new Date();
+      income.save((err,ret)=>{
+        if(err) return reject(err);
+        resolve();
+      })
+  });
+}
