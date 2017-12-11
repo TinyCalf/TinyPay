@@ -21,19 +21,19 @@ module.exports = {
     //   confirmationsLimit:6, // 交易确认数
     //   env:'prod',
     // },
-    bcc:{
-      category:'bitcoin',
-    	protocol:"http",
-    	host:'127.0.0.1',
-    	port:'10081',
-    	user:'ebo',
-    	pass:'ebo123',
-      txCheckDuration: 0.5 * 60 * 1000,// 2min
-      incomeLimit:0.01, // 最小充值提现下限
-      outcomeLimit:10, // 最大提币上限
-      confirmationsLimit:6, // 交易确认数
-      env:'prod',
-    },
+    // bcc:{
+    //   category:'bitcoin',
+    // 	protocol:"http",
+    // 	host:'127.0.0.1',
+    // 	port:'10081',
+    // 	user:'ebo',
+    // 	pass:'ebo123',
+    //   txCheckDuration: 0.5 * 60 * 1000,// 2min
+    //   incomeLimit:0.01, // 最小充值提现下限
+    //   outcomeLimit:10, // 最大提币上限
+    //   confirmationsLimit:6, // 交易确认数
+    //   env:'prod',
+    // },
     // ltc:{
     //   category:'bitcoin',
     // 	protocol:"http",
@@ -90,17 +90,17 @@ module.exports = {
 
     /****************************以太坊系列**************************************/
     //TODO： 主钱包地址为数据库第一条，之后需要全部删除
-    // etc:{
-    //   category:'ethereum',
-    // 	protocol:"http",
-    // 	host:'127.0.0.1',
-    // 	port:'10060',
-    //   txCheckDuration: 1 * 60 * 1000,// 1min
-    //   incomeLimit:1, // 最小充值提现下限
-    //   outcomeLimit:100, // 最大提币上限
-    //   confirmationsLimit:6, // 交易确认数
-    //   env:'prod',
-    // },
+    etc:{
+      category:'ethereum',
+    	protocol:"http",
+    	host:'127.0.0.1',
+    	port:'10060',
+      txCheckDuration: 1 * 60 * 1000,// 1min
+      incomeLimit:1, // 最小充值提现下限
+      outcomeLimit:100, // 最大提币上限
+      confirmationsLimit:6, // 交易确认数
+      env:'prod',
+    },
     // eth:{
     //   category:'ethereum',
     // 	protocol:"http",
