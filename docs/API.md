@@ -122,7 +122,7 @@ Worker connected to port 1999
 ### 接入建议
 该消息队列会传递所有最新的**充值交易**，且有可能会重复发送同一段信息，或同一笔交易但是确认数有增加,如果消息发送时您的zmq客户端不在线，则在下次客户端上线的时候依然可以接受该消息。当客户端侦听到该消息并完成处理以后，该消息将**永远不会重新发送**。如果确实发现漏发消息的情况造成财产遗漏，可联系Bitgogogo管理员查看日志文件。 接受到该信息时，作为接入端应该判断该交易地址(address)属于哪一个用户，获取充值的币的数量(amount)并在自建数据库中添加用户的余额（无论是充值成数字货币，还是自己平台的货币，根据自己的业务逻辑处理该笔充值即可）。 ZeroMQ的搭建在各个平台和不同编程环境下不同，需要根据情况选择。ZeroMQ官网地址 http://zeromq.org/。接入端可参考以下流程图接入
 
-![flowchart](./zmq_flowchar.png)
+![flowchart](https://github.com/Jonathan-ZHU/Bitgogogo/blob/master/docs/zmq_flowchart.png)
 
 ### nodejs接入示范
 安装zmq运行环境
