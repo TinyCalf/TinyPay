@@ -3,7 +3,7 @@
 */
 const mongoose = require("mongoose");
 
-var IncomeSchema = new mongoose.Schema({
+var OutcomeSchema = new mongoose.Schema({
   name:            {type:String, required:true},
   txid:            {type:String, required:true， unique:true},
   to:              {type:String},
@@ -12,4 +12,4 @@ var IncomeSchema = new mongoose.Schema({
   time:            {type:Date, required:true},
 });
 
-module.exports = mongoose.model("Income", IncomeSchema);
+module.exports = mongoose.model("Outcome", OutcomeSchema);

@@ -17,7 +17,7 @@ module.exports = {
     	pass:'ebo123',
       txCheckDuration: 5 * 60 * 1000,// 5min
       incomeLimit:0.001, // 最小充值提现下限
-      outcomeLimit:1, // 最大提币上限
+      outcomeLimit:10, // 最大提币上限
       confirmationsLimit:6, // 交易确认数
       env:'prod',
     },
@@ -30,7 +30,7 @@ module.exports = {
     	pass:'ebo123',
       txCheckDuration: 0.5 * 60 * 1000,// 2min
       incomeLimit:0.01, // 最小充值提现下限
-      outcomeLimit:10, // 最大提币上限
+      outcomeLimit:100, // 最大提币上限
       confirmationsLimit:6, // 交易确认数
       env:'prod',
     },

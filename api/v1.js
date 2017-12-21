@@ -200,7 +200,8 @@ app.post('/v1/sendtransaction',function(req,res){
       BitcoinRPC.sendTransaction(name, "", to, amount)
       .then( txid => {
         log.info("sent " + amount + " " + name + " to " + to, "txid is " + txid)
-        res.send({err:0 ,msg:txid})
+        db.addOutcomeLog(name, txid, "main", to, amount).catch(err=>{})
+        return res.send({err:0 ,msg:txid})
       })
       .catch ( err=> {
         log.err(err)
@@ -213,6 +214,7 @@ app.post('/v1/sendtransaction',function(req,res){
       rpc.sendTransaction(to, amount)
       .then( txid => {
         log.info("sent " + amount + " " + name + " to " + to, "txid is " + txid)
+        db.addOutcomeLog(name, txid, "main", to, amount).catch(err=>{})
         res.send({err:0 ,msg:txid})
       })
       .catch ( err=> {
