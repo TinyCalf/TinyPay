@@ -34,6 +34,75 @@ var judgeIp = (ip) => {
   return false
 }
 
+
+/*
+获取主节点基本信息
+CURL:
+  curl http://127.0.0.1:1990/v1/getinfo
+RET:
+{
+  "err":0,
+  "msg":[
+    {"name":"btc","accout":"n1KcLBAY9yeyh14r2hg2fJ7z5JuvbQRgpn","balance":5599.9999232},
+    {"name":"bcc","accout":"mzy1hroNApXSyCqFKKxC6KEteqQ1QDjYgr","balance":6099.999808},
+    {"name":"ltc","accout":"n2ejCd6VAQa5VCFvRHhqSSTu5hg6tGmZCp","balance":9024.97552},
+    {"name":"utc","accout":"mzKcK34QEYaonsRCMHzPmNb3ej99KRxP2f","balance":0},
+    {"name":"tch","accout":"mmrkSivFKDWTvga6M22RY1YkgnQb73gWK2","balance":0},
+    {"name":"eth","accout":"0x29800baedfb23c6a1a23239c08850c83a6193fec","balance":"17574"}
+  ]
+}
+*/
+app.get('/v1/getinfo',function(req,res){
+  if(!judgeIp(req.ip))
+    return res.send({err:-1000,msg:'you are not allowed!'})
+  var msg = [];
+  var currencies = config.currencies
+  var keys = []
+  for(var key in currencies) keys.push(key)
+  function loop(i) {
+    const promise = new Promise( (resolve, reject) => {
+      var nowcoin = currencies[keys[i]]
+      var obj = {}
+      obj.name = key
+      switch(nowcoin.category) {
+        case "bitcoin": {
+          BitcoinRPC.getnewaddress(keys[i])
+          .then(ret=>{
+            obj.name = keys[i]
+            obj.accout = ret
+            return BitcoinRPC.getBalance(keys[i])
+          })
+          .then(ret=>{
+            obj.balance = ret
+            msg.push(obj)
+            return resolve()
+          })
+          break
+        }
+        case "ethereum": {
+          var rpc = new EthereumRPC(keys[i])
+          rpc.getMainAccount()
+          .then ( ret => {
+            obj.name = keys[i]
+            obj.accout = ret
+            return rpc.getBalance(ret)
+          })
+          .then ( ret=> {
+            obj.balance = ret
+            msg.push(obj)
+            return resolve()
+          })
+        }
+      }
+    })
+    .then( () => {
+      (i < keys.length-1) ? loop(i+1) : res.send({err:0,msg:msg})
+    })
+  }
+  loop(0)
+});
+
+
 /*
 获取钱包地址 btc | bcc | ltc | eth | etc
 CURL:

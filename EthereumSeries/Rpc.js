@@ -174,7 +174,7 @@ module.exports = function Rpc(name) {
     return new Promise ( (resolve, reject) => {
       this.getRpc().eth.getBalance( account ,(err, ret) => {
         if(err) return reject(err)
-        resolve( ret )
+        resolve( this.fromWei(ret) )
       })
     })
   }

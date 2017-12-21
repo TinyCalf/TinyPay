@@ -65,7 +65,10 @@ exports.transferTokens = (from, to, value, contractAddr) => {
     .then( ()=>{
       var theContract = ethrpc.getRpc().eth.contract(ERC20ABI)
       var contractInstance = theContract.at(contractAddr)
-      contractInstance.transfer(to, value, { from: from }, function (err, txHash) {
+      contractInstance.transfer(
+        to,
+        value,
+        { from: from }, function (err, txHash) {
         if (err) return reject(err)
         if (txHash) {
           return resolve(txHash)

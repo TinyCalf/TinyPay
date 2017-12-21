@@ -94,7 +94,7 @@ exports.getBalance = (name) => {
 		rpcs[name].getbalance('', (err, ret) => {
         if(err) return reject(new Error(err))
 				if(ret.err) return reject(ret.err)
-				return resolve(ret)
+				return resolve(ret.result)
     });
   });
 }
