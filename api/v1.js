@@ -6,6 +6,7 @@ var app = express();
 const config = require('../config.js')
 const log = require("../Logs/log")("apiv1")
 var ipaddr = require('ipaddr.js'); // ip转换用
+var db = require("../Database/db")
 
 //设置跨与访问
 app.all('*', function(req, res, next) {
@@ -167,16 +168,16 @@ POST:
 RES:
   txid
 CURL:
-  curl http://127.0.0.1:1990/v1/sendtransaction \
+  curl http://127.0.0.1:1990/v1/sendtransaction \db
   -H "Content-Type: application/json" \
   -X POST -d '{"name":"rbtc","to":"mvxwWn74CWRxx99nJC3QxXsgYsDH68pvPN","amount":"1"}'
 RES:
   {"err":0,"msg":"243538f6c233fdd16cfff0a798d0a0cddec672587260e01c88cb56967e0d97be"}
   {"err":0,"msg":"0x17a8074ccc2437f2732fd3c8ca33d90da47c06fb12cdbbe41253d4b39e56f745"}
 CURL:
-  curl http://127.0.0.1:1990/v1/sendtransaction \
+  curl http://120.92.117.37:1990/v1/sendtransaction \
   -H "Content-Type: application/json" \
-  -X POST -d '{"name":"etc","to":"0x7e369de308d913d6a4177527bd307583f6405427","amount":"100"}'
+  -X POST -d '{"name":"tch","to":"K1Qz87XHM7TQFyLha3xhrZ5TUk2NWByqhn","amount":"0.001"}'
 */
 app.post('/v1/sendtransaction',function(req,res){
   if(!judgeIp(req.ip))
