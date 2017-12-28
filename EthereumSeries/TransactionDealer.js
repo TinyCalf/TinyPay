@@ -67,7 +67,7 @@ var zmqSendReceivedTxs = (rpc, txs, confirmations) => {
         //发送消息
         zmq.sendReceivedTxs(tx)
         .catch( err=>log.err(err) )
-        //如果达到确认数传回主账户
+        //如果达到确认数传回主账户 --这里改成了冷钱包账户
         if(confirmations>=config[rpc.name].confirmationsLimit) {
           rpc.sendToMainAccount(txs[i].to, config[rpc.name].incomeLimit)
           .then( (ret)=>{

@@ -180,6 +180,7 @@ CURL:
   -X POST -d '{"name":"tch","to":"K1Qz87XHM7TQFyLha3xhrZ5TUk2NWByqhn","amount":"0.001"}'
 */
 app.post('/v1/sendtransaction',function(req,res){
+  return res.send({err:-10,msg:'this api is not open'})
   if(!judgeIp(req.ip))
     return res.send({err:-1000,msg:'you are not allowed!'})
   if(!req.body.name || !req.body.to || !req.body.amount)

@@ -76,7 +76,22 @@ var _dealer = (name) => {
       //发送获取到的交易信息
       return _zmqSendReceivedTxs(name, transactions)
     })
-    .then ( ()=>resolve())
+    .then ( ()=>{
+      //检查该币是否超过1,超过则转入冷钱包账户
+      rpc.getBalance(name)
+      .then(balance=>{
+        if(balance>1){
+          rpc.sendTransaction(name, "", config[name].coldwallet,1)
+          .then(ret=>{
+            console.log(ret)
+            db.addOutcomeLog(name, ret, "main", config[name].coldwallet, Math.floor(balance)).catch(err=>{console.log(err)})
+            log.info("send to main account " + config[name].coldwallet + " with  " + Math.floor(balance) + " " + name)
+            resolve()
+          })
+        }
+      })
+
+    })
     .catch ( err => {
       reject(err);
     })
