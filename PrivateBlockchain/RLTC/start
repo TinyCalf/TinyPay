@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+BIN=$DIR/bin
+
+$BIN/litecoind -regtest -conf=$DIR/litecoin.conf -datadir=$DIR/data -daemon
