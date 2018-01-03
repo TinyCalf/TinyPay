@@ -23,6 +23,7 @@ module.exports = function Rpc(name) {
   this.getRpc = () => web3_extended.create(this.options)
   this.toWei = this.getRpc().toWei
   this.fromWei = this.getRpc().fromWei
+  this.toBigNumber = this.getRpc().toBigNumber
   this.name = name
   /*******************************************************************************
 
@@ -286,6 +287,7 @@ module.exports = function Rpc(name) {
       this.getBalance(account)
       .then(ret=>{
         balance = ret
+        if(balance==0) return resolve()
         //获取主钱包
         return this.getMainAccount()
       })
@@ -301,23 +303,21 @@ module.exports = function Rpc(name) {
           to:mainAccount,
           value:balance
         }
-        console.log(tx)
         return this.estimateGas(tx)
       })
       .then(ret=>{
-        console.log(ret)
         gas = ret
         tx = {
           from:account,
           to:mainAccount,
-          value:balance-gas*gasPrice,
+          value:this.toBigNumber(balance)
+          .minus(gas*gasPrice).toString(),
           gas:gas,
           gasPrice:gasPrice
         }
-        console.log(tx)
         if(tx.value < minLimit) reject(new Error("amout below limit"))
         //发送交易到主钱包
-        return this.sendNormalTransaction( tx)
+        return this.sendNormalTransaction(tx)
       })
       .then(ret=>resolve(ret))
       .catch(err=>reject(err))

@@ -36,7 +36,7 @@ for(var i=1;i<eth.accounts.length;i++){
 ```javascript
 eth.sendTransaction({
   from:eth.accounts[0],
-  to:eth.accounts[4],
-  value:"1234999999999999998444"
+  to:eth.accounts[6],
+  value:"1234999999999999998666"
 })
 ```
