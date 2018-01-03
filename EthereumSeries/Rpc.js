@@ -174,7 +174,7 @@ module.exports = function Rpc(name) {
     return new Promise ( (resolve, reject) => {
       this.getRpc().eth.getBalance( account ,(err, ret) => {
         if(err) return reject(err)
-        resolve( this.fromWei(ret) )
+        resolve(ret)
       })
     })
   }
@@ -301,9 +301,11 @@ module.exports = function Rpc(name) {
           to:mainAccount,
           value:balance
         }
+        console.log(tx)
         return this.estimateGas(tx)
       })
       .then(ret=>{
+        console.log(ret)
         gas = ret
         tx = {
           from:account,
@@ -312,6 +314,7 @@ module.exports = function Rpc(name) {
           gas:gas,
           gasPrice:gasPrice
         }
+        console.log(tx)
         if(tx.value < minLimit) reject(new Error("amout below limit"))
         //发送交易到主钱包
         return this.sendNormalTransaction( tx)
