@@ -13,45 +13,45 @@ const prod = {
   },
   currencies:{
     /****************************比特币系列**************************************/
-    btc:{
-      category:'bitcoin',
-    	protocol:"http",
-    	host:'127.0.0.1',
-    	port:'8332',
-    	user:'ebo',
-    	pass:'ebo123',
-      txCheckDuration: 1 * 60 * 1000,// 1min
-      incomeLimit:0.00001, // 最小充值提现下限
-      outcomeLimit:10, // 最大提币上限
-      confirmationsLimit:10, // 交易确认数
-      env:'prod',
-    },
-    bcc:{
-      category:'bitcoin',
-    	protocol:"http",
-    	host:'127.0.0.1',
-    	port:'10081',
-    	user:'ebo',
-    	pass:'ebo123',
-      txCheckDuration: 0.5 * 60 * 1000,// 30s
-      incomeLimit:0.00001, // 最小充值提现下限
-      outcomeLimit:100, // 最大提币上限
-      confirmationsLimit:10, // 交易确认数
-      env:'prod',
-    },
-    ltc:{
-      category:'bitcoin',
-    	protocol:"http",
-    	host:'127.0.0.1',
-    	port:'10000',
-    	user:'ebo',
-    	pass:'ebo123',
-      txCheckDuration: 30 * 1000,// 30s
-      incomeLimit:0.00001, // 最小充值提现下限
-      outcomeLimit:100, // 最大提币上限
-      confirmationsLimit:10, // 交易确认数
-      env:'prod',
-    },
+    // btc:{
+    //   category:'bitcoin',
+    // 	protocol:"http",
+    // 	host:'127.0.0.1',
+    // 	port:'8332',
+    // 	user:'ebo',
+    // 	pass:'ebo123',
+    //   txCheckDuration: 1 * 60 * 1000,// 1min
+    //   incomeLimit:0.00001, // 最小充值提现下限
+    //   outcomeLimit:10, // 最大提币上限
+    //   confirmationsLimit:10, // 交易确认数
+    //   env:'prod',
+    // },
+    // bcc:{
+    //   category:'bitcoin',
+    // 	protocol:"http",
+    // 	host:'127.0.0.1',
+    // 	port:'10081',
+    // 	user:'ebo',
+    // 	pass:'ebo123',
+    //   txCheckDuration: 0.5 * 60 * 1000,// 30s
+    //   incomeLimit:0.00001, // 最小充值提现下限
+    //   outcomeLimit:100, // 最大提币上限
+    //   confirmationsLimit:10, // 交易确认数
+    //   env:'prod',
+    // },
+    // ltc:{
+    //   category:'bitcoin',
+    // 	protocol:"http",
+    // 	host:'127.0.0.1',
+    // 	port:'10000',
+    // 	user:'ebo',
+    // 	pass:'ebo123',
+    //   txCheckDuration: 30 * 1000,// 30s
+    //   incomeLimit:0.00001, // 最小充值提现下限
+    //   outcomeLimit:100, // 最大提币上限
+    //   confirmationsLimit:10, // 交易确认数
+    //   env:'prod',
+    // },
     // utc:{
     //   category:'bitcoin',
     // 	protocol:"http",
@@ -95,28 +95,28 @@ const prod = {
 
     /****************************以太坊系列**************************************/
     //TODO： 主钱包地址为数据库第一条，之后需要全部删除
-    etc:{
-      category:'ethereum',
-    	protocol:"http",
-    	host:'127.0.0.1',
-    	port:'10060',
-      txCheckDuration: 20 * 1000,// 20s
-      incomeLimit:0.00001, // 最小充值提现下限
-      outcomeLimit:100, // 最大提币上限
-      confirmationsLimit:10, // 交易确认数
-      env:'prod',
-    },
-    eth:{
-      category:'ethereum',
-    	protocol:"http",
-    	host:'127.0.0.1',
-    	port:'10070',
-      txCheckDuration: 20 * 1000,// 20s
-      incomeLimit:0.00001, // 最小充值下限
-      outcomeLimit:100, // 最大提币上限
-      confirmationsLimit:10, // 交易确认数
-      env:'prod',
-    },
+    // etc:{
+    //   category:'ethereum',
+    // 	protocol:"http",
+    // 	host:'127.0.0.1',
+    // 	port:'10060',
+    //   txCheckDuration: 20 * 1000,// 20s
+    //   incomeLimit:0.00001, // 最小充值提现下限
+    //   outcomeLimit:100, // 最大提币上限
+    //   confirmationsLimit:10, // 交易确认数
+    //   env:'prod',
+    // },
+    // eth:{
+    //   category:'ethereum',
+    // 	protocol:"http",
+    // 	host:'127.0.0.1',
+    // 	port:'10070',
+    //   txCheckDuration: 20 * 1000,// 20s
+    //   incomeLimit:0.00001, // 最小充值下限
+    //   outcomeLimit:100, // 最大提币上限
+    //   confirmationsLimit:10, // 交易确认数
+    //   env:'prod',
+    // },
     /**************************************************************************/
   }
 }
@@ -223,4 +223,4 @@ const dev = {
 /*
 更换exports的内容来切换开发环境和正式环境
 */
-module.exports = dev
+module.exports = prod
