@@ -159,6 +159,7 @@ exports.generate = (name, number) => {
 		})
 	})
 }
+
 // this.sendTransaction("rbtc","","mpNQPrV8V9ZA9x5W9hDfYEvRnqh8GwwpqR",1)
 // .then(ret=>console.log(ret))
 // .catch(err=>console.log(err))

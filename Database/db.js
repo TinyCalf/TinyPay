@@ -216,7 +216,7 @@ exports.addIncomeLog = (name, txid, from, to, amount) => {
 exports.addOutcomeLog = (name, txid, from, to, amount) => {
   return new Promise ( (resolve, reject) => {
       //创建新币种
-      var income = new Income();
+      var income = new Outcome();
       income.name = name;
       income.txid = txid;
       income.to = to;
