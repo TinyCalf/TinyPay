@@ -226,7 +226,7 @@ const dev = {
     	protocol:"http",
     	host:'127.0.0.1',
     	port:'10070',
-      coldwallet:"0xecf6e8cbb8633a3c490d587fa357ad20e21d4b93",
+      coldwallet:"",
       txCheckDuration: 20 * 1000,// 20s
       incomeLimit:0.00001, // 最小充值下限
       outcomeLimit:100, // 最大提币上限
