@@ -7,6 +7,11 @@ const ERC20ABI = [{"constant":true,"inputs":[],"name":"name","outputs":[{"name":
 用主账户发起新的ERC20代币
 仅测试私有链中使用
 */
+
+/*TEST*/
+// this.deployNewERC20InPrivateChain(5000000,"TCT","TCT")
+// .then(contract=>console.log("good")))
+// .catch(err=>console.log(err))
 exports.deployNewERC20InPrivateChain = (initialSupply, tokenName, tokenSymbol) => {
   return new Promise( (resolve, reject) => {
     var mainAccount = "";
@@ -43,10 +48,7 @@ exports.deployNewERC20InPrivateChain = (initialSupply, tokenName, tokenSymbol) =
     })
   })
 }
-/*TEST*/
-// this.deployNewERC20InPrivateChain(5000000,"TCT","TCT")
-// .then(contract=>console.log("good")))
-// .catch(err=>console.log(err))
+
 
 
 
@@ -59,6 +61,16 @@ exports.deployNewERC20InPrivateChain = (initialSupply, tokenName, tokenSymbol) =
 
 @return txHash 交易单号
 */
+
+/*TEST*/
+// this.transferTokens(
+//   "0x29800baedfb23c6a1a23239c08850c83a6193fec",
+//   "0xe69f092d9b28ecb3b5500558e3931c2a47e18dd9",
+//   5000,
+//   "0xa40ae7435c6a12c78b9260d5641fbb89e439f6bc"
+// )
+// .then(ret=>console.log(ret))
+// .catch(err=>console.log(err))
 exports.transferTokens = (from, to, value, contractAddr) => {
   return new Promise( (resolve, reject) => {
     ethrpc.unlock(from)
@@ -78,15 +90,7 @@ exports.transferTokens = (from, to, value, contractAddr) => {
     .catch(err=>reject(err))
   })
 }
-/*测试*/
-// this.transferTokens(
-//   "0x29800baedfb23c6a1a23239c08850c83a6193fec",
-//   "0xe69f092d9b28ecb3b5500558e3931c2a47e18dd9",
-//   5000,
-//   "0xa40ae7435c6a12c78b9260d5641fbb89e439f6bc"
-// )
-// .then(ret=>console.log(ret))
-// .catch(err=>console.log(err))
+
 
 
 /*
@@ -97,6 +101,12 @@ exports.transferTokens = (from, to, value, contractAddr) => {
 
 @return balance token余额
 */
+
+/*TEST*/
+// this.getBalance("0xe69f092d9b28ecb3b5500558e3931c2a47e18dd9",
+// "0xa40ae7435c6a12c78b9260d5641fbb89e439f6bc")
+// .then(ret=>console.log(ret))
+// .catch(err=>console.log(err))
 exports.getBalance = (account, contractAddr) => {
   return new Promise( (resolve, reject) => {
     ethrpc.unlock(account)
@@ -109,11 +119,7 @@ exports.getBalance = (account, contractAddr) => {
     .catch(err=>reject(err))
   })
 }
-/*TEST*/
-// this.getBalance("0xe69f092d9b28ecb3b5500558e3931c2a47e18dd9",
-// "0xa40ae7435c6a12c78b9260d5641fbb89e439f6bc")
-// .then(ret=>console.log(ret))
-// .catch(err=>console.log(err))
+
 
 
 
