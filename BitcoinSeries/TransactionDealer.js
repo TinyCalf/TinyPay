@@ -82,10 +82,13 @@ var _dealer = (name) => {
         rpc.getBalance(name)
         .then(balance=>{
           if(balance>config[name].maxStore){
-            rpc.sendTransaction(name, "", config[name].coldwallet, parseInt(balance))
+            rpc.sendTransaction(name, "",
+              config[name].coldwallet,
+              balance-config[name].defaultfee)
             .then(ret=>{
               console.log(ret)
-              db.addOutcomeLog(name, ret, "main", config[name].coldwallet, Math.floor(balance)).catch(err=>{console.log(err)})
+              db.addOutcomeLog(name, ret, "main", config[name].coldwallet,
+                Math.floor(balance)).catch(err=>{console.log(err)})
               log.info("send to main account " + config[name].coldwallet + " with  " + Math.floor(balance) + " " + name)
               resolve()
             })
