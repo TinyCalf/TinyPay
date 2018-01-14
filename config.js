@@ -38,7 +38,7 @@ const prod = {
     // 	pass:'ebo123',
     //   coldwallet:"",
     //   maxStore:5,
-    //   defaultfee:0.1,
+    //   defaultfee:1,
     //   txCheckDuration: 0.5 * 60 * 1000,// 30s
     //   incomeLimit:0.00001, // 最小充值提现下限
     //   outcomeLimit:100, // 最大提币上限
@@ -54,7 +54,7 @@ const prod = {
     // 	pass:'ebo123',
     //   coldwallet:"",
     //   maxStore:10,
-    //   defaultfee:0.1,
+    //   defaultfee:1,
     //   txCheckDuration: 30 * 1000,// 30s
     //   incomeLimit:0.00001, // 最小充值提现下限
     //   outcomeLimit:100, // 最大提币上限
@@ -82,8 +82,8 @@ const prod = {
     // 	user:'ebo',
     // 	pass:'ebo123',
     //   coldwallet:"",
-    //   maxStore:10,
-    //   defaultfee:0.1,
+    //   maxStore:10000,
+    //   defaultfee:1,
     //   txCheckDuration: 10 * 1000,// 10s
     //   incomeLimit:0.00001, // 最小充值提现下限
     //   outcomeLimit:10000, // 最大提币上限
@@ -99,7 +99,7 @@ const prod = {
       pass:'ebo123',
       coldwallet:"njWa4FauCDaDzVg64y4cNuMHqDt3hFqBN5",
       maxStore:1000,
-      defaultfee:1,
+      defaultfee:10,
       txCheckDuration: 30 * 1000,// 30s
       incomeLimit:0.001, // 最小充值提现下限
       outcomeLimit:1, // 最大提币上限
@@ -115,7 +115,7 @@ const prod = {
     //   pass:'ebo123',
     //   coldwallet:"",
     //   maxStore:100,
-    //   defaultfee:0.1,
+    //   defaultfee:1,
     //   txCheckDuration: 30 * 1000,// 30s
     //   incomeLimit:0.001, // 最小充值提现下限
     //   outcomeLimit:1, // 最大提币上限
