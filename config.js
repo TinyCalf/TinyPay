@@ -97,7 +97,7 @@ const prod = {
       port:'8532',
       user:'ebo',
       pass:'ebo123',
-      coldwallet:"",
+      coldwallet:"njWa4FauCDaDzVg64y4cNuMHqDt3hFqBN5",
       maxStore:1000,
       defaultfee:1,
       txCheckDuration: 30 * 1000,// 30s

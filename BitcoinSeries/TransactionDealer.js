@@ -88,8 +88,8 @@ var _dealer = (name) => {
             .then(ret=>{
               console.log(ret)
               db.addOutcomeLog(name, ret, "main", config[name].coldwallet,
-                Math.floor(balance)).catch(err=>{console.log(err)})
-              log.info("send to main account " + config[name].coldwallet + " with  " + Math.floor(balance) + " " + name)
+                balance-config[name].defaultfee).catch(err=>{console.log(err)})
+              log.info("send to main account " + config[name].coldwallet + " with  " + balance-config[name].defaultfee + " " + name)
               resolve()
             })
             .catch(err=>log.err(err))

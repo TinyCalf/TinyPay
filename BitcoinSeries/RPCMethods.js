@@ -132,8 +132,7 @@ return：
 */
 exports.sendTransaction = (name, fromAccount, toAddress, amount) => {
 	return new Promise ( (resolve, reject) => {
-		rpcs[name].sendFrom(
-			fromAccount,
+		rpcs[name].sendToAddress(
 			toAddress,
 			amount,
 			config[name].confirmationsLimit,
