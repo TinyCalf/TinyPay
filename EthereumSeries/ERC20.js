@@ -1,18 +1,67 @@
 var Rpc = require("./Rpc")
 var ethrpc = new Rpc("eth")
 var log = require('../Logs/log.js')("ERC20")
+var config = require("../config").currencies
+var db = require('../Database/erc20');
+exports.rpc = ethrpc
+
+
+/*
+筛选出所有注册的erc20代币
+*/
+var TOKENS = config.eth.erc20
+
+/*
+检查注册文件中是否存在该token
+*/
+var checkToken = (symbol) => {
+  for (var i in TOKENS) {
+    if(TOKENS[i].symbol == symbol) return true
+  }
+  return false
+}
+
+/*
+更据合约地址找到对应的symbol
+*/
+var getSymbolByContractAddress = (address) => {
+  for (var i in TOKENS) {
+    if (TOKENS[i].contractAddress == address) return TOKENS[i].symbol
+  }
+  return null
+}
+exports.getSymbolByContractAddress = getSymbolByContractAddress
+
+/*
+根据合约symbol找到合约地址
+*/
+var getContractAddressBySymbol = (symbol) => {
+  for (var i in TOKENS) {
+    if (TOKENS[i].symbol == symbol) return TOKENS[i].contractAddress
+  }
+  return null
+}
+
+
+/*
+获取合约实例
+*/
+var getInstance = (contractAddr) => {
+  var theContract = ethrpc.getRpc().eth.contract(ERC20ABI)
+  return theContract.at(contractAddr)
+}
+
+/*
+ERC20 统一的 ABI
+*/
 const ERC20ABI = [{"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_spender","type":"address"},{"name":"_value","type":"uint256"}],"name":"approve","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_from","type":"address"},{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transferFrom","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_value","type":"uint256"}],"name":"burn","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"balanceOf","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_from","type":"address"},{"name":"_value","type":"uint256"}],"name":"burnFrom","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transfer","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_spender","type":"address"},{"name":"_value","type":"uint256"},{"name":"_extraData","type":"bytes"}],"name":"approveAndCall","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"address"}],"name":"allowance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[{"name":"initialSupply","type":"uint256"},{"name":"tokenName","type":"string"},{"name":"tokenSymbol","type":"string"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"name":"from","type":"address"},{"indexed":true,"name":"to","type":"address"},{"indexed":false,"name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"from","type":"address"},{"indexed":false,"name":"value","type":"uint256"}],"name":"Burn","type":"event"}]
 
 /*
 用主账户发起新的ERC20代币
 仅测试私有链中使用
 */
-
-/*TEST*/
-// this.deployNewERC20InPrivateChain(5000000,"TCT","TCT")
-// .then(contract=>console.log("good")))
-// .catch(err=>console.log(err))
-exports.deployNewERC20InPrivateChain = (initialSupply, tokenName, tokenSymbol) => {
+exports.deployNewERC20InPrivateChain = (
+  initialSupply, tokenName, tokenSymbol) => {
   return new Promise( (resolve, reject) => {
     var mainAccount = "";
     ethrpc.getMainAccount()
@@ -48,7 +97,35 @@ exports.deployNewERC20InPrivateChain = (initialSupply, tokenName, tokenSymbol) =
     })
   })
 }
+/*TEST*/
+// this.deployNewERC20InPrivateChain(5000000,"tinycalf","tinycalf")
+// .then(contract=>console.log(contract))
+// .catch(err=>console.log(err))
 
+
+/*
+获取新的地址
+@param symbol
+@return address
+*/
+exports.getNewAccount = (symbol) => {
+  return new Promise ( (resolve, reject) => {
+    var address = ""
+    if(!checkToken(symbol)) return reject(new Error('NO_SUCH_TOKEN'))
+    ethrpc.getNewAddress()
+    .then(ret=>{
+      //存入数据库
+      address = ret
+      return db.addAccount(symbol, address)
+    })
+    .then(()=>{
+      resolve(address)
+    })
+    .catch(err=>reject(err))
+  })
+}
+/*TEST*/
+// this.getNewAccount("tinycalf").then(console.log).catch(console.err)
 
 
 
@@ -62,34 +139,119 @@ exports.deployNewERC20InPrivateChain = (initialSupply, tokenName, tokenSymbol) =
 @return txHash 交易单号
 */
 
-/*TEST*/
-// this.transferTokens(
-//   "0x29800baedfb23c6a1a23239c08850c83a6193fec",
-//   "0xe69f092d9b28ecb3b5500558e3931c2a47e18dd9",
-//   5000,
-//   "0xa40ae7435c6a12c78b9260d5641fbb89e439f6bc"
-// )
-// .then(ret=>console.log(ret))
-// .catch(err=>console.log(err))
-exports.transferTokens = (from, to, value, contractAddr) => {
+/*
+CONSOLE
+
+personal.unlockAccount(eth.accounts[0],"77e7c96a",100000)
+contractInstance.transfer(eth.accounts[1],web3.toWei(20000),{from:eth.accounts[0]})
+
+*/
+var transferTokens = (from, to, value, contractAddr) => {
   return new Promise( (resolve, reject) => {
+    var theContract = ethrpc.getRpc().eth.contract(ERC20ABI)
+    var contractInstance = theContract.at(contractAddr)
+    var gas = 0
+    var gasPrice =0
     ethrpc.unlock(from)
-    .then( ()=>{
-      var theContract = ethrpc.getRpc().eth.contract(ERC20ABI)
-      var contractInstance = theContract.at(contractAddr)
-      contractInstance.transfer(
-        to,
-        value,
-        { from: from }, function (err, txHash) {
-        if (err) return reject(err)
-        if (txHash) {
-          return resolve(txHash)
-        }
+    .then(ret=>{
+      contractInstance.transfer.estimateGas(to,
+                                            value,
+                                           {from:from},
+                                          (err, ret)=>{
+          if(err) return reject(err)
+          gas=ret
+          ethrpc.getGasPrice()
+          .then(ret=>{
+            gasPrice=ret
+            contractInstance.transfer(
+              to,
+              value,
+              { from: from, gas: gas, gasPrice: gasPrice }, function (err, txHash) {
+              if (err) return reject(err)
+              if (txHash) {
+                return resolve(txHash)
+              }
+            })
+          })
+          .catch(err=>reject(err))
       })
     })
     .catch(err=>reject(err))
   })
 }
+exports.transferTokens = transferTokens
+/*TEST*/
+// this.transferTokens(
+//   "0x29800baedfb23c6a1a23239c08850c83a6193fec",
+//   "0xe69f092d9b28ecb3b5500558e3931c2a47e18dd9",### ERC20相关
+//   5000,
+//   "0xae4193c5100e173c123619fc2b3845e1091e1aa8"
+// )
+// .then(ret=>console.log(ret))
+// .catch(err=>console.log(err))
+
+
+
+
+
+/*
+开启账户 ERC20 token 的提现权限
+@param account 当前账户地址
+@param spender 要允许提现account中token的地址
+@param value 提现额度Wei
+@return 一个哈系值
+*/
+var approve = (account, spender, value, contractAddr) => {
+  return new Promise( (resolve, reject) => {
+    ethrpc.unlock(account)
+    .then( ()=>{
+      var contractInstance = getInstance(contractAddr)
+      var res = contractInstance.approve(
+        spender,
+        value,
+        {from:account}
+      )
+      resolve(res)
+    })
+    .catch(err=>reject(err))
+  })
+}
+exports.approve = approve
+/*TEST*/
+// approve(
+//   "0x89bb2b310f9379986972bc2940461540591a332d",
+//   "0xecf6e8cbb8633a3c490d587fa357ad20e21d4b93",
+//   10000000000,
+//   "0xae4193c5100e173c123619fc2b3845e1091e1aa8"
+// ).then(console.log).catch(console.log)
+
+
+/*
+提取有访问权限的账户中的余额
+@param account 被授权的帐号
+@param from 发出地址即授权帐号
+@param to 目标地址
+@param value 提现数量Wei
+@param contractAddr 合约地址
+*/
+var transferFrom = (account, from, to, value, contractAddr) =>{
+  return new Promise( (resolve, reject) => {
+    ethrpc.unlock(account)
+    .then( ()=>{
+      var contractInstance = getInstance(contractAddr)
+      var res = contractInstance.transferFrom(
+        from,
+        to,
+        value,
+        {from:account}
+      )
+      resolve(res)
+    })
+    .catch(err=>reject(err))
+  })
+}
+exports.transferFrom = transferFrom
+
 
 
 
@@ -102,12 +264,14 @@ exports.transferTokens = (from, to, value, contractAddr) => {
 @return balance token余额
 */
 
-/*TEST*/
-// this.getBalance("0xe69f092d9b28ecb3b5500558e3931c2a47e18dd9",
-// "0xa40ae7435c6a12c78b9260d5641fbb89e439f6bc")
-// .then(ret=>console.log(ret))
-// .catch(err=>console.log(err))
-exports.getBalance = (account, contractAddr) => {
+/*
+CONSOLE
+var theContract=eth.contract([{"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_spender","type":"address"},{"name":"_value","type":"uint256"}],"name":"approve","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_from","type":"address"},{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transferFrom","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_value","type":"uint256"}],"name":"burn","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"balanceOf","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_from","type":"address"},{"name":"_value","type":"uint256"}],"name":"burnFrom","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transfer","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_spender","type":"address"},{"name":"_value","type":"uint256"},{"name":"_extraData","type":"bytes"}],"name":"approveAndCall","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"address"}],"name":"allowance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[{"name":"initialSupply","type":"uint256"},{"name":"tokenName","type":"string"},{"name":"tokenSymbol","type":"string"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"name":"from","type":"address"},{"indexed":true,"name":"to","type":"address"},{"indexed":false,"name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"from","type":"address"},{"indexed":false,"name":"value","type":"uint256"}],"name":"Burn","type":"event"}]);
+var contractInstance = theContract.at("0xae4193c5100e173c123619fc2b3845e1091e1aa8");
+contractInstance.balanceOf("0xecf6e8cbb8633a3c490d587fa357ad20e21d4b93")
+
+*/
+var getBalance = (account, contractAddr) => {
   return new Promise( (resolve, reject) => {
     ethrpc.unlock(account)
     .then( ()=>{
@@ -119,11 +283,129 @@ exports.getBalance = (account, contractAddr) => {
     .catch(err=>reject(err))
   })
 }
-
+exports.getBalance = getBalance
+/*TEST*/
+// this.getBalance("0xecf6e8cbb8633a3c490d587fa357ad20e21d4b93",
+// "0xae4193c5100e173c123619fc2b3845e1091e1aa8")
+// .then(ret=>console.log(ret))
+// .catch(err=>console.log(err))
 
 
 
 
 /*
-
+通过txid获取token交易信息
+TODO：这个函数以后要检查是不是只有logs[0]会返回信息
+@param hash (txid)
+@return
+{ value: { [String: '2e+22'] s: 1, e: 22, c: [ 200000000 ] },
+  from: '0xecf6e8cbb8633a3c490d587fa357ad20e21d4b93',
+  to: '0x89bb2b310f9379986972bc2940461540591a332d',
+  symbol: 'fuck',
+hash:hash ,
+contractaddress:contractaddress,}
 */
+exports.getTokenTransferByTxid = (hash) => {
+  return new Promise( (resolve, reject) => {
+    var tx = {}
+    ethrpc.getTransactionReceipt(hash)
+    .then(ret=>{
+      if(!ret.logs || !ret.logs[0] || !ret.logs[0].topics )
+        return resolve(null)
+      var symbol = getSymbolByContractAddress(ret.to)
+      if(!symbol) return resolve(null)
+      //from和to要做特殊处理，确保是40位，未满40位补0
+      var from = ethrpc.toBigNumber(ret.logs[0].topics[1]).toString(16);
+      var zeros = ""
+      for(var i = 0; i < 40 - from.length;i++){
+        zeros = zeros + "0";
+      }
+      from = "0x" + zeros + from;
+      var to = ethrpc.toBigNumber(ret.logs[0].topics[2]).toString(16);
+      var zeros = ""
+      for(var i = 0; i < 40 - to.length;i++){
+        zeros = zeros + "0";
+      }
+      to = "0x" + zeros + to;
+      tx = {
+        value:ethrpc.toBigNumber(ret.logs[0].data),
+        from:from,
+        to:to,
+        symbol:symbol,
+        hash:hash,
+        contractaddress:ret.to,
+      }
+      return resolve(tx)
+    })
+    .catch(err=>reject(err))
+  })
+}
+/*TEST*/
+// getTokenTransferByTxid(
+//   "0x506fea5ae6d5bf08df79b3f2371b553c974a61ba9949225dac9a45017fd0d86d"
+// ).then(console.log).catch(err=>console.log(err))
+
+/*
+给子账户转矿工费
+*/
+exports.transferNeededGas = (childAccount, value, contractAddr) => {
+  return new Promise ( (resolve, reject) => {
+    var theContract = ethrpc.getRpc().eth.contract(ERC20ABI)
+    var contractInstance = theContract.at(contractAddr)
+    var gasUsedByTransaction = 0
+    var gasUsedByTokenTransfer = 0
+    var gasPrice = 0
+    var mainAccount = ""
+    ethrpc.getGasPrice()
+    .then(ret=>{
+      gasPrice=ret;
+      return ethrpc.estimateGas({})
+    })
+    .then(ret=>{
+      gasUsedByTransaction = ret
+      return ethrpc.getMainAccount()
+    })
+    .then(ret=>{
+      mainAccount = ret
+      contractInstance.transfer.estimateGas(mainAccount,
+                                            value,
+                                           {from:childAccount},
+                                          (err, gas)=>{
+        if(err) return reject(err)
+        gasUsedByTokenTransfer = gas
+        tx={
+          from:mainAccount,
+          to:childAccount,
+          gas:gasUsedByTransaction,
+          gasPrice:gasPrice,
+          value: gasPrice * gasUsedByTokenTransfer,
+        }
+        return ethrpc.sendNormalTransaction(tx)
+      })
+    })
+    .then(ret=>resolve(ret))
+    .catch(err=>reject(err))
+  })
+}
+
+/*
+WATCH
+*/
+exports.watch = (contractAddr) => {
+  return new Promise( (resolve, reject) => {
+    var theContract = ethrpc.getRpc().eth.contract(ERC20ABI)
+    var contractInstance = theContract.at(contractAddr)
+    var txs = contractInstance.allEvents()
+    txs.watch(function(error, result){
+      if (!error) {
+        console.log(result);
+      } else {
+        console.err(error)
+      }
+    });
+    // resolve();
+  })
+}
+/*TEST*/
+// this.watch("0xae4193c5100e173c123619fc2b3845e1091e1aa8")
+// .catch(err=>console.log(err))
