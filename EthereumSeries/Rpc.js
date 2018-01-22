@@ -23,6 +23,7 @@ module.exports = function Rpc(name) {
   this.getRpc = () => web3_extended.create(this.options)
   this.toWei = this.getRpc().toWei
   this.fromWei = this.getRpc().fromWei
+  this.toBigNumber = this.getRpc().toBigNumber
   this.name = name
   /*******************************************************************************
 
@@ -174,7 +175,7 @@ module.exports = function Rpc(name) {
     return new Promise ( (resolve, reject) => {
       this.getRpc().eth.getBalance( account ,(err, ret) => {
         if(err) return reject(err)
-        resolve( ret )
+        resolve(ret)
       })
     })
   }
@@ -282,16 +283,12 @@ module.exports = function Rpc(name) {
       var balance = null
       var gas = null
       var gasPrice = null
-      var mainAccount = null
+      var mainAccount = config[this.name].coldwallet
+      var tx = {}
       this.getBalance(account)
       .then(ret=>{
         balance = ret
-        //获取主钱包
-        return this.getMainAccount()
-      })
-      .then(ret=>{
-        mainAccount = ret
-        //获取费用
+        if(balance==0) return resolve()
         return this.getGasPrice()
       })
       .then(ret=>{
@@ -308,15 +305,20 @@ module.exports = function Rpc(name) {
         tx = {
           from:account,
           to:mainAccount,
-          value:balance-gas*gasPrice,
+          value:this.toBigNumber(balance)
+          .minus(gas*gasPrice).toString(),
           gas:gas,
           gasPrice:gasPrice
         }
         if(tx.value < minLimit) reject(new Error("amout below limit"))
         //发送交易到主钱包
-        return this.sendNormalTransaction( tx)
+        return this.sendNormalTransaction(tx)
       })
-      .then(ret=>resolve(ret))
+      .then(ret=>{
+        //增加数据
+        db.addOutcomeLog(this.name, ret, account, mainAccount, this.fromWei(tx.value)).catch(err=>{console.log(err)})
+        resolve(ret)
+      })
       .catch(err=>reject(err))
     })
   }

@@ -6,6 +6,7 @@ var app = express();
 const config = require('../config.js')
 const log = require("../Logs/log")("apiv1")
 var ipaddr = require('ipaddr.js'); // ip转换用
+var db = require("../Database/db")
 
 //设置跨与访问
 app.all('*', function(req, res, next) {
@@ -33,6 +34,75 @@ var judgeIp = (ip) => {
   }
   return false
 }
+
+
+/*
+获取主节点基本信息
+CURL:
+  curl http://127.0.0.1:1990/v1/getinfo
+RET:
+{
+  "err":0,
+  "msg":[
+    {"name":"btc","accout":"n1KcLBAY9yeyh14r2hg2fJ7z5JuvbQRgpn","balance":5599.9999232},
+    {"name":"bcc","accout":"mzy1hroNApXSyCqFKKxC6KEteqQ1QDjYgr","balance":6099.999808},
+    {"name":"ltc","accout":"n2ejCd6VAQa5VCFvRHhqSSTu5hg6tGmZCp","balance":9024.97552},
+    {"name":"utc","accout":"mzKcK34QEYaonsRCMHzPmNb3ej99KRxP2f","balance":0},
+    {"name":"tch","accout":"mmrkSivFKDWTvga6M22RY1YkgnQb73gWK2","balance":0},
+    {"name":"eth","accout":"0x29800baedfb23c6a1a23239c08850c83a6193fec","balance":"17574"}
+  ]
+}
+*/
+app.get('/v1/getinfo',function(req,res){
+  if(!judgeIp(req.ip))
+    return res.send({err:-1000,msg:'you are not allowed!'})
+  var msg = [];
+  var currencies = config.currencies
+  var keys = []
+  for(var key in currencies) keys.push(key)
+  function loop(i) {
+    const promise = new Promise( (resolve, reject) => {
+      var nowcoin = currencies[keys[i]]
+      var obj = {}
+      obj.name = key
+      switch(nowcoin.category) {
+        case "bitcoin": {
+          BitcoinRPC.getnewaddress(keys[i])
+          .then(ret=>{
+            obj.name = keys[i]
+            obj.accout = ret
+            return BitcoinRPC.getBalance(keys[i])
+          })
+          .then(ret=>{
+            obj.balance = ret
+            msg.push(obj)
+            return resolve()
+          })
+          break
+        }
+        case "ethereum": {
+          var rpc = new EthereumRPC(keys[i])
+          rpc.getMainAccount()
+          .then ( ret => {
+            obj.name = keys[i]
+            obj.accout = ret
+            return rpc.getBalance(ret)
+          })
+          .then ( ret=> {
+            obj.balance = ret
+            msg.push(obj)
+            return resolve()
+          })
+        }
+      }
+    })
+    .then( () => {
+      (i < keys.length-1) ? loop(i+1) : res.send({err:0,msg:msg})
+    })
+  }
+  loop(0)
+});
+
 
 /*
 获取钱包地址 btc | bcc | ltc | eth | etc
@@ -98,18 +168,19 @@ POST:
 RES:
   txid
 CURL:
-  curl http://127.0.0.1:1990/v1/sendtransaction \
+  curl http://127.0.0.1:1990/v1/sendtransaction \db
   -H "Content-Type: application/json" \
   -X POST -d '{"name":"rbtc","to":"mvxwWn74CWRxx99nJC3QxXsgYsDH68pvPN","amount":"1"}'
 RES:
   {"err":0,"msg":"243538f6c233fdd16cfff0a798d0a0cddec672587260e01c88cb56967e0d97be"}
   {"err":0,"msg":"0x17a8074ccc2437f2732fd3c8ca33d90da47c06fb12cdbbe41253d4b39e56f745"}
 CURL:
-  curl http://127.0.0.1:1990/v1/sendtransaction \
+  curl http://120.92.117.37:1990/v1/sendtransaction \
   -H "Content-Type: application/json" \
-  -X POST -d '{"name":"etc","to":"0x7e369de308d913d6a4177527bd307583f6405427","amount":"100"}'
+  -X POST -d '{"name":"tch","to":"K1Qz87XHM7TQFyLha3xhrZ5TUk2NWByqhn","amount":"0.001"}'
 */
 app.post('/v1/sendtransaction',function(req,res){
+  return res.send({err:-1,msg:'api not open'})
   if(!judgeIp(req.ip))
     return res.send({err:-1000,msg:'you are not allowed!'})
   if(!req.body.name || !req.body.to || !req.body.amount)
@@ -131,7 +202,8 @@ app.post('/v1/sendtransaction',function(req,res){
       BitcoinRPC.sendTransaction(name, "", to, amount)
       .then( txid => {
         log.info("sent " + amount + " " + name + " to " + to, "txid is " + txid)
-        res.send({err:0 ,msg:txid})
+        db.addOutcomeLog(name, txid, "main", to, amount).catch(err=>{})
+        return res.send({err:0 ,msg:txid})
       })
       .catch ( err=> {
         log.err(err)
@@ -144,6 +216,7 @@ app.post('/v1/sendtransaction',function(req,res){
       rpc.sendTransaction(to, amount)
       .then( txid => {
         log.info("sent " + amount + " " + name + " to " + to, "txid is " + txid)
+        db.addOutcomeLog(name, txid, "main", to, amount).catch(err=>{})
         res.send({err:0 ,msg:txid})
       })
       .catch ( err=> {

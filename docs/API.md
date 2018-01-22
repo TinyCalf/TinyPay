@@ -13,14 +13,57 @@
 
 | 币名 | 提现交易费用 | 最大提现上限 | 最小充值提现下限 |
 |-----|-------------|-------------|--------------|
-| btc | 0.005 | 1 | 0.001 |
-| bcc | 0.005 | 10 | 0.01 |
+| btc | 0.005 | 10 | 0.001 |
+| bcc | 0.005 | 100 | 0.01 |
 | ltc | 0.001 | 100| 0.01 |
 | utc | 0 | 10000 | 1 |
 | tch | 0 | 10000 | 1 |
 | rbtc | 测试币 | 10000 | 1 |
 | etc | 0.01 | 100 | 1 |
 | eth | 0.01 | 100 | 1 |
+
+# 获取主钱包信息
+该接口不要暴露给用户。用于查询平台的总资产信息
+
+### 请求地址
+GET http://YOUR_GIVEN_IP_ADDRESS:1990/v1/getinfo
+<br>(YOUR_GIVEN_IP_ADDRESS为Bitgogogo部署服务器的ip，需要向管理员索要)
+
+### 请求参数
+无
+
+### 返回参数
+
+| 参数名 | 数据类型  | 描述 |
+|-------|--------|---------|
+| err | number  |  错误码，如果为0则表示没有错误 |
+| msg | string  |  如果err为0， msg即为获取的信息，如果err不为0，msg即为错误信息 |
+|name | string | 币种名称 |
+| account | string | 主账户的地址，如果平台资金不足直接向改地址充值即可（比特币系列币种获取该地址可能每次都变动，但是绝对能发送到平台账户上） |
+| balance | number | 主账户余额 |
+
+
+
+### 请求示例
+
+```bash
+curl http://YOUR_GIVEN_IP_ADDRESS:1990/v1/getinfo
+# 返回结果为：
+# {
+#   "err":0,
+#   "msg":[
+#     {"name":"btc","accout":"n1KcLBAY9yeyh14r2hg2fJ7z5JuvbQRgpn","balance":5599.9999232},
+#     {"name":"bcc","accout":"mzy1hroNApXSyCqFKKxC6KEteqQ1QDjYgr","balance":6099.999808},
+#     {"name":"ltc","accout":"n2ejCd6VAQa5VCFvRHhqSSTu5hg6tGmZCp","balance":9024.97552},
+#     {"name":"utc","accout":"mzKcK34QEYaonsRCMHzPmNb3ej99KRxP2f","balance":0},
+#     {"name":"tch","accout":"mmrkSivFKDWTvga6M22RY1YkgnQb73gWK2","balance":0},
+#     {"name":"eth","accout":"0x29800baedfb23c6a1a23239c08850c83a6193fec","balance":"17574"}
+#   ]
+# }
+```
+
+### 接入建议
+该接口可用于管理员查看平台余额。如果余额不足以给用户提现，则可以直接将币冲入指定帐号地址。如果余额过剩则可使用下面的转账接口转至冷钱包或其他钱包
 
 
 # 获取新的钱包地址

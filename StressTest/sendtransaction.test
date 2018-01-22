@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}")" && pwd )";
+
+siege -c 4 -r 10 'http://127.0.0.1:1990/v1/sendtransaction POST <./tx.json'

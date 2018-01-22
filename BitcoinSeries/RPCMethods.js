@@ -94,7 +94,7 @@ exports.getBalance = (name) => {
 		rpcs[name].getbalance('', (err, ret) => {
         if(err) return reject(new Error(err))
 				if(ret.err) return reject(ret.err)
-				return resolve(ret)
+				return resolve(ret.result)
     });
   });
 }
@@ -132,8 +132,7 @@ return：
 */
 exports.sendTransaction = (name, fromAccount, toAddress, amount) => {
 	return new Promise ( (resolve, reject) => {
-		rpcs[name].sendFrom(
-			fromAccount,
+		rpcs[name].sendToAddress(
 			toAddress,
 			amount,
 			config[name].confirmationsLimit,
@@ -159,6 +158,7 @@ exports.generate = (name, number) => {
 		})
 	})
 }
+
 // this.sendTransaction("rbtc","","mpNQPrV8V9ZA9x5W9hDfYEvRnqh8GwwpqR",1)
 // .then(ret=>console.log(ret))
 // .catch(err=>console.log(err))

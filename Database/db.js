@@ -186,8 +186,14 @@ log 数据库
 ********************************************************************************/
 
 const Income = require("./Models/Income.model");
+const Outcome = require("./Models/Outcome.model");
 
-exports.addTxLog = (name, txid, to, from, amount) => {
+
+/*
+增加充值记录
+该方法不返回错误信息
+*/
+exports.addIncomeLog = (name, txid, from, to, amount) => {
   return new Promise ( (resolve, reject) => {
       //创建新币种
       var income = new Income();
@@ -198,7 +204,26 @@ exports.addTxLog = (name, txid, to, from, amount) => {
       income.amount = amount;
       income.time = new Date();
       income.save((err,ret)=>{
-        if(err) return reject(err);
+        resolve();
+      })
+  });
+}
+
+/*
+增加充值记录
+该方法不返回错误信息
+*/
+exports.addOutcomeLog = (name, txid, from, to, amount) => {
+  return new Promise ( (resolve, reject) => {
+      //创建新币种
+      var income = new Outcome();
+      income.name = name;
+      income.txid = txid;
+      income.to = to;
+      income.from = from;
+      income.amount = amount;
+      income.time = new Date();
+      income.save((err,ret)=>{
         resolve();
       })
   });

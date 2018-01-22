@@ -5,7 +5,9 @@ var config = require('../config.js').currencies
 var log = require('../Logs/log.js')("TransactionDealer")
 
 
-//{"name":"rbtc","category":"receive","address":"mh9oXQSwPg8Fb4W3cyHBtP2UHjFq4Se9Nx","amount":9,"confirmations":10,"txid":"a19f9ed983ec170a6f69d048217596839068fb01f1fd5df9f48eea3bc161e0fb"}
+//{"name":"rbtc","category":"receive","address":"mh9oXQSwPg8Fb4W3cyHBtP2UHjFq4Se9Nx"
+//,"amount":9,"confirmations":10
+//,"txid":"a19f9ed983ec170a6f69d048217596839068fb01f1fd5df9f48eea3bc161e0fb"}
 
 /*
 批量发送接受到的交易 TODO:node 8 以后还没有测试
@@ -31,7 +33,8 @@ var _zmqSendReceivedTxs = (name, txs) => {
           txid:             txs[i].txid,
         }
         zmq.sendReceivedTxs(tx).then( ()=>resolve() )
-        db.addTxLog(tx.name, tx.txid, null, tx.address, tx.amount).catch(err=>log.err(err))
+        db.addIncomeLog(tx.name, tx.txid, "main", tx.address, tx.amount)
+        .catch(err=>{})
       })
       .then( () => {
         (i < txs.length-1) ? loop(i+1) : resolve()
@@ -73,7 +76,30 @@ var _dealer = (name) => {
       //发送获取到的交易信息
       return _zmqSendReceivedTxs(name, transactions)
     })
-    .then ( ()=>resolve())
+    .then ( ()=>{
+      //检查该币是否超过上限,超过则转入冷钱包账户
+      if(config[name].coldwallet && config[name].coldwallet != "") {
+        rpc.getBalance(name)
+        .then(balance=>{
+          if(balance>config[name].maxStore){
+            rpc.sendTransaction(name, "",
+              config[name].coldwallet,
+              balance-config[name].defaultfee)
+            .then(ret=>{
+              console.log(ret)
+              db.addOutcomeLog(name, ret, "main", config[name].coldwallet,
+                balance-config[name].defaultfee).catch(err=>{console.log(err)})
+              log.info("send to main account " + config[name].coldwallet + " with  " + balance-config[name].defaultfee + " " + name)
+              resolve()
+            })
+            .catch(err=>log.err(err))
+          }
+        })
+        .catch(err=>log.err(err))
+      } else {
+        return resolve()
+      }
+    })
     .catch ( err => {
       reject(err);
     })
