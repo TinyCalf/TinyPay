@@ -1,5 +1,6 @@
 const BitcoinRPC = require('../BitcoinSeries/RPCMethods')
 const EthereumRPC = require('../EthereumSeries/Rpc')
+const ERC20RPC = require('../EthereumSeries/ERC20')
 const bodyParser = require('body-parser')
 const express = require("express");
 var app = express();
@@ -59,6 +60,7 @@ app.get('/v1/getinfo',function(req,res){
   var msg = [];
   var currencies = config.currencies
   var keys = []
+  var ethMainAccount = ""
   for(var key in currencies) keys.push(key)
   function loop(i) {
     const promise = new Promise( (resolve, reject) => {
@@ -74,7 +76,7 @@ app.get('/v1/getinfo',function(req,res){
             return BitcoinRPC.getBalance(keys[i])
           })
           .then(ret=>{
-            obj.balance = ret
+            obj.balance = ret.toString(10)
             msg.push(obj)
             return resolve()
           })
@@ -84,12 +86,15 @@ app.get('/v1/getinfo',function(req,res){
           var rpc = new EthereumRPC(keys[i])
           rpc.getMainAccount()
           .then ( ret => {
+            if(rpc.name == "eth"){
+              ethMainAccount = ret;
+            }
             obj.name = keys[i]
             obj.accout = ret
             return rpc.getBalance(ret)
           })
           .then ( ret=> {
-            obj.balance = ret
+            obj.balance = rpc.fromWei(ret).toString(10)
             msg.push(obj)
             return resolve()
           })
@@ -97,7 +102,28 @@ app.get('/v1/getinfo',function(req,res){
       }
     })
     .then( () => {
-      (i < keys.length-1) ? loop(i+1) : res.send({err:0,msg:msg})
+      if (i < keys.length-1) loop(i+1)
+      else{
+        //查找所有ERC20币种
+        if(currencies.eth && currencies.eth.erc20){
+          var erc20s = currencies.eth.erc20
+          var count = erc20s.length
+          erc20s.forEach(function(token) {
+            ERC20RPC.getBalance(ethMainAccount,token.contractAddress)
+            .then(ret=>{
+              var obj = {}
+              obj.name = token.symbol
+              var rpc = new EthereumRPC("eth")
+              obj.balance = rpc.fromWei(ret).toString(10)
+              obj.account = ethMainAccount
+              msg.push(obj)
+              count--
+              if(count<=0) res.send({err:0,msg:msg})
+            })
+            .catch(err=>log.err(err))
+          });
+        }
+      }
     })
   }
   loop(0)
@@ -115,46 +141,61 @@ app.get('/v1/getnewaddress',function(req,res){
   if(!judgeIp(req.ip))
     return res.send({err:-1000,msg:'you are not allowed!'})
   var name = req.query.name
-  if(!config.currencies[name]) {
-    res.send({err:-100,msg:'no such currency configured!'})
-    return
-  }
-  switch (config.currencies[name].category){
-    case 'bitcoin':{
-      BitcoinRPC.getnewaddress(name)
-      .then( addr => {
-        log.info(name + " getnewaddress " + addr)
-        res.send({err:0 ,msg:addr})
-      })
-      .catch ( err=> {
-        log.err(err)
-        res.send({err:-300 ,msg:err})
-      })
-      break
-    }
-    case 'ethereum':{
-      var rpc =new EthereumRPC(name)
-      rpc.getNewAccount()
-      .then( addr => {
-        log.info(name + " getnewaddress " + addr)
-        res.send({err:0 ,msg:addr})
-      })
-      .catch ( err=> {
-        log.err(err)
-        res.send({err:-300 ,msg:err})
-      })
-      break
-    }
-    case 'indie':{
-
-    }
-    default: {
-      var msg = 'incorrect category in server!'
-      log.err(msg)
-      res.send({err:-200,msg:msg})
-      return
+  var has = config.currencies[name]
+  if(config.currencies[name]){
+    switch (config.currencies[name].category){
+      case 'bitcoin':{
+        BitcoinRPC.getnewaddress(name)
+        .then( addr => {
+          log.info(name + " getnewaddress " + addr)
+          res.send({err:0 ,msg:addr})
+        })
+        .catch ( err=> {
+          log.err(err)
+          res.send({err:-300 ,msg:err})
+        })
+        break
+      }
+      case 'ethereum':{
+        var rpc =new EthereumRPC(name)
+        rpc.getNewAccount()
+        .then( addr => {
+          log.info(name + " getnewaddress " + addr)
+          res.send({err:0 ,msg:addr})
+        })
+        .catch ( err=> {
+          log.err(err)
+          res.send({err:-300 ,msg:err})
+        })
+        break
+      }
+      default: {
+        var msg = 'incorrect category in server!'
+        log.err(msg)
+        res.send({err:-200,msg:msg})
+        return
+      }
     }
   }
+  //搜索在ERC20中是否存在该币
+  if(config.currencies.eth && config.currencies.eth.erc20){
+    var erc20config = config.currencies.eth.erc20;
+    for (key in erc20config){
+      if(erc20config[key].symbol==name){
+        has=true
+        ERC20RPC.getNewAccount(name)
+        .then(ret=>{
+          log.info(name + " getnewaddress " + ret)
+          return res.send({err:0 ,msg:ret})
+        })
+        .catch(err=>{
+          log.err(err)
+          return res.send({err:-300 ,msg:err})
+        })
+      }
+    }
+  }
+  if(!has) return res.send({err:-100 ,msg:'NO_SUCH_CURRENCY_CONFIGURED'})
 });
 
 
@@ -175,12 +216,12 @@ RES:
   {"err":0,"msg":"243538f6c233fdd16cfff0a798d0a0cddec672587260e01c88cb56967e0d97be"}
   {"err":0,"msg":"0x17a8074ccc2437f2732fd3c8ca33d90da47c06fb12cdbbe41253d4b39e56f745"}
 CURL:
-  curl http://120.92.117.37:1990/v1/sendtransaction \
+  curl http://127.0.0.1:1990/v1/sendtransaction \
   -H "Content-Type: application/json" \
-  -X POST -d '{"name":"tch","to":"K1Qz87XHM7TQFyLha3xhrZ5TUk2NWByqhn","amount":"0.001"}'
+  -X POST -d '{"name":"fuck","to":"0x267bd3b16aa03c2ac7fae56207af8e37bf8eebd9","amount":"1.234"}'
 */
 app.post('/v1/sendtransaction',function(req,res){
-  return res.send({err:-1,msg:'api not open'})
+  return res.send({err:-2,msg:'NOT_OPEN'});
   if(!judgeIp(req.ip))
     return res.send({err:-1000,msg:'you are not allowed!'})
   if(!req.body.name || !req.body.to || !req.body.amount)
@@ -188,53 +229,80 @@ app.post('/v1/sendtransaction',function(req,res){
   var name = req.body.name
   var to = req.body.to
   var amount = req.body.amount
-  if(!config.currencies[name])
-    return res.send({err:-100,msg:'no such currency configured!'})
-  var outcomeLimit = config.currencies[name].outcomeLimit;
-  var incomeLimit = config.currencies[name].incomeLimit;
-  if(amount > outcomeLimit)
-    return res.send({err:-500,msg:"amout out of limit!"})
-  if(amount < incomeLimit)
-    return res.send({err:-600,msg:"amout less than limit"})
+  var has = false;
   //区分币种
-  switch (config.currencies[name].category){
-    case 'bitcoin':{
-      BitcoinRPC.sendTransaction(name, "", to, amount)
-      .then( txid => {
-        log.info("sent " + amount + " " + name + " to " + to, "txid is " + txid)
-        db.addOutcomeLog(name, txid, "main", to, amount).catch(err=>{})
-        return res.send({err:0 ,msg:txid})
-      })
-      .catch ( err=> {
-        log.err(err)
-        res.send({err:err.code ,msg:err.message})
-      })
-      break
-    }
-    case 'ethereum':{
-      var rpc = new EthereumRPC(name)
-      rpc.sendTransaction(to, amount)
-      .then( txid => {
-        log.info("sent " + amount + " " + name + " to " + to, "txid is " + txid)
-        db.addOutcomeLog(name, txid, "main", to, amount).catch(err=>{})
-        res.send({err:0 ,msg:txid})
-      })
-      .catch ( err=> {
-        log.err(err)
-        res.send({err:-300 ,msg:err.toString()})
-      })
-      break
-    }
-    case 'indie':{
+  if(config.currencies[name]) {
+    var outcomeLimit = config.currencies[name].outcomeLimit;
+    var incomeLimit = config.currencies[name].incomeLimit;
+    if(amount > outcomeLimit)
+      return res.send({err:-500,msg:"amout out of limit!"})
+    if(amount < incomeLimit)
+      return res.send({err:-600,msg:"amout less than limit"})
+    has = true
+    switch (config.currencies[name].category){
+      case 'bitcoin':{
+        BitcoinRPC.sendTransaction(name, "", to, amount)
+        .then( txid => {
+          log.info("sent " + amount + " " + name + " to " + to, "txid is " + txid)
+          db.addOutcomeLog(name, txid, "main", to, amount).catch(err=>{})
+          return res.send({err:0 ,msg:txid})
+        })
+        .catch ( err=> {
+          log.err(err)
+          res.send({err:err.code ,msg:err.message})
+        })
+        break
+      }
+      case 'ethereum':{
+        var rpc = new EthereumRPC(name)
+        rpc.sendTransaction(to, amount)
+        .then( txid => {
+          log.info("sent " + amount + " " + name + " to " + to, "txid is " + txid)
+          db.addOutcomeLog(name, txid, "main", to, amount).catch(err=>{})
+          res.send({err:0 ,msg:txid})
+        })
+        .catch ( err=> {
+          log.err(err)
+          res.send({err:-300 ,msg:err.toString()})
+        })
+        break
+      }
+      case 'indie':{
 
-    }
-    default: {
-      var msg = 'incorrect category in server!'
-      log.err(msg)
-      res.send({err:-200,msg:msg})
-      return
+      }
+      default: {
+        var msg = 'incorrect category in server!'
+        log.err(msg)
+        res.send({err:-200,msg:msg})
+        return
+      }
     }
   }
+  //搜索在ERC20中是否存在该币
+  if(config.currencies.eth && config.currencies.eth.erc20){
+    var erc20config = config.currencies.eth.erc20;
+    for (key in erc20config){
+      if(key==name){
+        has=true
+        ERC20RPC.transferTokens(
+          config.currencies.eth.coldwallet,
+          req.body.to,
+          ERC20RPC.rpc.toWei(amount),
+          ERC20RPC.getSymbolByContractAddress(name),
+        )
+        .then(txid=>{
+          log.info("sent " + amount + " " + name + " to " + to, "txid is " + txid)
+          db.addOutcomeLog(name, txid, "main", to, amount).catch(err=>{})
+          return res.send({err:0 ,msg:txid})
+        })
+        .catch(err=>{
+          log.err(err)
+          return res.send({err:-300 ,msg:err})
+        })
+      }
+    }
+  }
+  if(!has) return res.send({err:-100 ,msg:'no such currency configured'})
 });
 
 app.listen(config.apiv1.port);

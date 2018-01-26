@@ -228,3 +228,17 @@ exports.addOutcomeLog = (name, txid, from, to, amount) => {
       })
   });
 }
+
+/*
+通过txid查找交易
+*/
+exports.findIncomeLogByTxid = (txid) => {
+  return new Promise ( (resolve, reject) => {
+    Income.findOne({txid:txid}, (err,ret)=>{
+      if(err) return reject(err);
+      resolve(ret);
+    })
+  });
+}
+/*TEST*/
+// this.findIncomeLogByTxid("").then(console.log).catch(console.log)

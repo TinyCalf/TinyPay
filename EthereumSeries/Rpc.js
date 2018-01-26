@@ -199,6 +199,20 @@ module.exports = function Rpc(name) {
   }
 
   /*
+    创建新账户并获取其地址 的 不添加数据库版
+  */
+  this.getNewAddress = () => {
+    return new Promise ( (resolve, reject) => {
+      this.getRpc().personal.newAccount(_PASSPHRASE,(err, ret) => {
+        if(err) return reject(err)
+        //在数据库中添加该地址
+        if(!ret) return reject(new Error("CREATE_ACCOUNT_NO_RESULT"))
+        resolve(ret)
+      });
+    })
+  }
+
+  /*
   解锁账户
   account
   0xff7d1bbd14407128035a1e6a8287e4f2d74ce798
@@ -320,6 +334,18 @@ module.exports = function Rpc(name) {
         resolve(ret)
       })
       .catch(err=>reject(err))
+    })
+  }
+
+  /*
+  getTransactionReceipt
+  */
+  this.getTransactionReceipt = (hash) => {
+    return new Promise ( (resolve, reject) => {
+      this.getRpc().eth.getTransactionReceipt( hash, (err,ret) => {
+        if(err) return reject(err)
+        resolve(ret)
+      });
     })
   }
 
