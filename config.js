@@ -13,21 +13,20 @@ const prod = {
   },
   currencies:{
     /****************************比特币系列**************************************/
-    // btc:{
-    //   category:'bitcoin',
-    //   protocol:"http",
-    //   host:'127.0.0.1',
-    //   port:'8332',
-    //   user:'ebo',
-    //   pass:'ebo123',
-    //   coldwallet:"mwzq3m7dexveMYZjW1w4163yys7X4K3tCn",
-    //   maxStore:0.2,
-    //   txCheckDuration: 1 * 60 * 1000,// 1min
-    //   incomeLimit:0.00001, // 最小充值提现下限
-    //   outcomeLimit:10, // 最大提币上限
-    //   confirmationsLimit:10, // 交易确认数
-    //   env:'prod',
-    // },
+    btc:{
+      category:'bitcoin',
+      protocol:"http",
+      host:'127.0.0.1',
+      port:'8332',
+      user:'ebo',
+      pass:'ebo123',
+      coldwallet:"",
+      maxStore:0.5,
+      txCheckDuration: 1 * 60 * 1000,// 1min
+      incomeLimit:0.0005, // 最小充值提现下限
+      outcomeLimit:10, // 最大提币上限
+      confirmationsLimit:10, // 交易确认数
+    },
     bch:{
       category:'bitcoin',
       protocol:"http",
@@ -35,13 +34,12 @@ const prod = {
       port:'10081',
       user:'ebo',
       pass:'ebo123',
-      coldwallet:"n2cqkqmG5rCfnxMjG2AuXJmg1NnLm9bC2V",
-      maxStore:5,
-      txCheckDuration: 0.5 * 60 * 1000,// 30s
+      coldwallet:"",
+      maxStore:10,
+      txCheckDuration: 30 * 1000,// 30s
       incomeLimit:0.00001, // 最小充值提现下限
       outcomeLimit:100, // 最大提币上限
       confirmationsLimit:10, // 交易确认数
-      env:'prod',
     },
     ltc:{
       category:'bitcoin',
@@ -51,42 +49,26 @@ const prod = {
       user:'ebo',
       pass:'ebo123',
       coldwallet:"",
-      maxStore:10000,
+      maxStore:200,
       txCheckDuration: 30 * 1000,// 30s
-      incomeLimit:0.001, // 最小充值提现下限
+      incomeLimit:0.00001, // 最小充值提现下限
       outcomeLimit:100, // 最大提币上限
       confirmationsLimit:10, // 交易确认数
-      env:'prod',
     },
-    utc:{
+    tch:{
       category:'bitcoin',
-      protocol:"http",
-      host:'127.0.0.1',
-      port:'1995',
-      user:'ebo',
-      pass:'ebo123',
+    	protocol:"http",
+    	host:'127.0.0.1',
+    	port:'10010',
+    	user:'ebo',
+    	pass:'ebo123',
       coldwallet:"",
-      maxStore:10000,
-      txCheckDuration: 1 * 60 * 1000,// 1min
+      maxStore:20000,
+      txCheckDuration: 10 * 1000,// 10s
       incomeLimit:0.00001, // 最小充值提现下限
       outcomeLimit:10000, // 最大提币上限
-      confirmationsLimit:6, // 交易确认数
-      env:'prod',
+      confirmationsLimit:10, // 交易确认数
     },
-    // tch:{
-    //   category:'bitcoin',
-    // 	protocol:"http",
-    // 	host:'127.0.0.1',
-    // 	port:'10010',
-    // 	user:'ebo',
-    // 	pass:'ebo123',
-    //   coldwallet:"",
-    //   maxStore:10000,
-    //   txCheckDuration: 10 * 1000,// 10s
-    //   incomeLimit:0.00001, // 最小充值提现下限
-    //   outcomeLimit:10000, // 最大提币上限
-    //   confirmationsLimit:10, // 交易确认数
-    // },
     /****************************比特币系列 私有链********************************/
     // rbtc:{
     //   category:'bitcoin',
@@ -105,26 +87,26 @@ const prod = {
 
     /****************************以太坊系列**************************************/
     //TODO： 主钱包地址为数据库第一条，之后需要全部删除
-    // etc:{
-    //   category:'ethereum',
-    // 	protocol:"http",
-    // 	host:'127.0.0.1',
-    // 	port:'10060',
-    //   coldwallet:"",
-    //   txCheckDuration: 20 * 1000,// 20s
-    //   maxStore:2,
-    //   incomeLimit:0.001, // 最小充值提现下限
-    //   outcomeLimit:100, // 最大提币上限
-    //   confirmationsLimit:10, // 交易确认数
-    // },
+    etc:{
+      category:'ethereum',
+    	protocol:"http",
+    	host:'127.0.0.1',
+    	port:'10060',
+      coldwallet:"",
+      maxStore:20,
+      txCheckDuration: 20 * 1000,// 20s
+      incomeLimit:0.001, // 最小充值提现下限
+      outcomeLimit:100, // 最大提币上限
+      confirmationsLimit:12, // 交易确认数
+    },
     eth:{
       category:'ethereum',
     	protocol:"http",
     	host:'127.0.0.1',
     	port:'10070',
       coldwallet:"",
+      maxStore:6,
       txCheckDuration: 20 * 1000,// 20s
-      maxStore:2,
       incomeLimit:0.001, // 最小充值下限
       outcomeLimit:100, // 最大提币上限
       confirmationsLimit:12, // 交易确认数
@@ -161,97 +143,92 @@ const dev = {
   },
   currencies:{
     /****************************比特币系列**************************************/
-    // btc:{
-    //   category:'bitcoin',
-    // 	protocol:"http",
-    // 	host:'127.0.0.1',
-    // 	port:'8332',
-    // 	user:'ebo',
-    // 	pass:'ebo123',
-    //   coldwallet:"",
-    //   maxStore:0.2,
-    //   txCheckDuration: 5 * 1000, //5s
-    //   incomeLimit:0.00001, // 最小充值提现下限
-    //   outcomeLimit:10, // 最大提币上限
-    //   confirmationsLimit:10, // 交易确认数
-    //   env:'prod',
-    // },
-    // bch:{
-    //   category:'bitcoin',
-    // 	protocol:"http",
-    // 	host:'127.0.0.1',
-    // 	port:'10081',
-    // 	user:'ebo',
-    // 	pass:'ebo123',
-    //   coldwallet:"",
-    //   maxStore:0.2,
-    //   txCheckDuration: 5 * 1000,
-    //   incomeLimit:0.00001, // 最小充值提现下限
-    //   outcomeLimit:100, // 最大提币上限
-    //   confirmationsLimit:10, // 交易确认数
-    //   env:'prod',
-    // },
-    // ltc:{
-    //   category:'bitcoin',
-    // 	protocol:"http",
-    // 	host:'127.0.0.1',
-    // 	port:'10000',
-    // 	user:'ebo',
-    // 	pass:'ebo123',
-    //   coldwallet:"",
-    //   maxStore:0.2,
-    //   txCheckDuration: 5 * 1000,// 5s
-    //   incomeLimit:0.00001, // 最小充值提现下限
-    //   outcomeLimit:100, // 最大提币上限
-    //   confirmationsLimit:10, // 交易确认数
-    //   env:'prod',
-    // },
-    // tch:{
-    //   category:'bitcoin',
-    // 	protocol:"http",
-    // 	host:'127.0.0.1',
-    // 	port:'10010',
-    // 	user:'ebo',
-    // 	pass:'ebo123',
-    //   coldwallet:"",
-    //   maxStore:0.2,
-    //   txCheckDuration: 5 * 1000,// 5s
-    //   incomeLimit:0.00001, // 最小充值提现下限
-    //   outcomeLimit:10000, // 最大提币上限
-    //   confirmationsLimit:10, // 交易确认数balance
-    //   env:'prod',
-    // },
+    btc:{
+      category:'bitcoin',
+    	protocol:"http",
+    	host:'127.0.0.1',
+    	port:'8332',
+    	user:'ebo',
+    	pass:'ebo123',
+      coldwallet:"",
+      maxStore:1,
+      txCheckDuration: 5 * 1000, //5s
+      incomeLimit:0.00001, // 最小充值提现下限
+      outcomeLimit:10, // 最大提币上限
+      confirmationsLimit:10, // 交易确认数
+    },
+    bch:{
+      category:'bitcoin',
+    	protocol:"http",
+    	host:'127.0.0.1',
+    	port:'10081',
+    	user:'ebo',
+    	pass:'ebo123',
+      coldwallet:"",
+      maxStore:1,
+      txCheckDuration: 5 * 1000,
+      incomeLimit:0.00001, // 最小充值提现下限
+      outcomeLimit:10, // 最大提币上限
+      confirmationsLimit:10, // 交易确认数
+    },
+    ltc:{
+      category:'bitcoin',
+    	protocol:"http",
+    	host:'127.0.0.1',
+    	port:'10000',
+    	user:'ebo',
+    	pass:'ebo123',
+      coldwallet:"",
+      maxStore:1,
+      txCheckDuration: 5 * 1000,
+      incomeLimit:0.00001, // 最小充值提现下限
+      outcomeLimit:10, // 最大提币上限
+      confirmationsLimit:10, // 交易确认数
+    },
+    tch:{
+      category:'bitcoin',
+    	protocol:"http",
+    	host:'127.0.0.1',
+    	port:'10010',
+    	user:'ebo',
+    	pass:'ebo123',
+      coldwallet:"",
+      maxStore:1,
+      txCheckDuration: 5 * 1000,
+      incomeLimit:0.00001, // 最小充值提现下限
+      outcomeLimit:10, // 最大提币上限
+      confirmationsLimit:10, // 交易确认数
+    },
 
     /****************************以太坊系列**************************************/
-    // etc:{
-    //   category:'ethereum',
-    // 	protocol:"http",
-    // 	host:'127.0.0.1',
-    // 	port:'10060',
-    //   coldwallet:"0xecf6e8cbb8633a3c490d587fa357ad20e21d4b93",
-    //   txCheckDuration: 5 * 1000,// 20s
-    //   incomeLimit:0.00001, // 最小充值提现下限
-    //   outcomeLimit:100, // 最大提币上限
-    //   confirmationsLimit:10, // 交易确认数
-    //   env:'prod',
-    // },
+    etc:{
+      category:'ethereum',
+    	protocol:"http",
+    	host:'127.0.0.1',
+    	port:'10060',
+      coldwallet:"",
+      maxStore:1,
+      txCheckDuration: 5 * 1000,// 5s
+      incomeLimit:0.00001, // 最小充值提现下限
+      outcomeLimit:10, // 最大提币上限
+      confirmationsLimit:10, // 交易确认数\
+    },
     eth:{
       category:'ethereum',
     	protocol:"http",
     	host:'127.0.0.1',
     	port:'10070',
-      coldwallet:"0xa3bc33f5889547e79a204b5ada9d8e197292a171",
-      txCheckDuration: 20 * 1000, // 20s
-      maxStore:800,
+      coldwallet:"",
+      maxStore:1,
+      txCheckDuration: 5 * 1000, // 20s
       incomeLimit:0.00001,       // 最小充值下限
-      outcomeLimit:100,
-      incomeLimit:3,       // 最大提币上限
+      outcomeLimit:10,     // 最大提币上限
       confirmationsLimit:10,   // 交易确认数
       erc20:[
         {
           symbol:"tinycalf",
           contractAddress:"0x6b6b298a5a7d71de1d534c8a54eb29d68a168f9b",
-          maxStore:800,
+          maxStore:1,
         },
       ]
     },
@@ -263,7 +240,7 @@ const dev = {
     // 	port:'8330',
     // 	user:'ebo',
     // 	pass:'ebo123',
-    //   coldwallet:"msYVkZgGZs4nhuXWst8Baf3zggdr3KbAkt",
+    //   coldwallet:"",
     //   maxStore:50,
     //   txCheckDuration: 5 * 1000,// 30s
     //   incomeLimit:0.00001, // 最小充值提现下限JonQzjnN7LFX6KKaBkyBq46K8ac3q9NocV

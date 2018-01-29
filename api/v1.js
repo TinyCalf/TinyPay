@@ -284,12 +284,18 @@ app.post('/v1/sendtransaction',function(req,res){
     for (key in erc20config){
       if(key==name){
         has=true
-        ERC20RPC.transferTokens(
-          config.currencies.eth.coldwallet,
-          req.body.to,
-          ERC20RPC.rpc.toWei(amount),
-          ERC20RPC.getSymbolByContractAddress(name),
-        )
+        var eth = new EthereumRPC("eth")
+        var mainAccount = ""
+        eth.getMainAccount()
+        .then(address=>{
+          mainAccount = address
+          return ERC20RPC.transferTokens(
+            mainAccount,
+            req.body.to,
+            ERC20RPC.rpc.toWei(amount),
+            ERC20RPC.getSymbolByContractAddress(name),
+          )
+        })
         .then(txid=>{
           log.info("sent " + amount + " " + name + " to " + to, "txid is " + txid)
           db.addOutcomeLog(name, txid, "main", to, amount).catch(err=>{})
