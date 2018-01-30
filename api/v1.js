@@ -221,7 +221,6 @@ CURL:
   -X POST -d '{"name":"fuck","to":"0x267bd3b16aa03c2ac7fae56207af8e37bf8eebd9","amount":"1.234"}'
 */
 app.post('/v1/sendtransaction',function(req,res){
-  return res.send({err:-2,msg:'NOT_OPEN'});
   if(!judgeIp(req.ip))
     return res.send({err:-1000,msg:'you are not allowed!'})
   if(!req.body.name || !req.body.to || !req.body.amount)
@@ -282,7 +281,7 @@ app.post('/v1/sendtransaction',function(req,res){
   if(config.currencies.eth && config.currencies.eth.erc20){
     var erc20config = config.currencies.eth.erc20;
     for (key in erc20config){
-      if(key==name){
+      if(erc20config[key].symbol==name){
         has=true
         var eth = new EthereumRPC("eth")
         var mainAccount = ""

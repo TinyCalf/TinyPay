@@ -150,7 +150,7 @@ const dev = {
     	port:'8332',
     	user:'ebo',
     	pass:'ebo123',
-      coldwallet:"",
+      coldwallet:"mjG6bbTMcwzxZveNVYcs3uEEaq1APCAdZQ",
       maxStore:1,
       txCheckDuration: 5 * 1000, //5s
       incomeLimit:0.00001, // 最小充值提现下限
@@ -164,41 +164,41 @@ const dev = {
     	port:'10081',
     	user:'ebo',
     	pass:'ebo123',
-      coldwallet:"",
+      coldwallet:"musSjKh8ekjujD18hfkKkDMG7fjMy2AEuY",
       maxStore:1,
       txCheckDuration: 5 * 1000,
       incomeLimit:0.00001, // 最小充值提现下限
       outcomeLimit:10, // 最大提币上限
       confirmationsLimit:10, // 交易确认数
     },
-    ltc:{
-      category:'bitcoin',
-    	protocol:"http",
-    	host:'127.0.0.1',
-    	port:'10000',
-    	user:'ebo',
-    	pass:'ebo123',
-      coldwallet:"",
-      maxStore:1,
-      txCheckDuration: 5 * 1000,
-      incomeLimit:0.00001, // 最小充值提现下限
-      outcomeLimit:10, // 最大提币上限
-      confirmationsLimit:10, // 交易确认数
-    },
-    tch:{
-      category:'bitcoin',
-    	protocol:"http",
-    	host:'127.0.0.1',
-    	port:'10010',
-    	user:'ebo',
-    	pass:'ebo123',
-      coldwallet:"",
-      maxStore:1,
-      txCheckDuration: 5 * 1000,
-      incomeLimit:0.00001, // 最小充值提现下限
-      outcomeLimit:10, // 最大提币上限
-      confirmationsLimit:10, // 交易确认数
-    },
+    // ltc:{
+    //   category:'bitcoin',
+    // 	protocol:"http",
+    // 	host:'127.0.0.1',
+    // 	port:'10000',
+    // 	user:'ebo',
+    // 	pass:'ebo123',
+    //   coldwallet:"",
+    //   maxStore:1,
+    //   txCheckDuration: 5 * 1000,
+    //   incomeLimit:0.00001, // 最小充值提现下限
+    //   outcomeLimit:10, // 最大提币上限
+    //   confirmationsLimit:10, // 交易确认数
+    // },
+    // tch:{
+    //   category:'bitcoin',
+    // 	protocol:"http",
+    // 	host:'127.0.0.1',
+    // 	port:'10010',
+    // 	user:'ebo',
+    // 	pass:'ebo123',
+    //   coldwallet:"mviibohv6jVaFfbTp5Ur77WqhQiJEkN7Xa",
+    //   maxStore:1,
+    //   txCheckDuration: 5 * 1000,
+    //   incomeLimit:0.00001, // 最小充值提现下限
+    //   outcomeLimit:10, // 最大提币上限
+    //   confirmationsLimit:10, // 交易确认数
+    // },
 
     /****************************以太坊系列**************************************/
     etc:{
@@ -206,7 +206,7 @@ const dev = {
     	protocol:"http",
     	host:'127.0.0.1',
     	port:'10060',
-      coldwallet:"",
+      coldwallet:"0xf9c0f774ff2063f451a8abf2c65524ed16862624",
       maxStore:1,
       txCheckDuration: 5 * 1000,// 5s
       incomeLimit:0.00001, // 最小充值提现下限
@@ -218,7 +218,7 @@ const dev = {
     	protocol:"http",
     	host:'127.0.0.1',
     	port:'10070',
-      coldwallet:"",
+      coldwallet:"0x8dab32701170a5d2d1c7c1c45566db6ae460acbc",
       maxStore:1,
       txCheckDuration: 5 * 1000, // 20s
       incomeLimit:0.00001,       // 最小充值下限
@@ -257,4 +257,4 @@ const dev = {
 /*
 更换exports的内容来切换开发环境和正式环境
 */
-module.exports = prod
+module.exports = dev
