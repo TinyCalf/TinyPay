@@ -69,6 +69,34 @@ const prod = {
       outcomeLimit:10000, // 最大提币上限
       confirmationsLimit:10, // 交易确认数
     },
+    doge:{
+      category:'bitcoin',
+      protocol:"http",
+      host:'127.0.0.1',
+      port:'8532',
+      user:'ebo',
+      pass:'ebo123',
+      coldwallet:"",
+      maxStore:20000,
+      txCheckDuration: 30 * 1000,// 30s
+      incomeLimit:0.00001, // 最小充值提现下限
+      outcomeLimit:10000, // 最大提币上限
+      confirmationsLimit:10, // 交易确认数
+    },
+    btg:{
+      category:'bitcoin',
+      protocol:"http",
+      host:'127.0.0.1',
+      port:'8432',
+      user:'ebo',
+      pass:'ebo123',
+      coldwallet:"",
+      maxStore:200,
+      txCheckDuration: 60 * 1000,// 1min
+      incomeLimit:0.00001, // 最小充值提现下限
+      outcomeLimit:100, // 最大提币上限
+      confirmationsLimit:10, // 交易确认数
+    },
     /****************************比特币系列 私有链********************************/
     // rbtc:{
     //   category:'bitcoin',
@@ -199,6 +227,34 @@ const dev = {
     //   outcomeLimit:10, // 最大提币上限
     //   confirmationsLimit:10, // 交易确认数
     // },
+    doge:{
+      category:'bitcoin',
+      protocol:"http",
+      host:'127.0.0.1',
+      port:'8532',
+      user:'ebo',
+      pass:'ebo123',
+      coldwallet:"",
+      maxStore:1,
+      txCheckDuration: 5 * 1000,
+      incomeLimit:0.00001, // 最小充值提现下限
+      outcomeLimit:10, // 最大提币上限
+      confirmationsLimit:10, // 交易确认数
+    },
+    btg:{
+      category:'bitcoin',
+      protocol:"http",
+      host:'127.0.0.1',
+      port:'8432',
+      user:'ebo',
+      pass:'ebo123',
+      coldwallet:"",
+      maxStore:1,
+      txCheckDuration: 5 * 1000,// 1min
+      incomeLimit:0.00001, // 最小充值提现下限
+      outcomeLimit:10, // 最大提币上限
+      confirmationsLimit:10, // 交易确认数
+    },
 
     /****************************以太坊系列**************************************/
     etc:{
