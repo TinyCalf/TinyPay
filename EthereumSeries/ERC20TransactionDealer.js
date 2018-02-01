@@ -91,26 +91,6 @@ var zmqSendReceivedTxs = (rpc, txs, confirmations) => {
           var mainAccount = ""
           //获取主账户
           rpc.getMainAccount()
-          // .then(account=>{
-          //   mainAccount=account
-          //   //开启该用户钱包token权限
-          //   return erc20.approve(
-          //     txs[i].to,
-          //     mainAccount,
-          //     rpc.toWei(100000),
-          //     txs[i].contractaddress
-          //   )
-          // })
-          // .then(hash=>{
-          //   //从主账户转到指定冷钱包
-          //   return erc20.transferFrom(
-          //     mainAccount,
-          //     txs[i].to,
-          //     config[rpc.name].coldwallet,
-          //     txs[i].value,
-          //     txs[i].contractaddress,
-          //   )
-          // })
           .then(ret=>{
             mainAccount=ret
             return erc20.transferTokens(txs[i].to,
@@ -127,7 +107,7 @@ var zmqSendReceivedTxs = (rpc, txs, confirmations) => {
               txs[i].symbol,
               txs[i].hash,
               txs[i].to,
-              config[rpc.name].coldwallet,
+              mainAccount,
               rpc.fromWei( txs[i].value, 'ether').toString(),
             )
           })

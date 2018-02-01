@@ -297,9 +297,13 @@ module.exports = function Rpc(name) {
       var balance = null
       var gas = null
       var gasPrice = null
-      var mainAccount = config[this.name].coldwallet
+      var mainAccount = ""
       var tx = {}
-      this.getBalance(account)
+      this.getMainAccount()
+      .then(ret=>{
+        mainAccount=ret
+        return this.getBalance(account)
+      })
       .then(ret=>{
         balance = ret
         if(balance==0) return resolve()

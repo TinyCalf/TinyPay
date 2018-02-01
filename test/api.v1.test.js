@@ -16,12 +16,14 @@ describe('API v1', function() {
   for(var key in currencies) {
     allCurr.push({
       name:key,
+      coldwallet:currencies[key].coldwallet
     })
   }
   if(currencies.eth && currencies.eth.erc20){
     for(var key in currencies.eth.erc20) {
       allCurr.push({
         name:currencies.eth.erc20[key].symbol,
+        coldwallet:currencies.eth.coldwallet
       })
     }
   }
@@ -39,6 +41,7 @@ describe('API v1', function() {
               expect(res.body.err).to.equal(0)
               expect(res.body.msg).to.be.a('string')
               rbtcAddr=res.body.msg
+              console.log(res.body)
               done()
             })
         });
@@ -54,6 +57,7 @@ describe('API v1', function() {
           expect(res.body.err).to.not.equal(0)
           expect(res.body.msg).to.be.a('string')
           expect(res.body.msg).to.equal('NO_SUCH_CURRENCY_CONFIGURED')
+          console.log(res.body)
           done()
         })
     });
@@ -67,6 +71,7 @@ describe('API v1', function() {
           expect(res.body.err).to.not.equal(0)
           expect(res.body.msg).to.be.a('string')
           expect(res.body.msg).to.equal('NO_SUCH_CURRENCY_CONFIGURED')
+          console.log(res.body)
           done()
         })
     });
@@ -83,5 +88,40 @@ describe('API v1', function() {
           done()
         })
     });
+  })
+  describe('# /v1/sendtransaction 发起提现交易', function() {
+    for(var key in allCurr) {
+      (function(key) {
+        var name = allCurr[key].name;
+        var coldwallet = allCurr[key].coldwallet;
+        //构成一个8位随机小数
+        var random = function(){
+          var num = Math.ceil(Math.random()*1000)%10
+          num = num.toString()+ "."
+          for(var i = 0 ; i < 8 ; i ++)
+            num += (Math.ceil(Math.random()*1000)%10).toString()
+          return num
+        }
+        var ran = random()
+        it('应该成功发送' + ran + name +'交易并返回交易hash值 ', function(done) {
+          request
+            .post('/v1/sendtransaction')
+            .send({
+              name: name,
+              to: coldwallet,
+              amount: ran,
+            })
+            .set('Accept', 'application/json')
+            .expect(200)
+            .end((err, res) => {
+              if(err) return done(err)
+              expect(res.body.err).to.equal(0)
+              expect(res.body.msg).to.be.a('string')
+              console.log(res.body)
+              done()
+            })
+        });
+      })(key)
+    }
   })
 })
