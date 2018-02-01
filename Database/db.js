@@ -213,7 +213,7 @@ exports.addIncomeLog = (name, txid, from, to, amount) => {
 增加充值记录
 该方法不返回错误信息
 */
-exports.addOutcomeLog = (name, txid, from, to, amount) => {
+exports.addOutcomeLog = (name, txid, from, to, amount, remarks) => {
   return new Promise ( (resolve, reject) => {
       //创建新币种
       var income = new Outcome();
@@ -223,6 +223,9 @@ exports.addOutcomeLog = (name, txid, from, to, amount) => {
       income.from = from;
       income.amount = amount;
       income.time = new Date();
+      if (remarks) {
+        income.remarks = remarks;
+      }
       income.save((err,ret)=>{
         resolve();
       })

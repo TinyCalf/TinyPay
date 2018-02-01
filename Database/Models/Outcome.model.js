@@ -10,6 +10,7 @@ var OutcomeSchema = new mongoose.Schema({
   from:            {type:String, required:true},
   amount:          {type:Number, required:true},
   time:            {type:Date, required:true},
+  remarks:         {type:String, required:false},
 });
 
 module.exports = mongoose.model("Outcome", OutcomeSchema);
