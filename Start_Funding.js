@@ -131,7 +131,7 @@ function erc20FundSaving(name) {
     console.log(account)
     mainAccount = account
     
-    return ERC20RPC.getBalance(account, erc20Def)
+    return ERC20RPC.getBalance(account, erc20Def.contractAddress)
   }).then((amount) => {
     amount = new BigNumber(amount)
     console.log('AMOUNT:')
@@ -143,7 +143,7 @@ function erc20FundSaving(name) {
       mainAccount,
       to,
       ERC20RPC.rpc.toWei(sendAmount),
-      ERC20RPC.getSymbolByContractAddress(erc20Def.symbol))
+      erc20Def.contractAddress)
   }).then( (txid) => {
     let to = config.currencies.eth.coldwallet
     let name = erc20Def.symbol
