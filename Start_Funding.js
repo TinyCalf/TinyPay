@@ -15,6 +15,13 @@ var fundingConfig = {
   checkInterval: 3, // 3 seconds
 }
 
+var lastFundingTime = null
+// If parameter 'startNow' not given,
+//  don't start fund saving when launched.
+if (process.argv.slice(2).indexOf('startNow') < 0) {
+  lastFundingTime = new Date()
+}
+
 /**
  * Fund saving procedure for Bitcoin-like cryptocurrency
  * @param name name of the cryptocurrency in config.js
@@ -165,7 +172,6 @@ function doFundSaving() {
 }
 
 
-var lastFundingTime = null
 
 function isTimeToFunding(time) {
   if (lastFundingTime) {
