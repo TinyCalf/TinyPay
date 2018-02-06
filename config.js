@@ -35,7 +35,7 @@ const prod = {
       user:'ebo',
       pass:'ebo123',
       coldwallet:"",
-      maxStore:10,
+      maxStore:2,
       txCheckDuration: 30 * 1000,// 30s
       incomeLimit:0.00001, // 最小充值提现下限
       outcomeLimit:100, // 最大提币上限
@@ -49,7 +49,7 @@ const prod = {
       user:'ebo',
       pass:'ebo123',
       coldwallet:"",
-      maxStore:200,
+      maxStore:10,
       txCheckDuration: 30 * 1000,// 30s
       incomeLimit:0.00001, // 最小充值提现下限
       outcomeLimit:100, // 最大提币上限
@@ -63,7 +63,7 @@ const prod = {
     	user:'ebo',
     	pass:'ebo123',
       coldwallet:"",
-      maxStore:20000,
+      maxStore:10000,
       txCheckDuration: 10 * 1000,// 10s
       incomeLimit:0.00001, // 最小充值提现下限
       outcomeLimit:10000, // 最大提币上限
@@ -77,26 +77,27 @@ const prod = {
       user:'ebo',
       pass:'ebo123',
       coldwallet:"",
-      maxStore:20000,
+      maxStore:10000,
       txCheckDuration: 30 * 1000,// 30s
       incomeLimit:0.00001, // 最小充值提现下限
       outcomeLimit:10000, // 最大提币上限
       confirmationsLimit:10, // 交易确认数
     },
-    btg:{
-      category:'bitcoin',
-      protocol:"http",
-      host:'127.0.0.1',
-      port:'8432',
-      user:'ebo',
-      pass:'ebo123',
-      coldwallet:"",
-      maxStore:200,
-      txCheckDuration: 60 * 1000,// 1min
-      incomeLimit:0.00001, // 最小充值提现下限
-      outcomeLimit:100, // 最大提币上限
-      confirmationsLimit:10, // 交易确认数
-    },
+    // btg:{
+    //   category:'bitcoin',
+    //   protocol:"http",
+    //   host:'127.0.0.1',
+    //   port:'8432',
+    //   user:'ebo',
+    //   pass:'ebo123',
+    //   coldwallet:"",
+    //   maxStore:200,
+    //   txCheckDuration: 60 * 1000,// 1min
+    //   incomeLimit:0.00001, // 最小充值提现下限
+    //   outcomeLimit:100, // 最大提币上限
+    //   confirmationsLimit:10, // 交易确认数
+    // },
+      
     /****************************比特币系列 私有链********************************/
     // rbtc:{
     //   category:'bitcoin',
@@ -313,4 +314,4 @@ const dev = {
 /*
 更换exports的内容来切换开发环境和正式环境
 */
-module.exports = dev
+module.exports = prod

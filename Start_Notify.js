@@ -8,7 +8,7 @@ var web3 = require('web3_extended')
 var noticeConfig = {
   checkInterval: 60, // 1 min
   sendNoticeInterval: 30 * 60, // 30 min
-  warningBlocks: 1000
+  warningBlocks: 10
 }
 
 var smtpConfig = {
