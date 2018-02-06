@@ -29,6 +29,12 @@ if (process.argv.slice(2).indexOf('startNow') < 0) {
 function btcFundSaving(name) {
   let btcMainAddress = null
   let sendAmount = null
+  let maxStore = config.currencies[name].maxStore
+  if (S(maxStore).isEmpty()) {
+    return
+  }
+  maxStore = new BigNumber(maxStore)
+  
   BitcoinRPC.getnewaddress(name).then((address) => {
     //console.log('ADDRESS:')
     //console.log(address)
@@ -37,7 +43,11 @@ function btcFundSaving(name) {
   }).then( (amount) => {
     //console.log('AMOUNT:')
     //console.log(amount)
-    sendAmount = new BigNumber(amount).div(2)
+    balance = new BigNumber(amount)
+    if (balance.lte(maxStore)) {
+      return
+    }
+    sendAmount = balance.div(2)
     
     let to = config.currencies[name].coldwallet
     if (!S(to).isEmpty()) {
@@ -64,6 +74,12 @@ function ethFundSaving(name) {
   
   var ethRpc = new EthereumRPC(name)
   var sendAmount = null
+
+  let maxStore = config.currencies[name].maxStore
+  if (S(maxStore).isEmpty()) {
+    return
+  }
+  maxStore = new BigNumber(maxStore)
   
   var mainAccount = null
   ethRpc.getMainAccount().then((account) => {
@@ -77,8 +93,11 @@ function ethFundSaving(name) {
     //console.log('MAIN ACCOUNT:')
     //console.log(mainAccount)
 
-    sendAmount = new BigNumber(amount)
-    sendAmount = sendAmount.div(2)
+    balance = new BigNumber(amount)
+    if (balance.lte(maxStore)) {
+      return
+    }
+    sendAmount = balance.div(2)
 
     let to = config.currencies[name].coldwallet
     if (!S(to).isEmpty()) {
@@ -112,6 +131,12 @@ function erc20FundSaving(name) {
   var sendAmount = null
   var erc20Def = null
 
+  let maxStore = config.currencies.eth.maxStore
+  if (S(maxStore).isEmpty()) {
+    return
+  }
+  maxStore = new BigNumber(maxStore)
+
   if (config.currencies.eth.erc20) {
     for (i=0;i<config.currencies.eth.erc20.length;i++) {
       let erc20Item = config.currencies.eth.erc20[i]
@@ -135,7 +160,13 @@ function erc20FundSaving(name) {
   }).then((amount) => {
     amount = new BigNumber(amount)
     console.log('AMOUNT:')
-    console.log(ethRpc.fromWei(amount.div(1).toString()))
+    console.log(ethRpc.fromWei(amount).div(1).toString()))
+
+    let balance = new BigNumber(amount)
+    if (balance.lte(maxStore)) {
+      return
+    }
+
     sendAmount = ethRpc.fromWei(amount).div(2)
     
     let to = config.currencies.eth.coldwallet
