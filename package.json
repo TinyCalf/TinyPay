@@ -9,6 +9,7 @@
     "build": "node build.js",
     "check": "node check.js",
     "start": "node index.js",
+    "notify": "node Start_Notify.js",
     "daemon": "nohup node index.js &"
   },
   "author": "Jonathan-ZHU",
