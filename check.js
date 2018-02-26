@@ -29,6 +29,7 @@ var checkRPC = () => {
   return new Promise ( (resolve, reject) => {
     var names = []
     for (var key in currs) names.push(key)
+    //console.log(names)
     function loop(i) {
       const promise = new Promise( (resolve, reject) => {
         log.info("Checking " + names[i] + " RPC...");

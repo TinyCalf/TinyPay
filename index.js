@@ -30,8 +30,8 @@ EthereumSeriesTxsDealer.start()
 /*
 启动ERC20系列消息队列
 */
-ERC20TxsDealer.start()
-.catch ( (err)=>log.err(err) )
+//ERC20TxsDealer.start()
+//.catch ( (err)=>log.err(err) )
 
 /*
 启动 api v1
