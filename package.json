@@ -5,9 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha --reporter mochawesome",
+    "repo": "node ./openReporter",
     "build": "node build.js",
     "check": "node check.js",
     "start": "node index.js",
+    "notify": "node Start_Notify.js",
     "daemon": "nohup node index.js &"
   },
   "author": "Jonathan-ZHU",
@@ -20,7 +22,9 @@
     "express": "4.16.2",
     "ipaddr.js": "1.5.4",
     "mongoose": "4.13.0",
+    "nodemailer": "^4.6.0",
     "open": "0.0.5",
+    "string": "^3.3.3",
     "web3": "1.0.0-beta.24",
     "web3_extended": "1.0.0",
     "zmq": "2.15.3"

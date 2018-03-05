@@ -8,21 +8,21 @@ var web3 = require('web3_extended')
 var noticeConfig = {
   checkInterval: 60, // 1 min
   sendNoticeInterval: 30 * 60, // 30 min
-  warningBlocks: 1000
+  warningBlocks: 10
 }
 
 var smtpConfig = {
-  host: 'smtp.126.com',
+  host: 'smtp.exmail.qq.com',
   port: 465,
   secure: true,
   auth: {
-    user: 'luo_yong_biz@126.com',
-    pass: '123456aabbcc'
+    user: 'zhujiasheng@h5edu.cn',
+    pass: 'Zjs1993'
   }
 }
 
 var mailConfig = {
-  from: '"Luo Yong" <luo_yong_biz@126.com>'
+  from: '"Bitgogogo by TinyCalf" <zhujiasheng@h5edu.cn>'
 }
 
 var lastMessageSentTime = null;

@@ -16,6 +16,8 @@ var initCurrencyDatabase = () => {
     for (var key in config) {
       seq.push ( db.createNewCurrency(key, config[key].confirmationsLimit) )
     }
+    //额外增加ERC20数据库
+    seq.push ( db.createNewCurrency("erc20", config.eth.confirmationsLimit))
     Promise.all(seq)
     .then ( () => {
       log.info("All currencies' database initialized!")
