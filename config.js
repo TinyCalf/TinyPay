@@ -27,7 +27,7 @@ const prod = {
      outcomeLimit:10000, // 最大提币上限
      confirmationsLimit:10, // 交易确认数
     },
-      
+
     /****************************比特币系列 私有链********************************/
     rbtc:{
        category:'bitcoin',
@@ -97,27 +97,27 @@ const dev = {
     	port:'8332',
     	user:'ebo',
     	pass:'ebo123',
-      coldwallet:"mjG6bbTMcwzxZveNVYcs3uEEaq1APCAdZQ",
+      coldwallet:"",
       maxStore:1,
       txCheckDuration: 5 * 1000, //5s
       incomeLimit:0.00001, // 最小充值提现下限
       outcomeLimit:10, // 最大提币上限
       confirmationsLimit:10, // 交易确认数
     },
-    bch:{
-      category:'bitcoin',
-    	protocol:"http",
-    	host:'127.0.0.1',
-    	port:'10081',
-    	user:'ebo',
-    	pass:'ebo123',
-      coldwallet:"musSjKh8ekjujD18hfkKkDMG7fjMy2AEuY",
-      maxStore:1,
-      txCheckDuration: 5 * 1000,
-      incomeLimit:0.00001, // 最小充值提现下限
-      outcomeLimit:10, // 最大提币上限
-      confirmationsLimit:10, // 交易确认数
-    },
+    // bch:{
+    //   category:'bitcoin',
+    // 	protocol:"http",
+    // 	host:'127.0.0.1',
+    // 	port:'10081',
+    // 	user:'ebo',
+    // 	pass:'ebo123',
+    //   coldwallet:"musSjKh8ekjujD18hfkKkDMG7fjMy2AEuY",
+    //   maxStore:1,
+    //   txCheckDuration: 5 * 1000,
+    //   incomeLimit:0.00001, // 最小充值提现下限
+    //   outcomeLimit:10, // 最大提币上限
+    //   confirmationsLimit:10, // 交易确认数
+    // },
     // ltc:{
     //   category:'bitcoin',
     // 	protocol:"http",
@@ -146,66 +146,66 @@ const dev = {
     //   outcomeLimit:10, // 最大提币上限
     //   confirmationsLimit:10, // 交易确认数
     // },
-    doge:{
-      category:'bitcoin',
-      protocol:"http",
-      host:'127.0.0.1',
-      port:'8532',
-      user:'ebo',
-      pass:'ebo123',
-      coldwallet:"",
-      maxStore:1,
-      txCheckDuration: 5 * 1000,
-      incomeLimit:0.00001, // 最小充值提现下限
-      outcomeLimit:10, // 最大提币上限
-      confirmationsLimit:10, // 交易确认数
-    },
-    btg:{
-      category:'bitcoin',
-      protocol:"http",
-      host:'127.0.0.1',
-      port:'8432',
-      user:'ebo',
-      pass:'ebo123',
-      coldwallet:"",
-      maxStore:1,
-      txCheckDuration: 5 * 1000,// 1min
-      incomeLimit:0.00001, // 最小充值提现下限
-      outcomeLimit:10, // 最大提币上限
-      confirmationsLimit:10, // 交易确认数
-    },
+    // doge:{
+    //   category:'bitcoin',
+    //   protocol:"http",
+    //   host:'127.0.0.1',
+    //   port:'8532',
+    //   user:'ebo',
+    //   pass:'ebo123',
+    //   coldwallet:"",
+    //   maxStore:1,
+    //   txCheckDuration: 5 * 1000,
+    //   incomeLimit:0.00001, // 最小充值提现下限
+    //   outcomeLimit:10, // 最大提币上限
+    //   confirmationsLimit:10, // 交易确认数
+    // },
+    // btg:{
+    //   category:'bitcoin',
+    //   protocol:"http",
+    //   host:'127.0.0.1',
+    //   port:'8432',
+    //   user:'ebo',
+    //   pass:'ebo123',
+    //   coldwallet:"",
+    //   maxStore:1,
+    //   txCheckDuration: 5 * 1000,// 1min
+    //   incomeLimit:0.00001, // 最小充值提现下限
+    //   outcomeLimit:10, // 最大提币上限
+    //   confirmationsLimit:10, // 交易确认数
+    // },
 
     /****************************以太坊系列**************************************/
-    etc:{
-      category:'ethereum',
-    	protocol:"http",
-    	host:'127.0.0.1',
-    	port:'10060',
-      coldwallet:"0xf9c0f774ff2063f451a8abf2c65524ed16862624",
-      maxStore:1,
-      txCheckDuration: 5 * 1000,// 5s
-      incomeLimit:0.00001, // 最小充值提现下限
-      outcomeLimit:10, // 最大提币上限
-      confirmationsLimit:10, // 交易确认数\
-    },
+    // etc:{
+    //   category:'ethereum',
+    // 	protocol:"http",
+    // 	host:'127.0.0.1',
+    // 	port:'10060',
+    //   coldwallet:"0xf9c0f774ff2063f451a8abf2c65524ed16862624",
+    //   maxStore:1,
+    //   txCheckDuration: 5 * 1000,// 5s
+    //   incomeLimit:0.00001, // 最小充值提现下限
+    //   outcomeLimit:10, // 最大提币上限
+    //   confirmationsLimit:10, // 交易确认数\
+    // },
     eth:{
       category:'ethereum',
     	protocol:"http",
     	host:'127.0.0.1',
     	port:'10070',
-      coldwallet:"0x8dab32701170a5d2d1c7c1c45566db6ae460acbc",
+      coldwallet:"",
       maxStore:1,
       txCheckDuration: 5 * 1000, // 20s
       incomeLimit:0.00001,       // 最小充值下限
       outcomeLimit:10,     // 最大提币上限
       confirmationsLimit:10,   // 交易确认数
-      erc20:[
-        {
-          symbol:"tinycalf",
-          contractAddress:"0x6b6b298a5a7d71de1d534c8a54eb29d68a168f9b",
-          maxStore:1,
-        },
-      ]
+      // erc20:[
+      //   {
+      //     symbol:"tinycalf",
+      //     contractAddress:"0x6b6b298a5a7d71de1d534c8a54eb29d68a168f9b",
+      //     maxStore:1,
+      //   },
+      // ]
     },
 
     // rbtc:{
@@ -232,4 +232,4 @@ const dev = {
 /*
 更换exports的内容来切换开发环境和正式环境
 */
-module.exports = prod
+module.exports = dev

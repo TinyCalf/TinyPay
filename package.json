@@ -8,9 +8,9 @@
     "repo": "node ./openReporter",
     "build": "node build.js",
     "check": "node check.js",
-    "start": "node index.js",
+    "start": "node bitgogogo.js",
     "notify": "node Start_Notify.js",
-    "daemon": "nohup node index.js &"
+    "daemon": "nohup node bitgogogo.js &"
   },
   "author": "Jonathan-ZHU",
   "license": "ISC",

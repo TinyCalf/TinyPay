@@ -10,7 +10,7 @@
 
 var BitcoinSeriesTxsDealer = require('./BitcoinSeries/TransactionDealer.js')
 var EthereumSeriesTxsDealer = require('./EthereumSeries/TransactionDealer.js')
-var ERC20TxsDealer = require('./EthereumSeries/ERC20TransactionDealer.js')
+// var ERC20TxsDealer = require('./EthereumSeries/ERC20TransactionDealer.js')
 var log = require('./Logs/log.js')('index')
 
 
