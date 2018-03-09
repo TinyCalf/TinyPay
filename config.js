@@ -9,23 +9,24 @@ const prod = {
   },
   apiv1:{
     port:1990,
-    whitelist:["127.0.0.1","60.29.18.51","120.92.192.219","60.25.11.138"]
+    whitelist:["60.25.57.128","127.0.0.1","120.92.192.219","60.25.11.138","47.104.86.59","47.95.207.1"]
+
   },
   currencies:{
     /****************************比特币系列**************************************/
-    tch:{
-     category:'bitcoin',
-     protocol:"http",
-     host:'127.0.0.1',
-     port:'10010',
-     user:'ebo',
-     pass:'ebo123',
-     coldwallet:"",
-     maxStore:10000,
-     txCheckDuration: 10 * 1000,// 10s
-     incomeLimit:0.00001, // 最小充值提现下限
-     outcomeLimit:10000, // 最大提币上限
-     confirmationsLimit:10, // 交易确认数
+    btc:{
+      category:'bitcoin',
+      protocol:"http",
+      host:'127.0.0.1',
+      port:'8332',
+      user:'ebo',
+      pass:'ebo123',
+      coldwallet:"",
+      maxStore:1,
+      txCheckDuration: 60 * 1000,
+      incomeLimit:0.00001, // 最小充值提现下限
+      outcomeLimit:10, // 最大提币上限
+      confirmationsLimit:10, // 交易确认数
     },
 
     /****************************比特币系列 私有链********************************/
@@ -45,7 +46,6 @@ const prod = {
      },
 
     /****************************以太坊系列**************************************/
-    //TODO： 主钱包地址为数据库第一条，之后需要全部删除
     eth:{
       category:'ethereum',
       protocol:"http",
@@ -232,4 +232,4 @@ const dev = {
 /*
 更换exports的内容来切换开发环境和正式环境
 */
-module.exports = dev
+module.exports = prod
