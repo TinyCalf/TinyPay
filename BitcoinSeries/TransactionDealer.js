@@ -3,6 +3,8 @@ var db = require('../Database/db')
 var zmq = require('../Zeromq/zmqServer')
 var config = require('../config.js').currencies
 var log = require('../Logs/log.js')("TransactionDealer")
+var MessageStack = require('../Database/MessageStack')
+
 
 
 //{"name":"rbtc","category":"receive","address":"mh9oXQSwPg8Fb4W3cyHBtP2UHjFq4Se9Nx"
@@ -32,6 +34,7 @@ var _zmqSendReceivedTxs = (name, txs) => {
           confirmations:    txs[i].confirmations,
           txid:             txs[i].txid,
         }
+        MessageStack.push(tx.txid,JSON.stringify(tx))
         zmq.sendReceivedTxs(tx).then( ()=>resolve() )
         db.addIncomeLog(tx.name, tx.txid, "main", tx.address, tx.amount)
         .catch(err=>{})

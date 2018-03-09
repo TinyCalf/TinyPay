@@ -6,7 +6,7 @@ const config = require("../config")
 describe('API v1', function() {
   var apiv1 = require("../api/v1")
   var request = require('supertest')(apiv1.app)
-  this.timeout(1000*5*60); // 5min
+  this.timeout(1000*5); // 5min
   var etcAddr = "" //保留etc地址，用于后续测试
   var rbtcAddr = "" //保留rbtc地址
 
@@ -114,14 +114,91 @@ describe('API v1', function() {
             .set('Accept', 'application/json')
             .expect(200)
             .end((err, res) => {
+              console.log(res.body)
               if(err) return done(err)
               expect(res.body.err).to.equal(0)
               expect(res.body.msg).to.be.a('string')
-              console.log(res.body)
               done()
             })
         });
       })(key)
     }
+  })
+  describe('# /v1/pulltxs 从消息队列获取所有充值交易', function() {
+    it('应返回充值交易数组', function(done) {
+      request
+        .get('/v1/pulltxs')
+        .set('Accept', 'application/json')
+        .expect(200)
+        .end((err, res) => {
+          if(err) return done(err)
+          console.log(res.body)
+          expect(res.body.err).to.be.equal(0)
+          expect(res.body.msg).to.be.a("array")
+          done()
+        })
+    });
+  })
+  describe('# /v1/confirmtxs 确认交易处理完成', function() {
+    it('参数正确应返回充值交易数组', function(done) {
+      request
+        .post('/v1/confirmtxs')
+        .send(
+          {
+            txids:[
+              "test57896",
+              "test30600"
+            ]
+          }
+        )
+        .set('Accept', 'application/json')
+        .expect(200)
+        .end((err, res) => {
+          if(err) return done(err)
+          console.log(res.body)
+          expect(res.body.err).to.be.equal(0)
+          expect(res.body.msg).to.be.equal("DELETED")
+          done()
+        })
+    });
+    it('参数名不正确时应返回错误', function(done) {
+      request
+        .post('/v1/confirmtxs')
+        .send(
+          {
+            txifds:[
+              "test57896",
+              "test30600"
+            ]
+          }
+        )
+        .set('Accept', 'application/json')
+        .expect(200)
+        .end((err, res) => {
+          if(err) return done(err)
+          console.log(res.body)
+          expect(res.body.err).to.be.not.equal(0)
+          done()
+        })
+    });
+    it('参数不是数组时应返回错误', function(done) {
+      request
+        .post('/v1/confirmtxs')
+        .send(
+          {
+            txids:[
+              {fdsafd:120321}
+            ]
+          }
+        )
+        .set('Accept', 'application/json')
+        .expect(200)
+        .end((err, res) => {
+          if(err) return done(err)
+          console.log(res.body)
+          expect(res.body.err).to.be.not.equal(0)
+          done()
+        })
+    });
   })
 })

@@ -8,6 +8,7 @@ const config = require('../config.js')
 const log = require("../Logs/log")("apiv1")
 var ipaddr = require('ipaddr.js'); // ip转换用
 var db = require("../Database/db")
+const MessageStack = require("../Database/MessageStack")
 
 //设置跨与访问
 app.all('*', function(req, res, next) {
@@ -118,11 +119,12 @@ app.get('/v1/getinfo',function(req,res){
               obj.account = ethMainAccount
               msg.push(obj)
               count--
-              if(count<=0) res.send({err:0,msg:msg})
+              if(count<=0) return res.send({err:0,msg:msg})
             })
             .catch(err=>log.err(err))
           });
         }
+        else return res.send({err:0,msg:msg})
       }
     })
   }
@@ -309,6 +311,62 @@ app.post('/v1/sendtransaction',function(req,res){
   }
   if(!has) return res.send({err:-100 ,msg:'no such currency configured'})
 });
+
+/*
+从消息队列获取所有充值交易
+CURL:
+  curl http://127.0.0.1:1990/v1/pulltxs \
+  -H "Content-Type: application/json"
+RES:
+{"err":0,"msg":[
+ {"name":"btc","category":"receive","address":"mnjuMNdaHm1DcyXFRzSGGVCnkRJxNZKz4D","amount":1.25757578,"confirmations":2,"txid":"5d5f8c45ec95406057d136fff9811698e1214d701ce142ab2609a941230b904e"},
+ {"name":"btc","category":"receive","address":"mnjuMNdaHm1DcyXFRzSGGVCnkRJxNZKz4D","amount":2,"confirmations":2,"txid":"2d2e6429b630a2bd23686b458a50c67db8797a2562c44dae0d1625582a865f48"},
+ {"name":"btc","category":"receive","address":"mnjuMNdaHm1DcyXFRzSGGVCnkRJxNZKz4D","amount":3.27735604,"confirmations":2,"txid":"deaa27520aa9b8f00f5ab27f5df1c6decf52dee7248ecd09ab27e7ed7545aeee"},
+ {"name":"btc","category":"receive","address":"mnjuMNdaHm1DcyXFRzSGGVCnkRJxNZKz4D","amount":1,"confirmations":2,"txid":"98321205edcea127d3592d43b73c2b5ddd73b5afbbcb0372e5f410dca4520ef1"},
+ {"name":"eth","category":"receive","address":"0x6178076b384a3a1fd04608977c0cdca92d41bf45","amount":"1.257","confirmations":15,"txid":"0x70f675340d6c6f271948c31c13419f4811917563eab3eaa14afaf49bf9a3d805"},
+ {"name":"eth","category":"receive","address":"0x6178076b384a3a1fd04608977c0cdca92d41bf45","amount":"1.257","confirmations":15,"txid":"0x7bb89d4df53db94751e51eb7546716ce09682a6ea0a4d0d45250881b9b588f1f"},
+ {"name":"eth","category":"receive","address":"0x6178076b384a3a1fd04608977c0cdca92d41bf45","amount":"1.250","confirmations":13,"txid":"0x617c5500b7c97fb2bbbb4ba7ae43f078d47d3b0aa7fcbf3b2490f30c8184b997"}
+ ]
+}
+*/
+app.get('/v1/pulltxs',function(req,res){
+  if(!judgeIp(req.ip))
+    return res.send({err:-1000,msg:'you are not allowed!'})
+  MessageStack.pull()
+  .then(ret=>{
+    return res.send({err:0 ,msg:ret})
+  })
+  .catch(err=>{
+    log.err(err)
+    return res.send({err:-300 ,msg:err})
+  })
+})
+
+
+/*
+确认以下交易已经处理完成，消息栈中不会再出现一下交易
+CURL:
+  curl http://127.0.0.1:1990/v1/confirmtxs \
+  -H "Content-Type: application/json" \
+  -X POST -d '{"txids":["2d2e6429b630a2bd23686b458a50c67db8797a2562c44dae0d1625582a865f48"]}'
+RES:
+ {"err":0,"msg":"DELETED"}
+
+*/
+app.post('/v1/confirmtxs',function(req,res){
+  if(!judgeIp(req.ip))
+    return res.send({err:-1000,msg:'you are not allowed!'})
+  if(!req.body.txids) return res.send({err:-100,msg:'TXIDS_NOT_VAILD'})
+  var txids = req.body.txids
+  if(!txids[0]) return res.send({err:-100,msg:'TXIDS_NOT_VAILD'})
+  MessageStack.deleteByTxids(txids)
+  .then(ret=>{
+    return res.send({err:0,msg:ret})
+  })
+  .catch(err=>{
+    return res.send({err:-300,msg:err})
+  })
+})
 
 app.listen(config.apiv1.port);
 log.info("API V1 listening on " + config.apiv1.port);

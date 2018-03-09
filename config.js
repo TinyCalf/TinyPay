@@ -97,7 +97,7 @@ const dev = {
     	port:'8332',
     	user:'ebo',
     	pass:'ebo123',
-      coldwallet:"",
+      coldwallet:"mnjuMNdaHm1DcyXFRzSGGVCnkRJxNZKz4D",
       maxStore:1,
       txCheckDuration: 5 * 1000, //5s
       incomeLimit:0.00001, // 最小充值提现下限
@@ -193,7 +193,7 @@ const dev = {
     	protocol:"http",
     	host:'127.0.0.1',
     	port:'10070',
-      coldwallet:"",
+      coldwallet:"0x738489ac06e9a9071fa7fc2098a0c4221f7834a9",
       maxStore:1,
       txCheckDuration: 5 * 1000, // 20s
       incomeLimit:0.00001,       // 最小充值下限

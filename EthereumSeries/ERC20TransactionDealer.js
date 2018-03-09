@@ -9,6 +9,7 @@ var zmq = require('../Zeromq/zmqServer')
 var config = require('../config.js')
 var log = require('../Logs/log.js')("ERC20TransactionDealer")
 var config = require('../config').currencies
+var MessageStack = require('../Database/MessageStack')
 /*
 筛选出所有交易中向本地充值的交易
 txs=>txs
@@ -66,8 +67,9 @@ var zmqSendReceivedTxs = (rpc, txs, confirmations) => {
           confirmations:    confirmations,
           txid:             txs[i].hash,
         }
-
-        //发送消息
+        //数据库消息队列
+        MessageStack.push(tx.txid,JSON.stringify(tx))
+        //zmq发送消息
         zmq.sendReceivedTxs(tx)
         .catch( err=>log.err(err) )
         //如果充值记录中没有该交易，则向其发送一笔交易以保证转出的矿工费用,并添加数据库

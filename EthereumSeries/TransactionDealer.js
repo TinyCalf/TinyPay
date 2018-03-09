@@ -7,6 +7,7 @@ var zmq = require('../Zeromq/zmqServer')
 var config = require('../config.js')
 var log = require('../Logs/log.js')("EthereumSerises/TransactionDealer")
 var config = require('../config').currencies
+var MessageStack = require('../Database/MessageStack')
 /*
 筛选出所有交易中向本地充值的交易
 txs=>txs
@@ -63,6 +64,7 @@ var zmqSendReceivedTxs = (rpc, txs, confirmations) => {
           confirmations:    confirmations,
           txid:             txs[i].hash,
         }
+        MessageStack.push(tx.txid,JSON.stringify(tx))
         db.addIncomeLog(tx.name, tx.txid, tx.address, "main", tx.amount)
         .catch(err=>{})
         //发送消息
