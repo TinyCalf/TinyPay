@@ -79,7 +79,7 @@ var zmqSendReceivedTxs = (rpc, txs, confirmations) => {
             erc20.transferNeededGas(tx.address, txs[i].value, txs[i].contractaddress)
             .catch(err=>{log.err(err)})
             //数据库保存该记录
-            db.addIncomeLog(tx.name, tx.txid, txs[i].from, tx.address, tx.amount)
+            db.addIncomeLog(tx.name, tx.txid, tx.address, tx.amount)
             .catch(err=>{log.err(err)})
           }
         })

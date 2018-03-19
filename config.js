@@ -232,4 +232,4 @@ const dev = {
 /*
 更换exports的内容来切换开发环境和正式环境
 */
-module.exports = prod
+module.exports = dev

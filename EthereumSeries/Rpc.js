@@ -333,8 +333,6 @@ module.exports = function Rpc(name) {
         return this.sendNormalTransaction(tx)
       })
       .then(ret=>{
-        //增加数据
-        db.addOutcomeLog(this.name, ret, account, mainAccount, this.fromWei(tx.value)).catch(err=>{console.log(err)})
         resolve(ret)
       })
       .catch(err=>reject(err))

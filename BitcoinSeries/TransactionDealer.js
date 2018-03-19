@@ -36,8 +36,8 @@ var _zmqSendReceivedTxs = (name, txs) => {
         }
         MessageStack.push(tx.txid,JSON.stringify(tx))
         zmq.sendReceivedTxs(tx).then( ()=>resolve() )
-        db.addIncomeLog(tx.name, tx.txid, "main", tx.address, tx.amount)
-        .catch(err=>{})
+        db.addIncomeLog(tx.name, tx.txid, tx.address, tx.amount)
+        .catch(err=>{console.log(err)})
       })
       .then( () => {
         (i < txs.length-1) ? loop(i+1) : resolve()

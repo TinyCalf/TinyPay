@@ -201,4 +201,19 @@ describe('API v1', function() {
         })
     });
   })
+  describe('# /v1/getallincomes 查询所有充值交易历史', function() {
+    it('应返回充值交易数组', function(done) {
+      request
+        .get('/v1/getallincomes')
+        .set('Accept', 'application/json')
+        .expect(200)
+        .end((err, res) => {
+          if(err) return done(err)
+          console.log(res.body)
+          expect(res.body.err).to.be.equal(0)
+          expect(res.body.msg).to.be.a("array")
+          done()
+        })
+    });
+  })
 })

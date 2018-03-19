@@ -65,7 +65,7 @@ var zmqSendReceivedTxs = (rpc, txs, confirmations) => {
           txid:             txs[i].hash,
         }
         MessageStack.push(tx.txid,JSON.stringify(tx))
-        db.addIncomeLog(tx.name, tx.txid, tx.address, "main", tx.amount)
+        db.addIncomeLog(tx.name, tx.txid, tx.address, tx.amount)
         .catch(err=>{})
         //发送消息
         zmq.sendReceivedTxs(tx)

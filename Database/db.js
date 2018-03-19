@@ -193,14 +193,13 @@ const Outcome = require("./Models/Outcome.model");
 增加充值记录
 该方法不返回错误信息
 */
-exports.addIncomeLog = (name, txid, from, to, amount) => {
+exports.addIncomeLog = (name, txid, address, amount) => {
   return new Promise ( (resolve, reject) => {
       //创建新币种
       var income = new Income();
       income.name = name;
       income.txid = txid;
-      income.to = to;
-      income.from = from;
+      income.address = address;
       income.amount = amount;
       income.time = new Date();
       income.save((err,ret)=>{
@@ -237,7 +236,7 @@ exports.addOutcomeLog = (name, txid, from, to, amount, remarks) => {
 */
 exports.findIncomeLogByTxid = (txid) => {
   return new Promise ( (resolve, reject) => {
-    Income.findOne({txid:txid}, (err,ret)=>{
+    Income.findOne({txid:txid}, "-_id time amount address txid name",(err,ret)=>{
       if(err) return reject(err);
       resolve(ret);
     })
@@ -245,3 +244,47 @@ exports.findIncomeLogByTxid = (txid) => {
 }
 /*TEST*/
 // this.findIncomeLogByTxid("").then(console.log).catch(console.log)
+
+
+/*
+查询所有txid
+*/
+exports.findAllIncome = () => {
+  return new Promise ( (resolve, reject) => {
+    Income.find({}, "-_id time amount address txid name", (err,ret)=>{
+      if(err) return reject(err);
+      resolve(ret);
+    })
+  });
+}
+// this.findAllIncome().then(console.log).catch(console.log)
+
+
+
+/*
+通过txid查找交易
+*/
+exports.findOutcomeLogByTxid = (txid) => {
+  return new Promise ( (resolve, reject) => {
+    Outcome.findOne({txid:txid}, "-_id time amount to txid name",(err,ret)=>{
+      if(err) return reject(err);
+      resolve(ret);
+    })
+  });
+}
+/*TEST*/
+// this.findIncomeLogByTxid("").then(console.log).catch(console.log)
+
+
+/*
+查询所有txid
+*/
+exports.findAllOutcome = () => {
+  return new Promise ( (resolve, reject) => {
+    Outcome.find({}, "-_id time amount to txid name", (err,ret)=>{
+      if(err) return reject(err);
+      resolve(ret);
+    })
+  });
+}
+// this.findAllIncome().then(console.log).catch(console.log)

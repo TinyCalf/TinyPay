@@ -131,6 +131,145 @@ app.get('/v1/getinfo',function(req,res){
   loop(0)
 });
 
+/*
+查询所有充值信息
+curl http://127.0.0.1:1990/v1/getallincomes
+RETURN
+{
+    "err": 0,
+    "msg": [
+        {
+            "time": "2018-03-19T10:55:35.395Z",
+            "amount": 2,
+            "address": "mnjuMNdaHm1DcyXFRzSGGVCnkRJxNZKz4D",
+            "txid": "2d2e6429b630a2bd23686b458a50c67db8797a2562c44dae0d1625582a865f48",
+            "name": "btc"
+        },
+        {
+            "time": "2018-03-19T10:55:35.397Z",
+            "amount": 1,
+            "address": "mnjuMNdaHm1DcyXFRzSGGVCnkRJxNZKz4D",
+            "txid": "98321205edcea127d3592d43b73c2b5ddd73b5afbbcb0372e5f410dca4520ef1",
+            "name": "btc"
+        },
+    ]
+}
+
+*/
+app.get('/v1/getallincomes',(req, res) => {
+  if(!judgeIp(req.ip))
+    return res.send({err:-1000,msg:'you are not allowed!'})
+  db.findAllIncome()
+  .then(ret=>{
+    return res.send({err:0,msg:ret})
+  })
+  .catch(err=>{
+    console.log(new Error(err))
+    return res.send({err:-900,msg:err})
+  })
+});
+
+/*
+通过txid查询充值交易
+CURL
+  curl http://127.0.0.1:1990/v1/findincomebytxid \
+  -H "Content-Type: application/json" \
+  -X POST -d \ '{"txid":"2d2e6429b630a2bd23686b458a50c67db8797a2562c44dae0d1625582a865f48"}'
+RETRUN
+  {
+    "err": 0,
+    "msg": {
+        "time": "2018-03-19T10:55:35.395Z",
+        "amount": 2,
+        "address": "mnjuMNdaHm1DcyXFRzSGGVCnkRJxNZKz4D",
+        "txid": "2d2e6429b630a2bd23686b458a50c67db8797a2562c44dae0d1625582a865f48",
+        "name": "btc",
+    }
+}
+*/
+app.post('/v1/findincomebytxid', (req, res) => {
+  if(!judgeIp(req.ip))
+    return res.send({err:-1000,msg:'you are not allowed!'})
+  var txid = req.body.txid;
+  db.findIncomeLogByTxid(txid)
+  .then(ret=>{
+    return res.send({err:0,msg:ret})
+  })
+  .catch(err=>{
+    console.log(new Error(err))
+    return res.send({err:-900,msg:err})
+  })
+});
+
+/*
+查询所有提现信息
+curl http://127.0.0.1:1990/v1/getalloutcomes
+RETURN
+{
+    "err": 0,
+    "msg": [
+        {
+            "time": "2018-03-19T11:16:03.832Z",
+            "amount": 5.59647889,
+            "to": "mnjuMNdaHm1DcyXFRzSGGVCnkRJxNZKz4D",
+            "txid": "b8dd7c55f5e03f5a5d7e2f3d289ed90becb3fd47c3d9ba3a3b388bfb8d5c3188",
+            "name": "btc"
+        },
+        {
+            "time": "2018-03-19T11:16:04.403Z",
+            "amount": 1.83529194,
+            "to": "0x738489ac06e9a9071fa7fc2098a0c4221f7834a9",
+            "txid": "0x70a819faf56b84dfee5de0a8ecaf071706442459aa757aa308613d9d8d6c5cbf",
+            "name": "eth"
+        }
+    ]
+}
+
+*/
+app.get('/v1/getalloutcomes',(req, res) => {
+  if(!judgeIp(req.ip))
+    return res.send({err:-1000,msg:'you are not allowed!'})
+  db.findAllOutcome()
+  .then(ret=>{
+    return res.send({err:0,msg:ret})
+  })
+  .catch(err=>{
+    console.log(new Error(err))
+    return res.send({err:-900,msg:err})
+  })
+});
+
+/*
+通过txid查询充值交易
+CURL
+  curl http://127.0.0.1:1990/v1/findoutcomebytxid \
+  -H "Content-Type: application/json" \
+  -X POST -d \ '{"txid":"2d2e6429b630a2bd23686b458a50c67db8797a2562c44dae0d1625582a865f48"}'
+RETRUN
+{
+    "err": 0,
+    "msg": {
+        "time": "2018-03-19T11:16:03.832Z",
+        "amount": 5.59647889,
+        "to": "mnjuMNdaHm1DcyXFRzSGGVCnkRJxNZKz4D",
+        "txid": "b8dd7c55f5e03f5a5d7e2f3d289ed90becb3fd47c3d9ba3a3b388bfb8d5c3188",
+        "name": "btc"
+    }
+}
+*/
+app.post('/v1/findoutcomebytxid', (req, res) => {
+  if(!judgeIp(req.ip))
+    return res.send({err:-1000,msg:'you are not allowed!'})
+  var txid = req.body.txid;
+  db.findOutcomeLogByTxid(txid)
+  .then(ret=>{
+    return res.send({err:0,msg:ret})
+  })
+  .catch(err=>{
+    console.log(new Error(err))
+    return res.send({err:-900,msg:err})
+  })
+});
 
 /*
 获取钱包地址 btc | bcc | ltc | eth | etc
@@ -199,8 +338,6 @@ app.get('/v1/getnewaddress',function(req,res){
   }
   if(!has) return res.send({err:-100 ,msg:'NO_SUCH_CURRENCY_CONFIGURED'})
 });
-
-
 
 /*
 发送
@@ -341,7 +478,6 @@ app.get('/v1/pulltxs',function(req,res){
     return res.send({err:-300 ,msg:err})
   })
 })
-
 
 /*
 确认以下交易已经处理完成，消息栈中不会再出现一下交易
