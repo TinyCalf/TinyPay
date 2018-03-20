@@ -90,20 +90,20 @@ const dev = {
   },
   currencies:{
     /****************************比特币系列**************************************/
-    btc:{
-      category:'bitcoin',
-    	protocol:"http",
-    	host:'127.0.0.1',
-    	port:'8332',
-    	user:'ebo',
-    	pass:'ebo123',
-      coldwallet:"mnjuMNdaHm1DcyXFRzSGGVCnkRJxNZKz4D",
-      maxStore:1,
-      txCheckDuration: 5 * 1000, //5s
-      incomeLimit:0.00001, // 最小充值提现下限
-      outcomeLimit:10, // 最大提币上限
-      confirmationsLimit:10, // 交易确认数
-    },
+    // btc:{
+    //   category:'bitcoin',
+    // 	protocol:"http",
+    // 	host:'127.0.0.1',
+    // 	port:'8332',
+    // 	user:'ebo',
+    // 	pass:'ebo123',
+    //   coldwallet:"mnjuMNdaHm1DcyXFRzSGGVCnkRJxNZKz4D",
+    //   maxStore:1,
+    //   txCheckDuration: 5 * 1000, //5s
+    //   incomeLimit:0.00001, // 最小充值提现下限
+    //   outcomeLimit:10, // 最大提币上限
+    //   confirmationsLimit:10, // 交易确认数
+    // },
     // bch:{
     //   category:'bitcoin',
     // 	protocol:"http",
@@ -171,7 +171,17 @@ const dev = {
     //   maxStore:1,
     //   txCheckDuration: 5 * 1000,// 1min
     //   incomeLimit:0.00001, // 最小充值提现下限
-    //   outcomeLimit:10, // 最大提币上限
+    //   outcomeLimit:10, // 最大提币上限    // eth:{
+    //   category:'ethereum',
+    // 	protocol:"http",
+    // 	host:'127.0.0.1',
+    // 	port:'10070',
+    //   coldwallet:"0x738489ac06e9a9071fa7fc2098a0c4221f7834a9",
+    //   maxStore:1,
+    //   txCheckDuration: 5 * 1000, // 20s
+    //   incomeLimit:0.00001,       // 最小充值下限
+    //   outcomeLimit:10,     // 最大提币上限
+    //   confirmationsLimit:10,   // 交易确认数
     //   confirmationsLimit:10, // 交易确认数
     // },
 
@@ -208,21 +218,21 @@ const dev = {
       // ]
     },
 
-    // rbtc:{
-    //   category:'bitcoin',
-    // 	protocol:"http",
-    // 	host:'127.0.0.1',
-    // 	port:'8330',
-    // 	user:'ebo',
-    // 	pass:'ebo123',
-    //   coldwallet:"",
-    //   maxStore:50,
-    //   txCheckDuration: 5 * 1000,// 30s
-    //   incomeLimit:0.00001, // 最小充值提现下限JonQzjnN7LFX6KKaBkyBq46K8ac3q9NocV
-    //   outcomeLimit:10000, // 最大提币上限
-    //   confirmationsLimit:10, // 交易确认数
-    //   env:'prod',
-    // },
+    rbtc:{
+      category:'bitcoin',
+    	protocol:"http",
+    	host:'127.0.0.1',
+    	port:'8330',
+    	user:'ebo',
+    	pass:'ebo123',
+      coldwallet:"",
+      maxStore:50,
+      txCheckDuration: 5 * 1000,// 30s
+      incomeLimit:0.00001, // 最小充值提现下限JonQzjnN7LFX6KKaBkyBq46K8ac3q9NocV
+      outcomeLimit:10000, // 最大提币上限
+      confirmationsLimit:10, // 交易确认数
+      env:'prod',
+    },
     /**************************************************************************/
   }
 }

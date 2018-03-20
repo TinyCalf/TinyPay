@@ -50,14 +50,19 @@ exports.push = (txid, msg) => {
 }
 
 /*
-push一条新信息，如果txid已存在，则更新，不存在则插入
+标记为已删除
 @param txids array txid数组
 @param msg address of eth account
 @return null
 */
 exports.deleteByTxids = (txids) => {
   return new Promise ( (resolve, reject) => {
-    Stack.remove({ txid: { $in: txids } }, (err,ret)=>{
+    var data = {
+      $set:{
+        solved:true
+      }
+    }
+    Stack.update({ txid: { $in: txids } }, data, (err,ret)=>{
       if(err) return reject(err)
       return resolve("DELETED")
     })
@@ -69,7 +74,7 @@ exports.deleteByTxids = (txids) => {
 */
 exports.pull = () => {
   return new Promise ( (resolve, reject) => {
-    Stack.find({}, "-_id msg", (err, ret) => {
+    Stack.find({solved:false}, "-_id msg", (err, ret) => {
       if(err) return reject(err)
       var data = []
       for (var key in ret){
