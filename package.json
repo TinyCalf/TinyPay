@@ -21,6 +21,7 @@
     "chalk": "2.3.0",
     "express": "4.16.2",
     "ipaddr.js": "1.5.4",
+    "js-yaml": "^3.11.0",
     "mongoose": "4.13.0",
     "nodemailer": "^4.6.0",
     "open": "0.0.5",
