@@ -1,23 +1,65 @@
 const Web3 = require("web3")
 const config = require("../Config")
-
 var web3 = new Web3(Web3.givenProvider || "ws://"+ config.ethereum.host + ":" + config.ethereum.wsport)
+var log = require("../Log")("Ethereum/Block")
+var blockdb = require("./Database/EthereumBlock.db")
+
+/*
+check the hash of one block.
+if not wrong , update comformations of releated txs.
+*/
 
 
-var subscription = web3.eth.subscribe('newBlockHeaders', function(error, result){
-  if (!error)
-    console.log("error",error);
-  else console.log("result", result)
+
+/*
+start to subscript new block. once found, save into database
+*/
+var startToSubscriptNewBlock = () => {
+  log.success("start to subscript new block")
+  var subscription = web3.eth.subscribe('newBlockHeaders', function(error, result){
+    if (error) log.err(error)
+  })
+  .on("data", function(blockHeader){
+    var blockNumber = blockHeader.number
+    var blockHash = blockHeader.hash
+    log.success(`new block discovered ${blockNumber}, ${blockHash}`)
+    web3.eth.getBlock(blockNumber)
+    .then(ret=>{
+      return blockdb.insert({
+        number:blockNumber,
+        hash: blockHash,
+        txids:ret.transactions
+      })
+    })
+    .then(ret=>{
+      log.success(`added block ${blockNumber} into database`)
+    })
+    .catch(err=>log.err(err))
+  })
+}
+exports.startToSubscriptNewBlock = startToSubscriptNewBlock
+
+
+// var subscription = web3.eth.subscribe('logs', {
+//     fromBlock:"0x" + (30000).toString(16),
+//     // toBlock:"0x" + (38630).toString(16),
+// }, function(error, result){
+//     if (!error)
+//         console.log(result);
+// })
+// .on("data", function(log){
+//     console.log(log);
+// })
+// .on("changed", function(log){
+// });
+
+var subscription = web3.eth.subscribe('pendingTransactions', function(error, result){
+    if (!error)
+        console.log(result);
 })
-.on("data", function(blockHeader){
-  console.log("new block found")
-  var blockNumber = blockHeader.number
-  var blockHash = blockHeader.hash
-  console.log(blockNumber,  blockHash)
-})
-.on("error", (err) => {
-  console.log("err",err)
-})
+.on("data", function(transaction){
+    console.log(transaction);
+});
 
 
 

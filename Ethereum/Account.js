@@ -1,6 +1,6 @@
 var hdkey = require("ethereumjs-wallet/hdkey")
 var bip39 = require("bip39");
-var db = require("./Datebase/EthereumAccount.db")
+var db = require("./Database/EthereumAccount.db")
 var log = require("../Log")("Ethereum/Account")
 
 /* generate a new account*/
@@ -23,7 +23,9 @@ var _generate = () => {
 }
 
 /*
-新建一个帐号
+create a new account (generate and insert into database)
+
+EXAMPLE:
 createNewAccount("ETH" ,"ether", "123809128301")
 .then().catch(err=>log.err(err))
 */
@@ -43,6 +45,8 @@ var createNewAccount = (name, category, appid) => {
     })
   })
 }
+
+
 
 
 // for(let i=0; i< 10000; i++){
