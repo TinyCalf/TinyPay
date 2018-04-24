@@ -20,6 +20,7 @@
     "bitcoind-rpc": "0.7.0",
     "body-parser": "1.18.2",
     "chalk": "2.3.0",
+    "ethereumjs-tx": "^1.3.4",
     "ethereumjs-wallet": "^0.6.0",
     "express": "4.16.2",
     "ipaddr.js": "1.5.4",
@@ -29,6 +30,7 @@
     "open": "0.0.5",
     "string": "^3.3.3",
     "tiny-logger": "0.0.2",
+    "tinycalf-logger": "0.0.2-beta",
     "web3": "^1.0.0-beta.33",
     "web3_extended": "1.0.0",
     "zmq": "2.15.3"

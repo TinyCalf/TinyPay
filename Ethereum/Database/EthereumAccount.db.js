@@ -2,9 +2,6 @@ const dbconnect = require("../../dbconnect")
 mongoose = require("mongoose")
 
 var schema = new mongoose.Schema({
-  name:           {type:String, required:true}, // ETH KING PAY ...
-  category:       {type:String, required:true}, // ether erc20 erc233 ....
-  appid:          {type:String},
   address:        {type:String, required:true, unique:true},
   prikey:         {type:String, required:true},
   pubkey:         {type:String, required:true},
@@ -17,13 +14,36 @@ var EthereumAccount = mongoose.model("EthereumAccount", schema)
 /*export model*/
 exports.model = EthereumAccount
 
+/*
+add a new account
+
+EXAMPLE
+db.insert({
+  address
+  prikey
+  pubkey
+  path
+  mnemoic
+}).then(console.log).catch(console.log)
+*/
+exports.insert = new Function("params")
+
+/*
+find the prikey for an account
+
+EXAMPLE
+this.getPrikey("0xb479714e75cbba8e96fd0aea364da7f4b84d7e43")
+.then(console.log).catch(console.log)
+*/
+exports.getPrikey = new Function("address")
+
+
+
+
 /*add a new account*/
-exports.insert = (params) => {
+this.insert = (params) => {
   return new Promise ( (resolve, reject) => {
     var nAccount = new EthereumAccount()
-    nAccount.name = params.name
-    nAccount.category = params.category
-    nAccount.appid = params.appid
     nAccount.address = params.address
     nAccount.prikey = params.prikey
     nAccount.pubkey = params.pubkey
@@ -36,4 +56,13 @@ exports.insert = (params) => {
   })
 }
 
-// exports.findOneByAddress(address)
+this.getPrikey = (address) => {
+  return new Promise ( (resolve, reject) => {
+    EthereumAccount.findOne({address:address}, "prikey", (err, ret) => {
+      if(err) return reject(err.code)
+      if(!ret) return reject(new Error("address not found"))
+      if(!ret.prikey) return reject(new Error("prikey not found"))
+      resolve(ret.prikey)
+    })
+  })
+}

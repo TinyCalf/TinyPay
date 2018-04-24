@@ -1,12 +1,10 @@
-var Rpc = require("./Rpc")
-
-var etc = new Rpc("etc")
-etc.sendToMainAccount("0x739b6f3c2646afd8555b44f104d1093e229f2a50",0.0001)
-.then(console.log)
-.catch(console.log)
-
+// var account = require("./Account")
 //
-// var rpc = new Rpc("eth")
+// account.createNewAccount().then(console.log).catch(console.log)
 //
-// rpc.post();
-// rpc.get();
+//
+
+// 
+// var db = require("./Database/EthereumAccount.db.js")
+// db.getPrikey("0xb479714e75ca8e96fd0aea364da7f4b84d7e43")
+// .then(console.log).catch(console.log)

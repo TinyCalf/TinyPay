@@ -1,12 +1,20 @@
 # 数据库相关
 mongodb:
-  host: mongodb://localhost:27017/coolpay
+  host: mongodb://localhost:27017/coolpay_dev
 
-# ethereum相关
 ethereum:
   host: 127.0.0.1
   rpcport: 8545
   wsport: 8546
+  available_currencies:
+    - ether
+    - king
 
-# erc20 相关
-erc20:
+ether:
+  category: ether
+
+king:
+  contractAddress:
+  category: erc20
+  symbol: KING(KingCoin)
+  name: KingCoin
