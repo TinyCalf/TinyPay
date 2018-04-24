@@ -5,9 +5,8 @@ mongodb:
 # ethereum相关
 ethereum:
   host: 127.0.0.1
-  rpcport: 10070
-  wsport: 10072
+  rpcport: 8545
+  wsport: 8546
 
 # erc20 相关
 erc20:
-  

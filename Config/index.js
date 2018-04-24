@@ -6,5 +6,5 @@ var load = (name)=>{
   // console.log(ymlpath)
   return yaml.load(fs.readFileSync(ymlpath));
 }
-var main = load("main")
-module.exports = load(main.use)
+var index = load("index")
+module.exports = load(index.use)

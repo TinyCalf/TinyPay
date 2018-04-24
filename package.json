@@ -28,6 +28,7 @@
     "nodemailer": "^4.6.0",
     "open": "0.0.5",
     "string": "^3.3.3",
+    "tiny-logger": "0.0.2",
     "web3": "^1.0.0-beta.33",
     "web3_extended": "1.0.0",
     "zmq": "2.15.3"
