@@ -12,7 +12,7 @@ EXAMPLE:
 createNewAccount()
 .then().catch(err=>log.err(err))
 */
-exports.createNewAccount = new Function()
+exports.createNewAccount = new Function("alias")
 
 /*
 find the prikey of account
@@ -20,6 +20,10 @@ find the prikey of account
 exports.getPrivateKeyForAccount = new Function("address")
 
 
+var _getCurrencyByAlias = (alias) => {
+  if(!config[alias]) throw new Error("ALIAS_NOT_FOUND")
+  return config[alias]
+}
 
 
 /*generate a new account*/
@@ -41,11 +45,20 @@ var _generate = () => {
   }
 }
 
-this.createNewAccount = () => {
+this.createNewAccount = (alias) => {
   return new Promise ( (resolve, reject) => {
     var account = _generate()
+    currency = _getCurrencyByAlias(alias)
+    account.name = currency.name
+    account.symbol = currency.symbol
+    account.category  = currency.category
     db.insert(account)
     .then(ret=>{
+      var account = {}
+      account.address = ret.address
+      account.name = ret.name
+      account.symbol = ret.symbol
+      account.category = ret.category
       resolve(account)
     })
     .catch(err=>{

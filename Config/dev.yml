@@ -6,7 +6,7 @@ ethereum:
   host: 127.0.0.1
   rpcport: 8545
   wsport: 8546
-  available_currencies:
+  available_currency_alias:
     - ether
     - king
 

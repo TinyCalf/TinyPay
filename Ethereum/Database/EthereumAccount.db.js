@@ -6,7 +6,9 @@ var schema = new mongoose.Schema({
   prikey:         {type:String, required:true},
   pubkey:         {type:String, required:true},
   path:           {type:String, required:true},
-  mnemonic:       {type:String, required:true}
+  mnemonic:       {type:String, required:true},
+  symbol:         {type:String, required:true},
+  category:       {type:String, required:true},
 });
 
 var EthereumAccount = mongoose.model("EthereumAccount", schema)
@@ -24,6 +26,9 @@ db.insert({
   pubkey
   path
   mnemoic
+  alias
+  symbol
+  category
 }).then(console.log).catch(console.log)
 */
 exports.insert = new Function("params")
@@ -49,9 +54,12 @@ this.insert = (params) => {
     nAccount.pubkey = params.pubkey
     nAccount.path = params.path
     nAccount.mnemonic = params.mnemonic
+    nAccount.name = params.name
+    nAccount.symbol = params.symbol
+    nAccount.category = params.category
     nAccount.save( (err, ret) => {
       if (err) return reject(err)
-      resolve()
+      resolve(ret)
     })
   })
 }
