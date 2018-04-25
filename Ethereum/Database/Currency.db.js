@@ -1,0 +1,60 @@
+const dbconnect = require("../../dbconnect")
+mongoose = require("mongoose")
+
+var schema = new mongoose.Schema({
+  alias:               {type:String, required:true, unique:true},
+  lastCheckedHeight:  {type:Number, required:true, default:20},
+});
+
+var Currency = mongoose.model("Currency", schema);
+
+exports.model = Currency
+
+/*
+init all currency
+*/
+exports.init = new Function("currencies")
+
+/*
+update currency height
+*/
+exports.update = new Function("alias", "height")
+
+/*
+check currency height
+*/
+exports.check = new Function("alias")
+
+
+this.init = (currencies) => {
+  return new Promise( (resolve, reject)=>{
+    Currency.collection.insert(currencies, function(err, ret){
+      if(err && err.code != 11000) return reject(err)
+      if(err && err.code == 11000) return resolve()
+      resolve()
+    })
+  })
+}
+
+this.updateHeight = (alias, height)=>{
+  return new Promise( (resolve, reject)=>{
+    var data = {
+          $set:{
+            lastCheckedHeight:height
+          }
+        }
+    Currency.findOneAndUpdate({alias:alias}, data, (err,ret)=>{
+      if(err) return reject(err);
+      resolve();
+    })
+  })
+}
+
+this.checkHeight = (alias) => {
+  return new Promise( (resolve, reject)=>{
+    Currency.findOne({alias:alias}, (err,ret)=>{
+      if(err) return reject(err);
+      resolve(ret.lastCheckedHeight);
+    })
+  })
+}

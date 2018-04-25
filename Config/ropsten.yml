@@ -9,11 +9,12 @@ ethereum:
   available_currency_alias:
     - ether
     - king
+  confirmations: 20
 
 ether:
   gasPrice: 4000000000
-  confirmations: 20
   category: ether
+  startHeight: 3000000
 
 king:
   contractAddress: "0x53565FEbe212Fc43392Fdf01aE19CCd3d492695A"
@@ -21,4 +22,4 @@ king:
   symbol: KING(KingCoin)
   name: KingCoin
   gasPrice: 4000000000
-  confirmations: 20
+  startHeight: 3000000
