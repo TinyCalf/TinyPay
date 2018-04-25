@@ -7,6 +7,12 @@ var account = require("../Account")
 var db = require("../Database/ERC20Income.db")
 var block = require("../Block")
 var currencydb = require("../Database/Currency.db")
+var Event = require("events")
+
+var getEvents = new Event()
+exports.getEvents = getEvents
+
+
 
 var abi = JSON.parse(
   fs.readFileSync(__dirname + "/erc20.abi").toString())
@@ -77,6 +83,7 @@ discover new transactions
 */
 var _discoverNewTransactions = (alias) => {
   return new Promise ( (resolve, reject) => {
+    console.info(`discovering new ${alias} transactions`)
     var currentHeight = 0
     var lastCheckedHeight = 0
     block.getCurrentHeight()
@@ -85,13 +92,14 @@ var _discoverNewTransactions = (alias) => {
       return currencydb.checkHeight(alias)
     })
     .then(height=>{
-      lastCheckedHeight = height
+      lastCheckedHeight = height + 1
       return _getTransactions(alias, lastCheckedHeight, currentHeight)
     })
     .then(transactions=>{
       var incomes = []
       transactions.forEach( (tx)=>{
         var income = {}
+        income.alias = alias
         income.symbol = config[alias].symbol
         income.transactionHash = tx.transactionHash
         income.conformations = _culConformations(currentHeight, tx.blockNumber)
@@ -102,6 +110,7 @@ var _discoverNewTransactions = (alias) => {
         income.value = tx.value
         income.amount = web3.utils.fromWei(tx.value)
         incomes.push(income)
+        getEvents.emit("newIncome", income)
         console.success(`new ${alias} income has been discovered!
           transactionHash: ${income.transactionHash}
           sender: ${income.sender}
@@ -118,3 +127,15 @@ var _discoverNewTransactions = (alias) => {
     .catch(err=>reject(err))
   })
 }
+
+/*
+confirm when init
+*/
+_discoverNewTransactions("king").catch(err=>console.error(err))
+
+/*
+update  new transaction when new block discovered
+*/
+block.newBlock.on('newblock', (blockHeader) => {
+  _discoverNewTransactions("king").catch(err=>console.error(err))
+});

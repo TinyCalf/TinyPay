@@ -2,6 +2,7 @@ const dbconnect = require("../../dbconnect")
 mongoose = require("mongoose")
 
 var schema = new mongoose.Schema({
+  alias:                   {type:String, required:true},
   symbol:                  {type:String, required:true,},
   transactionHash:         {type:String, required:true, unique:true},
   conformations:           {type:Number, required:true, default:0},
