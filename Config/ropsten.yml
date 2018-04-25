@@ -1,0 +1,28 @@
+# 数据库相关
+mongodb:
+  host: mongodb://localhost:27017/coolpay_dev
+
+ethereum:
+  host: 127.0.0.1
+  rpcport: 8545
+  wsport: 8546
+  gas: 4700000
+  gasPrice: 4000000000
+  available_currency_alias:
+    - ether
+    - king
+
+ether:
+  category: ether
+
+king:
+  contractAddress: "0x53565FEbe212Fc43392Fdf01aE19CCd3d492695A"
+  category: erc20
+  symbol: KING(KingCoin)
+  name: KingCoin
+
+# tiny:
+#   contractAddress: "0x53565FEbe212Fc43392Fdf01aE19CCd3d492695A"
+#   category: erc20
+#   symbol: TINY
+#   name: Tiny Calf
