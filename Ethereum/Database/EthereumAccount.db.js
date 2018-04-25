@@ -43,6 +43,12 @@ this.getPrikey("0xb479714e75cbba8e96fd0aea364da7f4b84d7e43")
 exports.getPrikey = new Function("address")
 
 
+/*
+find all addresses by symbol
+
+*/
+exports.getAddressesBySymbol = new Function("symbol")
+
 
 
 /*add a new account*/
@@ -71,6 +77,16 @@ this.getPrikey = (address) => {
       if(!ret) return reject(new Error("address not found"))
       if(!ret.prikey) return reject(new Error("prikey not found"))
       resolve(ret.prikey)
+    })
+  })
+}
+
+this.getAddressesBySymbol = (symbol) => {
+  return new Promise ( (resolve, reject) => {
+    EthereumAccount.find({symbol:symbol}, "-_id address", (err, ret) => {
+      if(err) return reject(err.code)
+      if(!ret) return reject(new Error("addresses not found"))
+      resolve(ret)
     })
   })
 }

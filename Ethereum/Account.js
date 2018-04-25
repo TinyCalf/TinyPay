@@ -19,6 +19,18 @@ find the prikey of account
 */
 exports.getPrivateKeyForAccount = new Function("address")
 
+/*
+find addresses by alias
+EXAMPLE
+account.getAddressesByAlias("king").then(console.log).catch(console.log)
+RETURN 
+[ '0xbf0d681a164367b7fcef9435d32a23889fed100d',
+  '0x199c22f08dec6e189ac1c6b768919097be24f965',
+  '0xee6a7a60f2f8d1e45a15eebb91eec41886d4fa08',
+  '0xf02ee1ec37fd6aa356029f7dec2f5eb081a5bbce' ]
+*/
+exports.getAddressesByAlias = new Function("alias")
+
 
 var _getCurrencyByAlias = (alias) => {
   if(!config[alias]) throw new Error("ALIAS_NOT_FOUND")
@@ -69,4 +81,19 @@ this.createNewAccount = (alias) => {
 
 this.getPrivateKeyForAccount = (address) =>{
     return db.getPrikey(address)
+}
+
+this.getAddressesByAlias = (alias) => {
+  return new Promise ( (resolve, reject) =>{
+    var symbol = _getCurrencyByAlias(alias).symbol
+    db.getAddressesBySymbol(symbol)
+    .then(ret=>{
+      var array = []
+      ret.forEach((line)=>{
+        array.push(line.address)
+      })
+      resolve(array)
+    })
+    .catch(err=>reject(err))
+  })
 }
