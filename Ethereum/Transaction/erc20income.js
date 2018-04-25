@@ -9,6 +9,13 @@ var block = require("../Block")
 var currencydb = require("../Database/Currency.db")
 var Event = require("events")
 
+
+/*
+get some events
+EXAMPLE
+getEvents.on('newIncome', (income) => {...});
+        .on('confirmationUpdate',(transaction) => {...})
+*/
 var getEvents = new Event()
 exports.getEvents = getEvents
 
@@ -66,7 +73,7 @@ var _getTransactions = (alias, fromBlock, toBlock) =>{
 }
 
 /* culculate blockheight return 0-20*/
-var _culConformations = (currentHeight,blockNumber) => {
+var _culConfirmations = (currentHeight,blockNumber) => {
       var res = currentHeight - blockNumber
       var con = config.ethereum.confirmations
       if(res > con) res = con
@@ -102,7 +109,7 @@ var _discoverNewTransactions = (alias) => {
         income.alias = alias
         income.symbol = config[alias].symbol
         income.transactionHash = tx.transactionHash
-        income.conformations = _culConformations(currentHeight, tx.blockNumber)
+        income.confirmations = _culConfirmations(currentHeight, tx.blockNumber)
         income.sender = tx.from
         income.localReceiver = tx.to
         income.blockHash = tx.blockHash
@@ -116,7 +123,7 @@ var _discoverNewTransactions = (alias) => {
           sender: ${income.sender}
           localReceiver: ${income.localReceiver}
           amount: ${income.amount}
-          conformations: ${income.conformations}`)
+          confirmations: ${income.confirmations}`)
       })
       return db.appendRecords(incomes)
     })
@@ -129,13 +136,71 @@ var _discoverNewTransactions = (alias) => {
 }
 
 /*
-confirm when init
+update confirmations
+1. get block's hash that back from checkedHeight 22 confirmations
+2. find txs which block hash is block's hash
+3. culcalate the confirmations of the block txs
+5. update the tx that need to be changes
+6  emit the update
 */
-_discoverNewTransactions("king").catch(err=>console.error(err))
+var _updateConfirmationsOfOneBlock = (alias, blockNumber) => {
+  return new Promise ( (resolve, reject) => {
+    var blockHash = null
+    var currentHeight = null
+    var confirmations = null
+    var update = null
+    block.getBlock(blockNumber)
+    .then(ret=>{
+      blockHash = ret.hash
+      return block.getCurrentHeight()
+    })
+    .then(ret=>{
+      currentHeight = ret
+      confirmations = _culConfirmations(currentHeight, blockNumber)
+      return db.updateConfirmationByBlockHash(confirmations, blockHash, alias)
+    })
+    .then(ret=>{
+      update = ret
+      return db.findIncomesByBlockHash(blockHash, alias)
+    })
+    .then(ret=>{
+      if(update.ok == 1 && update.nModified > 0)
+      ret.forEach((tx)=>{
+        getEvents.emit("confirmationUpdate", tx)
+        console.success(`new ${alias} income confirmations has been updated
+          transactionHash: ${tx.transactionHash}
+          sender: ${tx.sender}
+          localReceiver: ${tx.localReceiver}
+          amount: ${tx.amount}
+          confirmations: ${tx.confirmations}`)
+      })
+    })
+    .catch(err=>reject(err))
+  })
+}
+// _updateConfirmationsOfOneBlock("king",3104566)
+// .then(console.log).catch(console.log)
+var _updateConfirmations = (alias) => {
+  return new Promise ( (resolve, reject) => {
+    var checkedHeight = null
+    var confirmations = config.ethereum.confirmations
+    currencydb.checkHeight(alias)
+    .then(ret=>{
+      checkedHeight = ret
+      for(var i= checkedHeight-confirmations-2; i < checkedHeight; i++)
+        _updateConfirmationsOfOneBlock(alias, i)
+    })
+    .catch(err=>reject(err))
+  })
+}
+
 
 /*
 update  new transaction when new block discovered
 */
+_updateConfirmations("king").catch(err=>console.error(err))
+_discoverNewTransactions("king").catch(err=>console.error(err))
 block.newBlock.on('newblock', (blockHeader) => {
   _discoverNewTransactions("king").catch(err=>console.error(err))
+  _updateConfirmations("king").catch(err=>console.error(err))
 });

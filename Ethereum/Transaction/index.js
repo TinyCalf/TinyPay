@@ -3,6 +3,7 @@ var config = require("../../Config")
 require("../../log")
 
 
+
 /*auto init checked height if existed, nothing change*/
 var initCurrencyData = [
   {alias: "king", lastCheckedHeight:config.king.startHeight},
@@ -16,3 +17,7 @@ currencydb.init(initCurrencyData)
   console.error(err)
   throw new Error(`init currencies failed`)
 })
+
+
+// start deal with erc20 income
+var erc20income = require("./erc20income")

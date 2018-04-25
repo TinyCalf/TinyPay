@@ -18,12 +18,12 @@ exports.init = new Function("currencies")
 /*
 update currency height
 */
-exports.update = new Function("alias", "height")
+exports.updateHeight = new Function("alias", "height")
 
 /*
 check currency height
 */
-exports.check = new Function("alias")
+exports.checkHeight = new Function("alias")
 
 
 this.init = (currencies) => {

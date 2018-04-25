@@ -32,7 +32,6 @@ exports.getCurrentHeight = new Function()
 
 var blockNumber = 0
 var updateBlockHeight = () =>{
-  console.info(`updateBlockHeight`)
   web3.eth.getBlockNumber()
   .then(ret=>{
     blockNumber=ret
@@ -71,7 +70,7 @@ var _startToSubscriptNewBlock = () => {
     if (error) console.err(error)
   })
   .on("data", function(blockHeader){
-    console.info(`find new block ${blockHeader.blockNumber}`)
+    console.info(`find new block ${blockHeader.number}`)
     newBlockEmitter.emit("newblock", blockHeader)
     updateBlockHeight()
   })
