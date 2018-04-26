@@ -8,7 +8,7 @@
     "repo": "node ./openReporter",
     "build": "node build.js",
     "check": "node check.js",
-    "start": "node bitgogogo.js",
+    "start": "node tinypay.js",
     "notify": "node Start_Notify.js",
     "daemon": "nohup node bitgogogo.js &"
   },

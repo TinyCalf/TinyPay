@@ -1,1 +1,1 @@
-var transaction = require("./Transaction")
+exports.transaction = require("./Transaction")

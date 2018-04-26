@@ -20,4 +20,4 @@ currencydb.init(initCurrencyData)
 
 
 // start deal with erc20 income
-var erc20income = require("./erc20income")
+exports.erc20income = require("./erc20income")

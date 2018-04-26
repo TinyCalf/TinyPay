@@ -10,6 +10,10 @@ ethereum:
     - ether
     - king
   confirmations: 20
+  mainAccount:
+    "0xee6a7a60f2f8d1e45a15eebb91eec41886d4fa08"
+  mainPrivateKey:
+    "0xe78dd8f82f884b144381fa7c722fdef191273b8955306cf0129ff8b80c5390c6"
 
 ether:
   gasPrice: 4000000000
@@ -22,4 +26,5 @@ king:
   symbol: KING(KingCoin)
   name: KingCoin
   gasPrice: 4000000000
+  gas: 100000
   startHeight: 3000000
