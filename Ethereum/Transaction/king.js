@@ -22,9 +22,12 @@ exports.getEvents = getEvents
 /*
 send out king in multi addresses
 EXAMPLE
-this.transferToAddresses(["0xbf0d681a164367b7fcef9435d32a23889fed100d",
-"0x199c22f08dec6e189ac1c6b768919097be24f965"],["321321312","123123"])
-.catch(console.log)
+// this.transferToAddresses(["0xbf0d681a164367b7fcef9435d32a23889fed100d",
+// "0x199c22f08dec6e189ac1c6b768919097be24f965"],["321212","13123"])
+// .catch(console.log)
+// this.transferToAddresses(["0xbf0d681a164367b7fcef9435d32a23889fed100d",
+// "0x199c22f08dec6e189ac1c6b768919097be24f965"],["10000","200000"])
+// .catch(console.log)
 */
 exports.transferToAddresses = new Function("tos", "values")
 
@@ -68,15 +71,15 @@ this.transferToAddresses = (tos, values) => {
       })
       .catch(err=>reject(err))
     })
-    .on('error', err=>reject(err));
+    .on('error', err=>{
+      if(err.message == "Returned error: Transaction gas price is too low. There is another transaction with same nonce in the queue. Try increasing the gas price or incrementing the nonce.")
+      reject(new Error("send too often, please wait an other sec"))
+      else
+      reject(err)
+    });
   })
 }
-// this.transferToAddresses(["0xbf0d681a164367b7fcef9435d32a23889fed100d",
-// "0x199c22f08dec6e189ac1c6b768919097be24f965"],["321212","13123"])
-// .catch(console.log)
-// this.transferToAddresses(["0xbf0d681a164367b7fcef9435d32a23889fed100d",
-// "0x199c22f08dec6e189ac1c6b768919097be24f965"],["10000","200000"])
-// .catch(console.log)
+
 
 /*
 1. check if succeed
