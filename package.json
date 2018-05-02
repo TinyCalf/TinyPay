@@ -1,7 +1,7 @@
 {
-  "name": "bitgogogo",
-  "version": "1.0.0",
-  "description": "bitgogogo",
+  "name": "TinyPay",
+  "version": "3.0.0",
+  "description": "数字货币支付方案",
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha --reporter mochawesome",

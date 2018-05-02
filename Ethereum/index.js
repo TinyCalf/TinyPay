@@ -1,1 +1,2 @@
-exports.transaction = require("./Transaction")
+exports.Transaction = require("./Transaction")
+exports.Account = require("./Account")

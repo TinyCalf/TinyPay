@@ -2,42 +2,48 @@ const express = require("express");
 var router = express.Router()
 var verify = require("./verify")
 var config = require("../Config")
+var Ethereum = require("../Ethereum")
 
 // middleware that is specific to this router
 router.use(function timeLog(req, res, next) {
   if(config.www.disableVerify) return next()
   // console.log(req.body) //post
   var ifPass = verify.verifySign(req.body)
-  if(!ifPass) return res.send({err:-1000,msg:"SIGNATURE_INCORRECT"})
+  if(!ifPass) return res.send({err:-100,msg:"SIGNATURE_INCORRECT"})
   next();
 });
 
 
-
-/*
-curl -X POST 127.0.0.1:1990/v1/a  -H "Content-Type: application/json" -d '{"user":"tiny","pass":"mvxwWn74CWRxx99nJC3QxXsgYsDH68pvPN"}'
-
-*/
-router.post('/a', function(req, res) {
-  res.send('a');
-});
-// define the about route
-router.get('/b', function(req, res) {
-  res.send('b');
-});
-
-
 /**
- * @api {post} /v1/newaccount get a new account for some coin
- * @apiName NewAccount
- * @apiGroup v1
+ * @api {post} /v1/getnewaccount 获取某币种的新帐号
+ * @apiName 获取某币种的新帐号
+ * @apiGroup V1
  *
- * @apiParam {String} alias Alias for a coin.
+ * @apiParam {String} alias 币种的代称，目前仅支持 king
+ * @apiParamExample {json} Request-Example:
+     {
+       "appkey": "YOUR_APPKEY",
+       "signature": "SIG",
+       "timestamp": "789463135",
+       "params":{
+          "alias":"king"
+         }
+     }
  *
- * @apiSuccess {String} address  new address for the account.
+ * @apiSuccess {Number} err  错误码， 0时为成功
+ * @apiSuccess {String} msg  返回成功时为新帐号的地址
  */
-router.post('/newaccount', function(req, res) {
-  res.send('a');
+router.post('/getnewaccount', function(req, res) {
+  if(!req.body.params || !req.body.params.alias)
+    res.send({err:-1,msg:"PARAM_INVAILD"})
+  Ethereum.Account.createNewAccount(req.body.params.alias)
+  .then(address=>{
+    res.send({err:0,msg:address})
+  })
+  .catch(err=>{
+    console.error(err)
+    res.send({err:-101,msg:err})
+  })
 });
 
 

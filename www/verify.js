@@ -1,6 +1,6 @@
 var crypto = require("crypto")
-
-
+var config = require("../Config")
+const DURATION = 1000*60 // the allowed time duration between client and server
 // {
 //   appkey:"1231231",
 //   signature:"123123123123123",
@@ -24,8 +24,6 @@ exports.verifySign = Function("ob")
 //   }
 // }
 exports.getSign = Function("ob")
-
-var secret = "997abe175d48da23af5699fe668f89e57fbc49fbcaa3ac1970b23aca9d3168a6"
 
 
 // var ob = {
@@ -51,7 +49,7 @@ var sortParams = (params) => {
 var verifyTime = (ts1, ts2) => {
   var duration = 0;
   (ts1-ts2 < 0) ? duration=ts2-ts1 : duration=ts1-ts2;
-  if(duration>1000*60)
+  if(duration>DURATION)
     return false
   else
     return true
@@ -59,15 +57,18 @@ var verifyTime = (ts1, ts2) => {
 
 this.getSign = (ob) => {
   var params = sortParams(ob.params)
-  var str = params + secret + ob.timestamp
-  console.log(str)
+  var str = params + config.www.appsecret + ob.timestamp
   var sha1 = crypto.createHash('sha1');
+  console.log(str)
   sha1.update(str);
   var sign = sha1.digest('hex')
+  console.log(sign)
   return sign
 }
 
 this.verifySign = (ob) => {
+  if(ob.appkey != config.www.appkey)
+    return false
   if(!verifyTime(Date.now(),ob.timestamp))
     return false
   if(this.getSign(ob)!=ob.signature)
