@@ -35,4 +35,4 @@ www:
   disableVerify: false
   appkey: b172afe6dc6fecc491bdb458853eeac49bd2a930
   appsecret: 997abe175d48da23af5699fe668f89e57fbc49fbcaa3ac1970b23aca9d3168a6
-  callbackUri: http://127.0.0.1
+  callbackUri: http://127.0.0.1:30000

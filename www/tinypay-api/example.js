@@ -57,13 +57,13 @@ CATCH
 a instance of node Error
 */
 
-// tinypay.transferKingToAddresses(
-//   ["0x212e754b95f99799aab5686ab21cf45a5f7e4000",
-//   "0x18aa1fe4446719d60a3b8b848e9d8eed37b18718"],
-//   ["20","30"])
-// .then(console.log)
-// .catch(err=>{
-//   console.log(err.code)
-//   console.log(err.message)
-//   console.log(err)
-// })
+tinypay.transferKingToAddresses(
+  ["0x212e754b95f99799aab5686ab21cf45a5f7e4000",
+  "0x18aa1fe4446719d60a3b8b848e9d8eed37b18718"],
+  ["20","30"])
+.then(console.log)
+.catch(err=>{
+  console.log(err.code)
+  console.log(err.message)
+  console.log(err)
+})
