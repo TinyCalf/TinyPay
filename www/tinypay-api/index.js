@@ -22,7 +22,6 @@ class Tinypay {
   _sign(params)  {
     var timestamp = Date.now()
     var str = this._sortParams(params) + this.appSecret + timestamp
-    console.log(str)
     var sha1 = crypto.createHash('sha1');
     sha1.update(str);
     var sign = sha1.digest('hex')
@@ -32,8 +31,28 @@ class Tinypay {
       signature:sign,
       params:params
     }
-    console.log(obj)
     return obj
+  }
+  // TODO:can make a factory function
+  // get info of the main account
+  getInfo () {
+    return new Promise ( (resolve, reject)=>{
+      var params = this._sign({})
+      var options = {
+        uri: `${this.apiUri}/v1/getinfo`,
+        method: 'POST',
+        json: params
+      };
+      request(options, function (error, response, body) {
+        if(error) return reject(error)
+        if(body.err != 0) {
+          var e = new Error(body.msg)
+          e.code = body.err
+          return reject(e)
+        }
+        resolve(body.msg)
+      });
+    })
   }
 
   // get new account for one coin
@@ -47,7 +66,33 @@ class Tinypay {
       };
       request(options, function (error, response, body) {
         if(error) return reject(error)
-        return resolve(body)
+        if(body.err != 0) {
+          var e = new Error(body.msg)
+          e.code = body.err
+          return reject(e)
+        }
+        resolve(body.msg)
+      });
+    })
+  }
+
+  // get new account for one coin
+  transferKingToAddresses (tos, amounts) {
+    return new Promise ( (resolve, reject)=>{
+      var params = this._sign({tos:tos, amounts:amounts})
+      var options = {
+        uri: `${this.apiUri}/v1/transferkingtoaddresses`,
+        method: 'POST',
+        json: params
+      };
+      request(options, function (error, response, body) {
+        if(error) return reject(error)
+        if(body.err != 0) {
+          var e = new Error(body.msg)
+          e.code = body.err
+          return reject(e)
+        }
+        resolve(body.msg)
       });
     })
   }

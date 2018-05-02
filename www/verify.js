@@ -59,10 +59,8 @@ this.getSign = (ob) => {
   var params = sortParams(ob.params)
   var str = params + config.www.appsecret + ob.timestamp
   var sha1 = crypto.createHash('sha1');
-  console.log(str)
   sha1.update(str);
   var sign = sha1.digest('hex')
-  console.log(sign)
   return sign
 }
 

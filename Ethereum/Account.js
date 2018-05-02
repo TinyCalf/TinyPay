@@ -33,6 +33,7 @@ exports.getAddressesByAlias = new Function("alias")
 
 
 
+
 var _getCurrencyByAlias = (alias) => {
   if(!config[alias]) throw new Error("ALIAS_NOT_FOUND")
   return config[alias]

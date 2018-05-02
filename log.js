@@ -1,7 +1,7 @@
 var logger = require("tinycalf-logger")
 var config = require("./Config")
 logger.init({
-  // mongodb:config.mongodb.host,
+  mongodb:config.mongodb.host,
   // email:{
   //   smtp:{
   //     host: 'smtp.exmail.qq.com',

@@ -22,5 +22,8 @@ currencydb.init(initCurrencyData)
 // start deal with erc20 income
 exports.erc20income = require("./erc20income")
 
+// ether
+exports.ether = require("./ether")
+
 // start king
-exports.king = require("./king.js")
+exports.king = require("./king")

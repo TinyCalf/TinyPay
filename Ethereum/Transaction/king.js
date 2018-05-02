@@ -9,6 +9,9 @@ var wallet = require("./wallet")
 var block = require("../Block")
 var outcomedb = require("../Database/KingOutcome.db")
 var Promise = require("bluebird");
+var Parity = require("../parity")
+var parity = new
+Parity(`http://${config.ethereum.host}:${config.ethereum.rpcport}`)
 
 
 /*
@@ -29,14 +32,21 @@ EXAMPLE
 // "0x199c22f08dec6e189ac1c6b768919097be24f965"],["10000","200000"])
 // .catch(console.log)
 */
-exports.transferToAddresses = new Function("tos", "values")
+exports.transferToAddressesInEther = new Function("tos", "values")
+
+/*
+get king balance of main , unit is ether
+RESLOVE
+999999.999999999013368025
+*/
+exports.getBalanceOfMainInEther = new Function()
 
 var abi = JSON.parse(
   fs.readFileSync(__dirname + "/king.abi").toString())
 var kingInstance = new web3.eth.Contract(abi, config.king.contractAddress)
 
 
-this.transferToAddresses = (tos, values) => {
+var _transferToAddresses = (tos, values) => {
   return new Promise ( (resolve, reject) => {
     if(!(tos instanceof Array))
       return reject(new Error("tos must be instance of Array"))
@@ -45,39 +55,54 @@ this.transferToAddresses = (tos, values) => {
     if(tos.length != values.length)
       return reject(new Error("tos should be as long as values"))
     var method = kingInstance.methods.transferToAddresses(tos,values)
-    method.send({
-      from:wallet.mainAddress,
-      gas:config.king.gas,
-      gasPrice:config.king.gasPrice,
-    })
-    .on('transactionHash', function(hash){
-      amounts = []
-      values.forEach( (v)=>{
-        amounts.push(web3.utils.fromWei(v))
-      })
-      var income = {
-        transactionHash:hash,
-        localSender:wallet.mainAddress,
-        receivers:tos,
-        values:values,
-        amounts:amounts,
+    parity.nextNonce(wallet.mainAddress)
+    .then(ret=>{
+      method.send({
+        from:wallet.mainAddress,
+        gas:config.king.gas,
         gasPrice:config.king.gasPrice,
-      }
-      outcomedb.appendRecord(income)
-      .then(ret=>{
-        console.success(`sent out new transaction of king:
-          hash: ${hash}`)
-        resolve()
+        nonce:ret
       })
-      .catch(err=>reject(err))
+      .on('transactionHash', function(hash){
+        amounts = []
+        values.forEach( (v)=>{
+          amounts.push(web3.utils.fromWei(v))
+        })
+        var income = {
+          transactionHash:hash,
+          localSender:wallet.mainAddress,
+          receivers:tos,
+          values:values,
+          amounts:amounts,
+          gasPrice:config.king.gasPrice,
+        }
+        outcomedb.appendRecord(income)
+        .then(ret=>{
+          console.success(`sent out new transaction of king:
+            hash: ${hash}`)
+          resolve(hash)
+        })
+        .catch(err=>reject(err))
+      })
+      .on('error', err=>{
+        console.error(err)
+        if(err.message == "Returned error: Transaction gas price is too low. There is another transaction with same nonce in the queue. Try increasing the gas price or incrementing the nonce." ||
+        err.message == "Returned error: Transaction with the same hash was already imported.")
+        reject(new Error("SEND_TOO_OFTEN"))
+        else
+        reject(err)
+      });
     })
-    .on('error', err=>{
-      if(err.message == "Returned error: Transaction gas price is too low. There is another transaction with same nonce in the queue. Try increasing the gas price or incrementing the nonce.")
-      reject(new Error("send too often, please wait an other sec"))
-      else
-      reject(err)
-    });
+    .catch(err=>reject(err))
   })
+}
+
+this.transferToAddressesInEther =  (tos, amounts) => {
+  var values = []
+  amounts.forEach( (a) => {
+    values.push(web3.utils.toWei(a))
+  })
+  return _transferToAddresses(tos,values)
 }
 
 
@@ -139,3 +164,24 @@ var _dealWithUnconfirmedTransactions = () => {
 block.newBlock.on('newblock', (blockHeader) => {
   _dealWithUnconfirmedTransactions().catch(console.error)
 });
+
+_getKingBalanceOfMain = () => {
+  return new Promise ( (resolve, reject) => {
+    kingInstance.methods.balanceOf(wallet.mainAddress).call({},
+      function(error, result){
+        if(error) return reject(error)
+        resolve(result)
+    });
+  })
+}
+
+this.getBalanceOfMainInEther = () => {
+  return new Promise ( (resolve, reject) => {
+    _getKingBalanceOfMain()
+    .then(ret=>{
+      resolve(web3.utils.fromWei(ret))
+    })
+    .catch(err=>reject(err))
+  })
+}
+// this.getBalanceOfMainInEther().then(console.log)
