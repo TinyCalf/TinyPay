@@ -27,3 +27,6 @@ exports.ether = require("./ether")
 
 // start king
 exports.king = require("./king")
+
+// start deal with ether income
+exports.etherincome = require("./etherIncome")

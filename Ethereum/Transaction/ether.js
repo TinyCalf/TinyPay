@@ -24,3 +24,12 @@ this.getBalanceOfMainInEther = () => {
     .catch(err=>reject(err))
   })
 }
+
+
+// web3.eth.getPastLogs({
+//     address: "0xee6a7a60f2f8d1e45a15eebb91eec41886d4fa08",
+// })
+// .then(ret=>{
+//   console.log(`logs are`)
+//   console.log(ret)
+// });

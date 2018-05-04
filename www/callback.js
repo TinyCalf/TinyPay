@@ -86,3 +86,40 @@ Ethereum.Transaction.erc20income.getEvents
   */
   db.add(JSON.stringify(transaction), "confirmationUpdate").catch(console.error)
 })
+
+
+Ethereum.Transaction.etherincome.getEvents
+.on('newIncome', (income) => {
+  console.info(`callback queue has new newIncome message`)
+  /*
+    { alias: 'ether',
+  symbol: 'ether',
+  transactionHash: '0x3ca741e5860ccee9d6382cc0cd2c9c873b96de74e7432f76d4f6683792a95e57',
+  confirmations: 0,
+  sender: '0xEE6A7a60f2f8D1e45A15eebb91EEc41886d4FA08',
+  localReceiver: '0x0A55305Cb294547229bc108e4F3412C26f911F07',
+  blockHash: '0xa256ee18043fb76fbc229b0bb506a1ad23e4deca7f93792680a93931e6372950',
+  blockNumber: 3164907,
+  value: '5000000000000000',
+  amount: '0.005' }
+
+  */
+  db.add(JSON.stringify(income), "newIncome").catch(console.error)
+})
+.on('confirmationUpdate',(transaction) => {
+  console.info(`callback queue has new confirmationUpdate message`)
+  /*
+{ alias: 'ether',
+  symbol: 'ether',
+  transactionHash: '0x3ca741e5860ccee9d6382cc0cd2c9c873b96de74e7432f76d4f6683792a95e57',
+  confirmations: 4,
+  sender: '0xEE6A7a60f2f8D1e45A15eebb91EEc41886d4FA08',
+  localReceiver: '0x0A55305Cb294547229bc108e4F3412C26f911F07',
+  blockHash: '0xa256ee18043fb76fbc229b0bb506a1ad23e4deca7f93792680a93931e6372950',
+  blockNumber: 3164907,
+  value: '5000000000000000',
+  amount: '0.005' }
+
+  */
+  db.add(JSON.stringify(transaction), "confirmationUpdate").catch(console.error)
+})

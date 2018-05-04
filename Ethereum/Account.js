@@ -31,6 +31,12 @@ RETURN
 */
 exports.getAddressesByAlias = new Function("alias")
 
+/*
+get flited addresses
+*/
+exports.getEtherAddressesByAddresses = new Function("addresses")
+this.getEtherAddressesByAddresses = db.getEtherAddressesByAddresses
+
 
 
 

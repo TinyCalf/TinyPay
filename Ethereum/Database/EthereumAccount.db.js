@@ -49,6 +49,11 @@ find all addresses by symbol
 */
 exports.getAddressesBySymbol = new Function("symbol")
 
+/*
+find ether addresses by addresses
+*/
+exports.getEtherAddressesByAddresses = new Function("addresses")
+
 
 
 /*add a new account*/
@@ -87,6 +92,21 @@ this.getAddressesBySymbol = (symbol) => {
       if(err) return reject(err.code)
       if(!ret) return reject(new Error("addresses not found"))
       resolve(ret)
+    })
+  })
+}
+
+this.getEtherAddressesByAddresses = (addresses) => {
+  return new Promise ( (resolve, reject) => {
+    var conditions = {symbol:"ether",address: {$in: addresses}}
+    EthereumAccount.find(conditions, "-_id address", (err, ret) => {
+      if(err) return reject(err.code)
+      if(!ret) return reject(new Error("addresses not found"))
+      var res = []
+      ret.forEach( (address)=>{
+        res.push(address.address)
+      })
+      resolve(res)
     })
   })
 }

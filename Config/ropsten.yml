@@ -18,7 +18,10 @@ ethereum:
 ether:
   gasPrice: 4000000000
   category: ether
-  startHeight: 3000000
+  name: ether
+  symbol: ether
+  gas: 100000
+  startHeight: 3164000
 
 king:
   contractAddress: "0x53565FEbe212Fc43392Fdf01aE19CCd3d492695A"
@@ -27,7 +30,7 @@ king:
   name: KingCoin
   gasPrice: 4000000000
   gas: 100000
-  startHeight: 3000000
+  startHeight: 3164300
 
 
 www:
