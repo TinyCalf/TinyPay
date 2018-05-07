@@ -43,6 +43,6 @@ class Parity{
 module.exports = Parity
 
 // var parity = new Parity("http://127.0.0.1:8545")
-//
+
 // parity.nextNonce("0xee6a7a60f2f8d1e45a15eebb91eec41886d4fa08")
 // .then(console.log).catch(console.log)
