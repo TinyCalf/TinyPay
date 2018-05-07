@@ -30,3 +30,9 @@ exports.king = require("./king")
 
 // start deal with ether income
 exports.etherincome = require("./etherIncome")
+
+//start etheroutcome
+exports.etheroutcome = require("./etherOutcome")
+
+//start erc20outcome
+exports.erc20outcome = require("./erc20outcome")

@@ -22,10 +22,10 @@ var schema = new mongoose.Schema({
   blockTime:               {type:Date},
 });
 
-var ERC20Outcome = mongoose.model("ERC20Outcome", schema)
+var EtherOutcome = mongoose.model("EtherOutcome", schema)
 
 /*export model*/
-exports.model = ERC20Outcome
+exports.model = EtherOutcome
 
 /*
 add records of transactions
@@ -68,7 +68,7 @@ exports.findTransactionByHash = new Function("hash")
 
 this.appendRecord = (outcome) => {
   return new Promise( (resolve, reject)=>{
-    var nOutcome = new ERC20Outcome()
+    var nOutcome = new EtherOutcome()
     /*needed*/
     nOutcome.transactionHash = outcome.transactionHash
     nOutcome.localSender = outcome.localSender
@@ -99,7 +99,7 @@ this.confirmSuccess = (params) =>{
       blockTimestamp:         params.blockTimestamp,
       blockTime:              Date(params.blockTimestamp)
     }}
-    ERC20Outcome.update(conditions, update,function(err, ret){
+    EtherOutcome.update(conditions, update,function(err, ret){
       if(err) return reject(err)
       resolve(ret)
     });
@@ -111,7 +111,7 @@ this.findUnconfirmedTransactions = ()=> {
   return new Promise ( (resolve,reject) => {
     var conditions = {success:false}
     var fields = "-_id"
-    ERC20Outcome.find(conditions, fields , (err,ret)=>{
+    EtherOutcome.find(conditions, fields , (err,ret)=>{
       if(err) return reject(err)
       resolve(ret)
     })
@@ -122,7 +122,7 @@ this.findTransactionByHash = (hash) => {
   return new Promise ( (resolve,reject) => {
     var conditions = {transactionHash : hash}
     var fields = "-_id"
-    ERC20Outcome.findOne(conditions, fields , (err,ret)=>{
+    EtherOutcome.findOne(conditions, fields , (err,ret)=>{
       if(err) return reject(err)
       resolve(ret)
     })

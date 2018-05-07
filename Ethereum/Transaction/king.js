@@ -19,7 +19,7 @@ get some events
 EXAMPLE
 getEvents.on('outcomeSuccess', (income) => {...});
 */
-var getEvents = new Event()
+let getEvents = new Event()
 exports.getEvents = getEvents
 
 /*
@@ -41,12 +41,12 @@ RESLOVE
 */
 exports.getBalanceOfMainInEther = new Function()
 
-var abi = JSON.parse(
+let abi = JSON.parse(
   fs.readFileSync(__dirname + "/king.abi").toString())
-var kingInstance = new web3.eth.Contract(abi, config.king.contractAddress)
+let kingInstance = new web3.eth.Contract(abi, config.king.contractAddress)
 
 
-var _transferToAddresses = (tos, values) => {
+let _transferToAddresses = (tos, values) => {
   return new Promise ( (resolve, reject) => {
     if(!(tos instanceof Array))
       return reject(new Error("tos must be instance of Array"))
@@ -111,7 +111,7 @@ this.transferToAddressesInEther =  (tos, amounts) => {
 2 if succeed insert into db
 3 if succeed emit Event
 */
-var _checkOutcomeOnBlock = (outcome) => {
+let _checkOutcomeOnBlock = (outcome) => {
   return new Promise ( (resolve, reject) => {
     var tx = {}
     web3.eth.getTransactionReceipt(outcome.transactionHash)
@@ -134,7 +134,10 @@ var _checkOutcomeOnBlock = (outcome) => {
     .then(ret=>{
       console.success(`king outcome transfer successfully
         transactionHash: ${outcome.transactionHash}`)
-      getEvents.emit("outcomeSuccess", outcome)
+      return outcomedb.findTransactionByHash(outcome.transactionHash)
+    })
+    .then(ret=>{
+      getEvents.emit("outcomeSuccess", ret)
       resolve()
     })
     .catch(err=>reject(err))
@@ -146,7 +149,7 @@ var _checkOutcomeOnBlock = (outcome) => {
 2.check on the block to see if has been confirmed
 3.emit confirmed transactions
 */
-var _dealWithUnconfirmedTransactions = () => {
+let _dealWithUnconfirmedTransactions = () => {
   return new Promise ( (resolve, reject)=>{
     outcomedb.findUnconfirmedTransactions()
     .then(txs=>{

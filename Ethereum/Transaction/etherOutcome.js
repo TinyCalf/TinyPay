@@ -7,11 +7,12 @@ var account = require("../Account")
 var Event = require("events")
 var wallet = require("./wallet")
 var block = require("../Block")
-var outcomedb = require("../Database/ERC20Outcome.db")
+var outcomedb = require("../Database/EtherOutcome.db")
 var Promise = require("bluebird");
 var Parity = require("../parity")
 var parity = new
 Parity(`http://${config.ethereum.host}:${config.ethereum.rpcport}`)
+
 
 /*
 get some events
@@ -21,61 +22,73 @@ getEvents.on('outcomeSuccess', (income) => {...});
 let getEvents = new Event()
 exports.getEvents = getEvents
 
-let abi = JSON.parse(
-  fs.readFileSync(__dirname + "/erc20.abi").toString())
-var kingInstance = new web3.eth.Contract(abi, config.king.contractAddress)
-var contractInstances = {
-  king: kingInstance
-}
 
-exports.transferERC20InEther = new Function("to", "amount")
 
-let _transferERC20 = (alias, from, to, value) => {
+exports.transferEtherInEther = new Function("to", "amount")
+
+// { blockHash: null,
+//   blockNumber: null,
+//   chainId: '0x3',
+//   condition: null,
+//   creates: null,
+//   from: '0xEE6A7a60f2f8D1e45A15eebb91EEc41886d4FA08',
+//   gas: 100000,
+//   gasPrice: '4000000000',
+//   hash: '0xd6c3b3366fefbbfeae1f933375d5687379949590820810cabbd49eaee6d39cd7',
+//   input: '0x',
+//   nonce: 29,
+//   publicKey: '0xf72b0c62099a654ff6076b2612a2182a6c169422daa05c0928bd09bb03af7f252231f548352ebd068618295b370cd113976e89766d4bf3b1b3f5154dccff3a81',
+//   r: '0x1c2bac60af0d99f3d77e618f06feb6fde6cb9582235ebd2cf58d50acf9792312',
+//   raw: '0xf8681d84ee6b2800830186a094c66bbb755a375b7bb2ff142eea8967246722a2b68405f76b888029a01c2bac60af0d99f3d77e618f06feb6fde6cb9582235ebd2cf58d50acf9792312a039b15be765878ae263561a5bbef1168e61710a047f7dbb8525690f114355b754',
+//   s: '0x39b15be765878ae263561a5bbef1168e61710a047f7dbb8525690f114355b754',
+//   standardV: '0x0',
+//   to: '0xC66Bbb755a375B7BB2FF142EEa8967246722A2B6',
+//   transactionIndex: null,
+//   v: '0x29',
+//   value: '100101000' }
+let _transferEther = (from, to, value) => {
   return new Promise ( (resolve, reject)=>{
     parity.nextNonce(from)
     .then(nonce=>{
-      contractInstances[alias].methods.transfer(to, value).send({
+      web3.eth.sendTransaction({
         from: from,
-        nonce: nonce,
-        gas: config[alias].gas,
-        gasPrice: config[alias].gasPrice,
+        to: to,
+        value: value,
+        nonce:nonce,
+        gas:config.ether.gas,
+        gasPrice:config.ether.gasPrice,
       })
       .on('transactionHash', function(hash){
-          web3.eth.getTransaction(hash)
-          .then(tx=>resolve(tx))
-          .catch(err=>reject(err))
+        web3.eth.getTransaction(hash)
+        .then(tx=>resolve(tx))
+        .catch(err=>reject(err))
       })
-      .on('error', err=>{
-          console.error(err)
-          if(err.message == "Returned error: Transaction gas price is too low. There is another transaction with same nonce in the queue. Try increasing the gas price or incrementing the nonce." ||
-          err.message == "Returned error: Transaction with the same hash was already imported.")
-          reject(new Error("SEND_TOO_OFTEN"))
-          else
-          reject(err)
-      })
+      .on('error', (err)=>{
+        console.error(err)
+        if(err.message == "Returned error: Transaction gas price is too low. There is another transaction with same nonce in the queue. Try increasing the gas price or incrementing the nonce." ||
+        err.message == "Returned error: Transaction with the same hash was already imported.")
+        reject(new Error("SEND_TOO_OFTEN"))
+        else
+        reject(err)
+      });
     })
     .catch(err=>reject(err))
   })
 }
 
-this.transferERC20InEther = (alias, to, amount) => {
+this.transferEtherInEther = (to, amount) => {
   return new Promise ( (resolve, reject)=>{
-    let ifConfiged = false
-    config.ethereum.available_currency_alias.forEach( a=>{
-      if (a==alias) ifConfiged = true
-    })
-    if(!ifConfiged) return resolve(new Error("ALIAS_NOT_EXISTED"))
     hash = null
-    _transferERC20(alias, wallet.mainAddress, to, web3.utils.toWei(amount))
+    _transferEther(wallet.mainAddress, to, web3.utils.toWei(amount))
     .then(tx=>{
-      console.success(`sent out new transaction of ${alias}:
+      console.success(`sent out new transaction of ether:
         hash: ${tx.hash}`)
       hash = tx.hash
       var outcome = {}
       outcome.transactionHash = tx.hash
       outcome.localSender = tx.from.toLowerCase()
-      outcome.receiver = to
-      outcome.value = web3.utils.toWei(amount)
+      outcome.receiver = tx.to.toLowerCase()
+      outcome.value = tx.value
       outcome.amount = amount
       outcome.gasPrice = tx.gasPrice
       return outcomedb.appendRecord(outcome)
@@ -111,7 +124,7 @@ let _checkOutcomeOnBlock = (outcome) => {
       return outcomedb.confirmSuccess(tx)
     })
     .then(ret=>{
-      console.success(`ERC20 outcome transfer successfully
+      console.success(`ether outcome transfer successfully
         transactionHash: ${outcome.transactionHash}`)
       return outcomedb.findTransactionByHash(outcome.transactionHash)
     })
@@ -143,10 +156,7 @@ let _dealWithUnconfirmedTransactions = () => {
     .catch(err=>reject(err))
   })
 }
-_dealWithUnconfirmedTransactions().catch(console.error)
+
 block.newBlock.on('newblock', (blockHeader) => {
   _dealWithUnconfirmedTransactions().catch(console.error)
 });
-
-
-// this.transferERC20InEther("king","0xb02d2693f4b0d7fd1221be056a275005ffc327af","2").then(console.log).catch(console.log)

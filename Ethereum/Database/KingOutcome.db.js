@@ -59,6 +59,11 @@ find unconfirmed transactions
 */
 exports.findUnconfirmedTransactions = new Function()
 
+/*
+find transaction by hash
+*/
+exports.findTransactionByHash = new Function("hash")
+
 
 this.appendRecord = (outcome) => {
   return new Promise( (resolve, reject)=>{
@@ -106,6 +111,17 @@ this.findUnconfirmedTransactions = ()=> {
     var conditions = {success:false}
     var fields = "-_id"
     KingOutcome.find(conditions, fields , (err,ret)=>{
+      if(err) return reject(err)
+      resolve(ret)
+    })
+  })
+}
+
+this.findTransactionByHash = (hash) => {
+  return new Promise ( (resolve,reject) => {
+    var conditions = {transactionHash : hash}
+    var fields = "-_id"
+    EtherOutcome.findOne(conditions, fields , (err,ret)=>{
       if(err) return reject(err)
       resolve(ret)
     })

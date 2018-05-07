@@ -97,6 +97,27 @@ class Tinypay {
     })
   }
 
+  withdraw (alias, to, amount) {
+    return new Promise ( (resolve, reject)=>{
+      var params = this._sign({alias:alias, to:to, amount:amount})
+      var options = {
+        uri: `${this.apiUri}/v1/withdraw`,
+        method: 'POST',
+        json: params
+      };
+      request(options, function (error, response, body) {
+        if(error) return reject(error)
+        if(body.err != 0) {
+          console.log(body)
+          var e = new Error(body.msg)
+          e.code = body.err
+          return reject(e)
+        }
+        resolve(body.msg)
+      });
+    })
+  }
+
 
 }
 module.exports = Tinypay

@@ -46,19 +46,23 @@ app.post('/', function(req, res) {
 
 { type: 'outcomeSuccess',
   msg:
-   { recordTime: '2018-05-02T10:07:18.000Z',
-     recordTimestamp: 1525255638178,
-     gasPrice: 4000000000,
-     localSender: '0xEE6A7a60f2f8D1e45A15eebb91EEc41886d4FA08',
-     transactionHash: '0x905c1adc8da51530ab73c36ec70840bd689e063f3558dd139ed3d188d5ee7a44',
-     success: false,
-     amounts: [ '20', '30' ],
-     values: [ '20000000000000000000', '30000000000000000000' ],
-     receivers:
-      [ '0x212e754b95f99799aab5686ab21cf45a5f7e4000',
-        '0x18aa1fe4446719d60a3b8b848e9d8eed37b18718' ],
-     confirmations: 0,
-     __v: 0 } }
+   { recordTime: 2018-05-04T07:48:44.000Z,
+  recordTimestamp: 1525420124559,
+  gasPrice: 4000000000,
+  amount: '0.001',
+  value: '1000000000000000',
+  receiver: '0xc66bbb755a375b7bb2ff142eea8967246722a2b6',
+  localSender: '0xee6a7a60f2f8d1e45a15eebb91eec41886d4fa08',
+  transactionHash: '0xe67e8cfdaa2d19c8a7c727863d18bc85dd5ef00f6148ead4ab013d05a03ac4ab',
+  success: true,
+  confirmations: 0,
+  __v: 0,
+  gasUsed: 21000,
+  etherUsed: 0.000084,
+  blockHash: '0xa54ef2f3cf2bbe12248337549271204515eb6829d023dcd9689fcbd79093afa9',
+  blockNumber: 3165551,
+  blockTimestamp: 1525420225,
+  blockTime: 2018-05-04T07:50:29.000Z }}
   */
   res.send("ok")
 });
