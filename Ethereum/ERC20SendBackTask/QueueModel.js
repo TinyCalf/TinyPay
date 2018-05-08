@@ -83,9 +83,11 @@ module.exports = class QueueModel {
     })
   }
 
-  confirmSentBack (address) {
+  confirmSentBack (sentBackTransactionHash) {
     return new Promise ( (resolve, reject) => {
-      let conditions = {contractAddress:this.contractAddress,address:address}
+      let conditions =
+      {contractAddress:this.contractAddress,
+        sentBackTransactionHash:sentBackTransactionHash}
       let update = { $set:{
         sentBackStatus: 2
       }}
@@ -132,7 +134,7 @@ module.exports = class QueueModel {
     })
   }
 
-  findOneSentBackButNoConfirmedAddress () {
+  findAllSentBackButNoConfirmedAddress () {
     return new Promise ( (resolve, reject) => {
       let conditions = {contractAddress:this.contractAddress,
         sentBackStatus:1}

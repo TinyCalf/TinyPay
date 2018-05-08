@@ -14,12 +14,12 @@ let sendback = new Sendback({
     mongoose : mongoose,
     web3: web3,
     parity:parity,
-    gas: 100000,
-    gasPrice:4000000000,
-    estimatedGas: 100000
+    gas: "100000",
+    gasPrice:"4000000000",
+    estimatedGas: "50000"
 })
 
-// sendback.addAddressToBeSentBack("0x212e754b95f99799aab5686ab21cf45a5f7e4000")
+// sendback.addAddressToBeSentBack("0xb02d2693f4b0d7fd1221be056a275005ffc327af")
 // .then(console.log).catch(console.log)
 //
 // sendback._findAllAndConfirmSentGas()
@@ -30,5 +30,11 @@ let sendback = new Sendback({
 // .then(console.log).catch(console.log)
 
 
-sendback._findOneAndSendBack()
-.then(console.log).catch(console.log)
+// sendback._findOneAndSendBack()
+// .then(console.log).catch(console.log)
+
+//
+// sendback._findAllAndConfirmSentBack()
+// .then(console.log).catch(console.log)
+
+sendback.start()

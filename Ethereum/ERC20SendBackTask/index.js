@@ -4,6 +4,7 @@ const fs = require("fs")
 const path = require("path")
 Promise = require("bluebird")
 require("../../log")
+const account = require("../Account")
 
 module.exports = class ERC20SendBackTask {
 
@@ -43,9 +44,24 @@ module.exports = class ERC20SendBackTask {
       new this.web3.eth.Contract(abi, this.contractAddress)
   }
 
-  /* add one address into the queue to be sent back to main*/
+  /*
+  1. judge if has token inside
+  2. add one address into the queue to be sent back to main
+  */
   addAddressToBeSentBack (address) {
-    return this.queue.create(address)
+    return new Promise( (resolve, reject) => {
+      this.contractInstance.methods.balanceOf(address).call()
+      .then(ret=>{
+        if(ret <= 0) return reject(new Error("NO_TOKEN_IN_THIS_ADDRESS") )
+        return account.getPrivateKeyForAccount(address)
+      })
+      .then(ret=>{
+        if(!ret) return reject(new Error("INVAILED_ADDRESS") )
+        return this.queue.create(address)
+      })
+      .then(ret=>resolve(ret))
+      .catch(err=>reject(err))
+    })
   }
 
   /*
@@ -71,7 +87,8 @@ module.exports = class ERC20SendBackTask {
             to: address,
             gas: this.gas,
             gasPrice: this.gasPrice,
-            value: this.estimatedGas,
+            value: this.web3.utils.toBN(this.estimatedGas)
+            .mul(this.web3.utils.toBN(this.gasPrice)),
             nonce: nonce,
         }
         this.web3.eth.sendTransaction(tx)
@@ -112,7 +129,7 @@ module.exports = class ERC20SendBackTask {
       .then(ret=>{
         return Promise.map(ret, receipt=>{
           return new Promise ( (resolve, reject) => {
-            if( receipt.status == '0x1'
+            if( receipt && receipt.status == '0x1'
                 && receipt.transactionHash
                 && receipt.gasUsed){
               let etherUsed = this.web3.utils
@@ -146,18 +163,23 @@ module.exports = class ERC20SendBackTask {
       .then(ret=>{
         if(!ret) return resolve()
         address = ret.address
-        return this.parity.nextNonce(this.mainAddress)
+        return this.parity.nextNonce(address)
       })
       .then(ret=>{
         nonce = ret
+        return account.getPrivateKeyForAccount(address)
+      })
+      .then( prikey=>{
+        let a = this.web3.eth.accounts.wallet.add(prikey);
         return this.contractInstance.methods.balanceOf(address).call()
       })
       .then(ret=>{
-        this.contractInstance.methods.transfer(address, ret).send({
-          from:this.mainAddress,
+        this.contractInstance.methods.transfer(this.mainAddress,
+          this.web3.utils.toBN(ret) ).send({
+          from: address,
+          nonce: nonce,
           gas: this.estimatedGas,
-          gasPrice:this.gasPrice,
-          nonce: nonce
+          gasPrice:this.gasPrice
         })
         .on('transactionHash', function(hash){
           console.success(`sent back all token for ${self.config.alias} ${address}
@@ -182,13 +204,55 @@ module.exports = class ERC20SendBackTask {
     })
   }
 
+  /*
+
+  */
+  _findAllAndConfirmSentBack() {
+    return new Promise ( (resolve, reject) => {
+      let address = ""
+      return this.queue.findAllSentBackButNoConfirmedAddress()
+      .then(txs=>{
+        return Promise.map(txs, tx=>{
+          return new Promise ( (resolve, reject) => {
+            this.web3.eth.getTransactionReceipt(tx.sentBackTransactionHash)
+            .then(ret=>{
+              resolve(ret)
+            })
+            .catch(err=>reject(err))
+          })
+        })
+      })
+      .then(ret=>{
+        return Promise.map(ret, receipt=>{
+          return new Promise ( (resolve, reject) => {
+            if( receipt && receipt.status == '0x1'
+                && receipt.transactionHash){
+              let sentBackTransactionHash = receipt.transactionHash
+              this.queue.confirmSentBack(
+                sentBackTransactionHash,
+              ).then(ret=>resolve()).catch(err=>reject(err))
+            } else resolve()
+          })
+        })
+      })
+      .then(ret=>resolve()).catch(err=>reject(err))
+    })
+  }
 
 
-
-
-
-
-
-
+  start() {
+    setInterval(()=>{
+      this._findOneAndSendGas().catch(err=>console.error(err))
+    }, 10000)
+    setInterval(()=>{
+      this._findAllAndConfirmSentGas().catch(err=>console.error(err))
+    }, 10000)
+    setInterval(()=>{
+      this._findOneAndSendBack().catch(err=>console.error(err))
+    }, 10000)
+    setInterval(()=>{
+      this._findAllAndConfirmSentBack().catch(err=>console.error(err))
+    }, 10000)
+  }
 
 }

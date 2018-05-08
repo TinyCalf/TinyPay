@@ -118,6 +118,27 @@ class Tinypay {
     })
   }
 
+  sendBack (address) {
+    return new Promise ( (resolve, reject)=>{
+      var params = this._sign({address:address})
+      var options = {
+        uri: `${this.apiUri}/v1/sendback`,
+        method: 'POST',
+        json: params
+      };
+      request(options, function (error, response, body) {
+        if(error) return reject(error)
+        if(body.err != 0) {
+          console.log(body)
+          var e = new Error(body.msg)
+          e.code = body.err
+          return reject(e)
+        }
+        resolve(body.msg)
+      });
+    })
+  }
+
 
 }
 module.exports = Tinypay

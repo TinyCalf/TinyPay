@@ -78,18 +78,18 @@ CATCH
 a instance of node Error
 */
 
-// tinypay.withdraw("king","0x212e754b95f99799aab5686ab21cf45a5f7e4000","10")
-// .then(console.log)
-// .catch(err=>{
-//   console.log(err.code)
-//   console.log(err.message)
-//   console.log(err)
-// })
-
-tinypay.withdraw("ether","0x212e754b95f99799aab5686ab21cf45a5f7e4000","0.001")
+tinypay.withdraw("king","0x212e754b95f99799aab5686ab21cf45a5f7e4000","10")
 .then(console.log)
 .catch(err=>{
   console.log(err.code)
   console.log(err.message)
   console.log(err)
 })
+
+// tinypay.withdraw("ether","0x212e754b95f99799aab5686ab21cf45a5f7e4000","0.001")
+// .then(console.log)
+// .catch(err=>{
+//   console.log(err.code)
+//   console.log(err.message)
+//   console.log(err)
+// })
