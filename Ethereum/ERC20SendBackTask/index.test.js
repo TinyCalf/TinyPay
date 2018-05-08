@@ -16,11 +16,19 @@ let sendback = new Sendback({
     parity:parity,
     gas: 100000,
     gasPrice:4000000000,
-    estimatedGas: 100000 * 4000000000
+    estimatedGas: 100000
 })
 
 // sendback.addAddressToBeSentBack("0x212e754b95f99799aab5686ab21cf45a5f7e4000")
 // .then(console.log).catch(console.log)
-
-// sendback.findOneAndSendGas()
+//
+// sendback._findAllAndConfirmSentGas()
 // .then(console.log).catch(console.log)
+
+
+// sendback._findAllAndConfirmSentGas()
+// .then(console.log).catch(console.log)
+
+
+sendback._findOneAndSendBack()
+.then(console.log).catch(console.log)

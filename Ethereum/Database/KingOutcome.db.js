@@ -109,7 +109,7 @@ this.confirmSuccess = (params) =>{
 this.findUnconfirmedTransactions = ()=> {
   return new Promise ( (resolve,reject) => {
     var conditions = {success:false}
-    var fields = "-_id"
+    var fields = "-_id -__v"
     KingOutcome.find(conditions, fields , (err,ret)=>{
       if(err) return reject(err)
       resolve(ret)

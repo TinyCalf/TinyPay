@@ -53,9 +53,11 @@ module.exports = class QueueModel {
   }
 
   /*confirm has got gas needed*/
-  confirmSentGas (address, etherUsed) {
+  confirmSentGas (sentGasTransactionHash, etherUsed) {
     return new Promise ( (resolve, reject) => {
-      let conditions = {contractAddress:this.contractAddress,address:address}
+      let conditions =
+      {contractAddress:this.contractAddress,
+        sentGasTransactionHash:sentGasTransactionHash}
       let update = { $set:{
         etherUsed: etherUsed,
         sentGasStatus : 2
@@ -105,7 +107,7 @@ module.exports = class QueueModel {
     })
   }
 
-  findOneSentGasButNoConfirmedAddress () {
+  findAllSentGasButNoConfirmedAddress () {
     return new Promise ( (resolve, reject) => {
       let conditions = {contractAddress:this.contractAddress,
         sentGasStatus:1}
@@ -117,13 +119,13 @@ module.exports = class QueueModel {
     })
   }
 
-  findOneGotGasButNoSentBackAddress () {
+  findOneSentGasButNoSentBackAddress () {
     return new Promise ( (resolve, reject) => {
       let conditions = {contractAddress:this.contractAddress,
         sentBackStatus:0,
         sentGasStatus:2}
       let fields = "address"
-      this.model.find(conditions, fields, (err, ret) => {
+      this.model.findOne(conditions, fields, (err, ret) => {
         if(err) return reject(err)
         resolve(ret)
       })
