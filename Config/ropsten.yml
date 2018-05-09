@@ -1,6 +1,6 @@
 # 数据库相关
 mongodb:
-  host: mongodb://localhost:27017/coolpay_dev
+  host: mongodb://localhost:27017/tinypay_ropsten
 
 ethereum:
   host: 127.0.0.1
@@ -21,7 +21,7 @@ ether:
   name: ether
   symbol: ether
   gas: 100000
-  startHeight: 3164000
+  startHeight: 3196887
 
 king:
   contractAddress: "0x53565FEbe212Fc43392Fdf01aE19CCd3d492695A"
@@ -30,7 +30,7 @@ king:
   name: KingCoin
   gasPrice: 4000000000
   gas: 100000
-  startHeight: 3164300
+  startHeight: 3196887
 
 
 www:

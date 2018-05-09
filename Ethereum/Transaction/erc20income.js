@@ -110,8 +110,8 @@ var _discoverNewTransactions = (alias) => {
         income.symbol = config[alias].symbol
         income.transactionHash = tx.transactionHash
         income.confirmations = _culConfirmations(currentHeight, tx.blockNumber)
-        income.sender = tx.from
-        income.localReceiver = tx.to
+        income.sender = tx.from.toLowerCase()
+        income.localReceiver = tx.to.toLowerCase()
         income.blockHash = tx.blockHash
         income.blockNumber = tx.blockNumber
         income.value = tx.value

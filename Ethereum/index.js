@@ -24,4 +24,6 @@ let sendback = new ERC20SendBackTask({
     gasPrice:config.king.gasPrice,
     estimatedGas: "50000"
 })
-exports.ERC20SendBackTask = ERC20SendBackTask
+
+sendback.start()
+exports.ERC20SendBackTask = sendback

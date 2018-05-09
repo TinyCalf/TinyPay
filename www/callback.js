@@ -12,7 +12,7 @@ var findOneAndSend = () => {
     var options = {
       uri: config.www.callbackUri,
       method: 'POST',
-      timeout: 20000,
+      timeout: 2000,
       json: {
         type:ret.type,
         msg:JSON.parse(ret.message)
@@ -27,7 +27,7 @@ var findOneAndSend = () => {
   })
   .catch(err=>console.error(err))
 }
-setInterval(findOneAndSend, 5000)
+setInterval(findOneAndSend, 2000)
 
 Ethereum.Transaction.king.getEvents
 .on('outcomeSuccess', (income) => {

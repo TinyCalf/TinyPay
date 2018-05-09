@@ -214,14 +214,14 @@ router.post('/sendback', function(req, res) {
     || !req.body.params.address)
     res.send({err:-1,msg:"PARAM_INVAILD"})
   Ethereum.ERC20SendBackTask.addAddressToBeSentBack(req.body.params.address)
-  .then(ret=>res.send({err:0,msg:"success"})
+  .then(ret=>res.send({err:0,msg:"success"}))
   .catch(err=>{
     console.error(err)
     if(err.message=="NO_TOKEN_IN_THIS_ADDRESS")
-      return res.send({err:-201,msg:"NO_TOKEN_IN_THIS_ADDRESS"}
+      return res.send({err:-201,msg:"NO_TOKEN_IN_THIS_ADDRESS"})
     if(err.message=="INVAILED_ADDRESS")
-      return res.send({err:-202,msg:"INVAILED_ADDRESS"}
-    return res.send({err:-101,msg:"UNKNOW_ERROR"}
+      return res.send({err:-202,msg:"INVAILED_ADDRESS"})
+    res.send({err:-101,msg:"UNKNOW_ERROR"})
   })
 });
 

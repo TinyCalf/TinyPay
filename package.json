@@ -6,11 +6,8 @@
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha --reporter mochawesome",
     "repo": "node ./openReporter",
-    "build": "node build.js",
-    "check": "node check.js",
     "start": "node tinypay.js",
-    "notify": "node Start_Notify.js",
-    "daemon": "nohup node bitgogogo.js &",
+    "daemon": "nohup node tinypay.js &",
     "generatedoc":"./node_modules/apidoc/bin/apidoc  -i www/ -o doc/ && node ./openDoc"
   },
   "author": "Jonathan-ZHU",

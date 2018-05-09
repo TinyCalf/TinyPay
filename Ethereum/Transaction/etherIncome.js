@@ -101,8 +101,8 @@ var _discoverNewTransactions = () => {
         income.symbol = "ether"
         income.transactionHash = tx.hash
         income.confirmations = _culConfirmations(currentHeight, tx.blockNumber)
-        income.sender = tx.from
-        income.localReceiver = tx.to
+        income.sender = tx.from.toLowerCase()
+        income.localReceiver = tx.to.toLowerCase()
         income.blockHash = tx.blockHash
         income.blockNumber = tx.blockNumber
         income.value = tx.value

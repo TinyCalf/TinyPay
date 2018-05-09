@@ -121,7 +121,7 @@ this.findTransactionByHash = (hash) => {
   return new Promise ( (resolve,reject) => {
     var conditions = {transactionHash : hash}
     var fields = "-_id"
-    EtherOutcome.findOne(conditions, fields , (err,ret)=>{
+    KingOutcome.findOne(conditions, fields , (err,ret)=>{
       if(err) return reject(err)
       resolve(ret)
     })
