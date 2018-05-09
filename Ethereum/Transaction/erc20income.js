@@ -59,8 +59,8 @@ var _getTransactions = (alias, fromBlock, toBlock) =>{
             blockNumber: t.blockNumber,
             transactionHash: t.transactionHash,
             transactionIndex: t.transactionIndex,
-            from: t.returnValues.from,
-            to: t.returnValues.to,
+            from: t.returnValues.from.toLowerCase(),
+            to: t.returnValues.to.toLowerCase(),
             value : t.returnValues.value
           }
           result.push(res)
