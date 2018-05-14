@@ -9,6 +9,7 @@ ethereum:
   available_currency_alias:
     - ether
     - king
+    - tiny
   confirmations: 20
   mainAccount:
     "0xee6a7a60f2f8d1e45a15eebb91eec41886d4fa08"
@@ -32,10 +33,19 @@ king:
   gas: 100000
   startHeight: 3196887
 
+tiny:
+  contractAddress: "0x485f659412636c389d6C7E6E9e10916C7A3BBe5d"
+  category: erc20
+  symbol: TINY
+  name: Tiny Calf
+  gasPrice: 4000000000
+  gas: 100000
+  startHeight: 3196887
+
 
 www:
   port: 1990
-  disableVerify: false
-  appkey: b172afe6dc6fecc491bdb458853eeac49bd2a930
-  appsecret: 997abe175d48da23af5699fe668f89e57fbc49fbcaa3ac1970b23aca9d3168a6
-  callbackUri: http://127.0.0.1:30000
+  disableVerify: true
+  # appkey: b172afe6dc6fecc491bdb458853eeac49bd2a930
+  # appsecret: 997abe175d48da23af5699fe668f89e57fbc49fbcaa3ac1970b23aca9d3168a6
+  callbackUri: http://192.168.1.107:3000/user/SEND_RECHARGE_ORDER

@@ -7,6 +7,8 @@ var schema = new mongoose.Schema({
   pubkey:         {type:String, required:true},
   path:           {type:String, required:true},
   mnemonic:       {type:String, required:true},
+  alias:          {type:String, required:true},
+  name:           {type:String, required:true},
   symbol:         {type:String, required:true},
   category:       {type:String, required:true},
 });
@@ -68,6 +70,7 @@ this.insert = (params) => {
     nAccount.name = params.name
     nAccount.symbol = params.symbol
     nAccount.category = params.category
+    nAccount.alias = params.alias
     nAccount.save( (err, ret) => {
       if (err) return reject(err)
       resolve(ret)

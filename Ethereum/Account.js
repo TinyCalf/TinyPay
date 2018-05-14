@@ -41,7 +41,8 @@ this.getEtherAddressesByAddresses = db.getEtherAddressesByAddresses
 
 
 var _getCurrencyByAlias = (alias) => {
-  if(!config[alias]) throw new Error("ALIAS_NOT_FOUND")
+  if(!config[alias] || !config[alias].category)
+    throw new Error("ALIAS_NOT_FOUND")
   return config[alias]
 }
 
@@ -55,7 +56,7 @@ var _generate = () => {
   let wallet = hdwallet.derivePath(path).getWallet()
   let prikey = "0x" + wallet.getPrivateKey().toString("hex")
   let pubkey = "0x" + wallet.getPublicKey().toString("hex")
-  let address = "0x" + wallet.getAddress().toString("hex")
+  let address = wallet.getChecksumAddressString()
   return {
     mnemonic:mnemonic,
     path: path,
@@ -71,6 +72,7 @@ this.createNewAccount = (alias) => {
     currency = _getCurrencyByAlias(alias)
     account.name = currency.name
     account.symbol = currency.symbol
+    account.alias = alias
     account.category  = currency.category
     db.insert(account)
     .then(ret=>{
@@ -78,6 +80,7 @@ this.createNewAccount = (alias) => {
       account.address = ret.address
       account.name = ret.name
       account.symbol = ret.symbol
+      account.alias = ret.alias
       account.category = ret.category
       resolve(account)
     })
@@ -86,6 +89,7 @@ this.createNewAccount = (alias) => {
     })
   })
 }
+// this.createNewAccount("KING").then(console.log).catch(console.log)
 
 this.getPrivateKeyForAccount = (address) =>{
     return db.getPrikey(address)
@@ -105,3 +109,4 @@ this.getAddressesByAlias = (alias) => {
     .catch(err=>reject(err))
   })
 }
+// this.getAddressesByAlias("ether").then(console.log).catch(console.log)

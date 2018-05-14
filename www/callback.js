@@ -41,6 +41,12 @@ Ethereum.Transaction.etheroutcome.getEvents
   db.add(JSON.stringify(income), "outcomeSuccess").catch(console.error)
 })
 
+Ethereum.Transaction.erc20outcome.getEvents
+.on('outcomeSuccess', (outcome) => {
+  console.info(`callback queue has new outcomeSuccess message`)
+  db.add(JSON.stringify(outcome), "outcomeSuccess").catch(console.error)
+})
+
 
 Ethereum.Transaction.erc20income.getEvents
 .on('newIncome', (income) => {
