@@ -56,7 +56,7 @@ var _generate = () => {
   let wallet = hdwallet.derivePath(path).getWallet()
   let prikey = "0x" + wallet.getPrivateKey().toString("hex")
   let pubkey = "0x" + wallet.getPublicKey().toString("hex")
-  let address = wallet.getChecksumAddressString()
+  let address = wallet.getChecksumAddressString().toLowerCase()
   return {
     mnemonic:mnemonic,
     path: path,
@@ -89,7 +89,9 @@ this.createNewAccount = (alias) => {
     })
   })
 }
-// this.createNewAccount("KING").then(console.log).catch(console.log)
+// this.createNewAccount("king").then(console.log).catch(console.log)
+// this.createNewAccount("ether").then(console.log).catch(console.log)
+// this.createNewAccount("tiny").then(console.log).catch(console.log)
 
 this.getPrivateKeyForAccount = (address) =>{
     return db.getPrikey(address)
