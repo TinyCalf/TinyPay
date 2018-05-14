@@ -9,6 +9,8 @@ var block = require("../Block")
 var currencydb = require("../Database/Currency.db")
 var Event = require("events")
 var Promise = require("bluebird")
+const utils = require("ethereumjs-util")
+const BN = utils.BN
 
 /*
 get some events
@@ -105,7 +107,7 @@ var _discoverNewTransactions = () => {
         income.localReceiver = tx.to.toLowerCase()
         income.blockHash = tx.blockHash
         income.blockNumber = tx.blockNumber
-        income.value = tx.value
+        income.value = new BN(tx.value, 10).toString(10)
         income.amount = web3.utils.fromWei(tx.value)
         incomes.push(income)
         getEvents.emit("newIncome", income)

@@ -5,18 +5,42 @@ require("../../log")
 
 
 /*auto init checked height if existed, nothing change*/
-var initCurrencyData = [
-  {alias: "king", lastCheckedHeight:config.king.startHeight},
-  {alias: "ether", lastCheckedHeight:config.ether.startHeight}
-]
-currencydb.init(initCurrencyData)
-.then(ret=>{
-  console.success(`init currencies' height succeed`)
+let initCurrencyData = []
+let aliases = config.ethereum.available_currency_alias
+aliases.forEach( (alias)=>{
+  if(!config[alias] || !config[alias].startHeight) {
+    console.error(`something wrong in ${alias}'s config file`)
+    process.exit(1)
+  }
+  let data = {
+    alias:alias,
+    lastCheckedHeight:config[alias].startHeight
+  }
+  initCurrencyData.push(data)
 })
-.catch(err=>{
-  console.error(err)
-  throw new Error(`init currencies failed`)
+initCurrencyData.forEach( (curr)=>{
+  currencydb.init(curr)
+  .then(ret=>{
+    console.success(`init ${curr.alias}'s height succeed`)
+    currencydb.checkHeight(curr.alias)
+    .then(ret=>{
+      if(ret < curr.lastCheckedHeight)
+        currencydb.updateHeight(curr.alias, curr.lastCheckedHeight)
+        .then(ret=>console.success(`${curr.alias}'s height has changed to
+          ${curr.lastCheckedHeight}`))
+        .catch(err=>{throw err})
+    })
+    .catch(err=>{throw err})
+
+  })
+  .catch(err=>{
+    console.error(err)
+    throw new Error(`init currencies failed`)
+  })
 })
+
+
+
 
 
 // start deal with erc20 income

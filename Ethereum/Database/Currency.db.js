@@ -30,8 +30,8 @@ this.init = (currencies) => {
   return new Promise( (resolve, reject)=>{
     Currency.collection.insert(currencies, function(err, ret){
       if(err && err.code != 11000) return reject(err)
-      if(err && err.code == 11000) return resolve()
-      resolve()
+      if(err && err.code == 11000) return resolve(ret)
+      resolve(ret)
     })
   })
 }

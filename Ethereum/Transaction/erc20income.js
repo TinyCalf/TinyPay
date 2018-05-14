@@ -24,9 +24,34 @@ exports.getEvents = getEvents
 var abi = JSON.parse(
   fs.readFileSync(__dirname + "/erc20.abi").toString())
 var kingInstance = new web3.eth.Contract(abi, config.king.contractAddress)
-var contractInstances = {
-  king: kingInstance
-}
+var aliases = config.ethereum.available_currency_alias
+let contractInstances = {}
+aliases.forEach( (c) => {
+  if(!config[c])
+    throw new Error(`Currency not found! Please check config file to see if there is a problem`)
+  let curr = config[c]
+  if(curr.category != "erc20") return
+  if(!curr.category
+    ||!curr.contractAddress
+    || !curr.category
+    || !curr.symbol
+    || !curr.name)
+    throw new Error(`Currency not found! Please check config file to see if there is a problem`)
+  let nInstance = new web3.eth.Contract(abi, curr.contractAddress)
+  contractInstances[c] = nInstance
+  nInstance.methods.name().call({}).then(ret=>{
+    if(ret!=curr.name){
+      console.error(`${c}'s name is wrong in config file`)
+      process.exit(1)
+    }
+  })
+  nInstance.methods.symbol().call({}).then(ret=>{
+    if(ret!=curr.symbol){
+    console.error(`${c}'s symbol is wrong in config file`)
+      process.exit(1)
+    }
+  })
+})
 
 /*
 get related transactions of the token
@@ -198,9 +223,35 @@ var _updateConfirmations = (alias) => {
 /*
 update  new transaction when new block discovered
 */
-_updateConfirmations("king").catch(err=>console.error(err))
-_discoverNewTransactions("king").catch(err=>console.error(err))
+let _startAllOnce = () => {
+  for(key in contractInstances) {
+    _updateConfirmations(key).catch(err=>console.error(err))
+    _discoverNewTransactions(key).catch(err=>console.error(err))
+  }
+}
+_startAllOnce()
 block.newBlock.on('newblock', (blockHeader) => {
-  _discoverNewTransactions("king").catch(err=>console.error(err))
-  _updateConfirmations("king").catch(err=>console.error(err))
+  _startAllOnce()
 });
+
+// contractInstances.tiny.getPastEvents('Transfer',{
+//   filter:{to:["0x4aac1c1c2e23d68c1e78f5d9ab214eb45b8288d5"]},
+//   fromBlock:0,
+//   toBlock: "latest"
+// }, function(error, data){
+//   if(error) return reject(error)
+//   var result = []
+//   data.forEach( t=>{
+//     var res = {
+//       blockHash: t.blockHash,
+//       blockNumber: t.blockNumber,
+//       transactionHash: t.transactionHash,
+//       transactionIndex: t.transactionIndex,
+//       from: t.returnValues.from.toLowerCase(),
+//       to: t.returnValues.to.toLowerCase(),
+//       value : t.returnValues.value
+//     }
+//     result.push(res)
+//   })
+//   console.log(result)
+// })

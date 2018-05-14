@@ -4,7 +4,7 @@ const express = require("express");
 var app = express();
 var v1 = require('./v1');
 var config = require("../Config")
-require("./callback")
+// require("./callback")
 
 
 //设置跨与访问
