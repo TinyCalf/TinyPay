@@ -19,51 +19,51 @@ var findOneAndSend = () => {
       }
     };
     request(options, function (error, response, body) {
-      if(error) return console.error(error)
+      if(error) return console.warn(error)
       //has got response, indicating that this message is solved
-      db.markReceived(ret._id).catch(err=>console.error(err))
+      db.markReceived(ret._id).catch(err=>console.warn(err))
       console.info(`new message received by client id:${ret.id}`)
     });
   })
-  .catch(err=>console.error(err))
+  .catch(err=>console.warn(err))
 }
 setInterval(findOneAndSend, 2000)
 
 Ethereum.Transaction.king.getEvents
 .on('outcomeSuccess', (income) => {
   console.info(`callback queue has new outcomeSuccess message`)
-  db.add(JSON.stringify(income), "outcomeSuccess").catch(console.error)
+  db.add(JSON.stringify(income), "outcomeSuccess").catch(console.warn)
 })
 
 Ethereum.Transaction.etheroutcome.getEvents
 .on('outcomeSuccess', (income) => {
   console.info(`callback queue has new outcomeSuccess message`)
-  db.add(JSON.stringify(income), "outcomeSuccess").catch(console.error)
+  db.add(JSON.stringify(income), "outcomeSuccess").catch(console.warn)
 })
 
 Ethereum.Transaction.erc20outcome.getEvents
 .on('outcomeSuccess', (outcome) => {
   console.info(`callback queue has new outcomeSuccess message`)
-  db.add(JSON.stringify(outcome), "outcomeSuccess").catch(console.error)
+  db.add(JSON.stringify(outcome), "outcomeSuccess").catch(console.warn)
 })
 
 
 Ethereum.Transaction.erc20income.getEvents
 .on('newIncome', (income) => {
   console.info(`callback queue has new newIncome message`)
-  db.add(JSON.stringify(income), "newIncome").catch(console.error)
+  db.add(JSON.stringify(income), "newIncome").catch(console.warn)
 })
 .on('confirmationUpdate',(transaction) => {
-  db.add(JSON.stringify(transaction), "confirmationUpdate").catch(console.error)
+  db.add(JSON.stringify(transaction), "confirmationUpdate").catch(console.warn)
 })
 
 
 Ethereum.Transaction.etherincome.getEvents
 .on('newIncome', (income) => {
   console.info(`callback queue has new newIncome message`)
-  db.add(JSON.stringify(income), "newIncome").catch(console.error)
+  db.add(JSON.stringify(income), "newIncome").catch(console.warn)
 })
 .on('confirmationUpdate',(transaction) => {
   console.info(`callback queue has new confirmationUpdate message`)
-  db.add(JSON.stringify(transaction), "confirmationUpdate").catch(console.error)
+  db.add(JSON.stringify(transaction), "confirmationUpdate").catch(console.warn)
 })
