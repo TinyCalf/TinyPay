@@ -3,6 +3,9 @@ mongoose = require("mongoose")
 
 var schema = new mongoose.Schema({
   /*needed when create*/
+  alias:                   {type:String, required:true},
+  symbol:                  {type:String, required:true},
+  name:                    {type:String, required:true},
   transactionHash:         {type:String, required:true, unique:true},
   confirmations:           {type:Number, default:0},
   localSender:             {type:String, required:true}, // address of from
@@ -76,6 +79,9 @@ this.appendRecord = (outcome) => {
     nOutcome.value = outcome.value
     nOutcome.amount = outcome.amount
     nOutcome.gasPrice = outcome.gasPrice
+    nOutcome.alias = outcome.alias
+    nOutcome.symbol = outcome.symbol
+    nOutcome.name = outcome.name
     /*culculate*/
     nOutcome.recordTimestamp = Date.now()
     nOutcome.recordTime = Date()

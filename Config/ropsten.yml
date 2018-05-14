@@ -17,21 +17,23 @@ ethereum:
     "0xe78dd8f82f884b144381fa7c722fdef191273b8955306cf0129ff8b80c5390c6"
 
 ether:
-  gasPrice: 4000000000
   category: ether
   name: ether
   symbol: ether
-  gas: 100000
-  startHeight: 3196887
-
-king:
-  contractAddress: "0x53565FEbe212Fc43392Fdf01aE19CCd3d492695A"
-  category: erc20
-  symbol: KING(KingCoin)
-  name: KingCoin
   gasPrice: 4000000000
   gas: 100000
   startHeight: 3196887
+  autoSendBack: true
+
+king:
+  contractAddress: "0x53565FEbe212Fc43392Fdf01aE19CCd3d492695A" #合约地址
+  category: erc20           #token类别
+  symbol: KING(KingCoin)    #token缩写
+  name: KingCoin            #token名称
+  gasPrice: 4000000000      #交易预定gasPrice
+  gas: 100000               #交易预定gaslimit
+  startHeight: 3196887      #起始高度
+  autoSendBack: true       #是否自动转回主账户（ehtereum.mainAccount）
 
 tiny:
   contractAddress: "0x485f659412636c389d6C7E6E9e10916C7A3BBe5d"
@@ -41,6 +43,7 @@ tiny:
   gasPrice: 4000000000
   gas: 100000
   startHeight: 3196887
+  autoSendBack: true
 
 
 www:

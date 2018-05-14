@@ -21,12 +21,38 @@ getEvents.on('outcomeSuccess', (income) => {...});
 let getEvents = new Event()
 exports.getEvents = getEvents
 
-let abi = JSON.parse(
+var abi = JSON.parse(
   fs.readFileSync(__dirname + "/erc20.abi").toString())
 var kingInstance = new web3.eth.Contract(abi, config.king.contractAddress)
-var contractInstances = {
-  king: kingInstance
-}
+var aliases = config.ethereum.available_currency_alias
+let contractInstances = {}
+aliases.forEach( (c) => {
+  if(!config[c])
+    throw new Error(`Currency not found! Please check config file to see if there is a problem`)
+  let curr = config[c]
+  if(curr.category != "erc20") return
+  if(!curr.category
+    ||!curr.contractAddress
+    || !curr.category
+    || !curr.symbol
+    || !curr.name)
+    throw new Error(`Currency not found! Please check config file to see if there is a problem`)
+  let nInstance = new web3.eth.Contract(abi, curr.contractAddress)
+  contractInstances[c] = nInstance
+  nInstance.methods.name().call({}).then(ret=>{
+    if(ret!=curr.name){
+      console.error(`${c}'s name is wrong in config file`)
+      process.exit(1)
+    }
+  })
+  nInstance.methods.symbol().call({}).then(ret=>{
+    if(ret!=curr.symbol){
+    console.error(`${c}'s symbol is wrong in config file`)
+      process.exit(1)
+    }
+  })
+})
+
 
 exports.transferERC20InEther = new Function("to", "amount")
 
@@ -60,6 +86,10 @@ let _transferERC20 = (alias, from, to, value) => {
 
 this.transferERC20InEther = (alias, to, amount) => {
   return new Promise ( (resolve, reject)=>{
+    if(!(typeof amount=='string')){
+      return resolve(new Error("amount should be String"))
+    }
+
     let ifConfiged = false
     config.ethereum.available_currency_alias.forEach( a=>{
       if (a==alias) ifConfiged = true
@@ -78,12 +108,19 @@ this.transferERC20InEther = (alias, to, amount) => {
       outcome.value = web3.utils.toWei(amount)
       outcome.amount = amount
       outcome.gasPrice = tx.gasPrice
+      outcome.alias = alias
+      outcome.symbol = config[alias].symbol
+      outcome.name = config[alias].name
       return outcomedb.appendRecord(outcome)
     })
     .then( ret=>resolve(hash))
     .catch(err=>reject(err))
   })
 }
+
+// this.transferERC20InEther("tiny",
+// "0xee6a7a60f2f8d1e45a15eebb91eec41886d4fa08","20.01")
+// .then(console.log).catch(console.log)
 
 /*
 1. check if succeed
