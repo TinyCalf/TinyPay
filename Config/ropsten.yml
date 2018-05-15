@@ -20,8 +20,8 @@ ether:
   category: ether
   name: ether
   symbol: ether
-  gasPrice: 4000000000
-  gas: 100000
+  gasPrice: "4000000000"
+  gas: "100000"
   startHeight: 3196887
   autoSendBack: true
 
@@ -30,20 +30,22 @@ king:
   category: erc20           #token类别
   symbol: KING(KingCoin)    #token缩写
   name: KingCoin            #token名称
-  gasPrice: 4000000000      #交易预定gasPrice
-  gas: 100000               #交易预定gaslimit
-  startHeight: 3196887      #起始高度
+  gasPrice: "4000000000"      #交易预定gasPrice
+  gas: "100000"               #交易预定gaslimit
+  startHeight: "3196887"      #起始高度
   autoSendBack: true       #是否自动转回主账户（ehtereum.mainAccount）
+  sendBackNeededGas: "100000"
 
 tiny:
   contractAddress: "0x485f659412636c389d6C7E6E9e10916C7A3BBe5d"
   category: erc20
   symbol: TINY
   name: Tiny Calf
-  gasPrice: 4000000000
-  gas: 100000
-  startHeight: 3196887
+  gasPrice: "4000000000"
+  gas: "100000"
+  startHeight: "3196887"
   autoSendBack: true
+  sendBackNeededGas: "100000"
 
 
 www:

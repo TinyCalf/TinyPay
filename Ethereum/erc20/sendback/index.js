@@ -1,38 +1,28 @@
+/*
+erc20/sendback/index.js
+*/
 const Queue = require("./QueueModel")
 const Event = require("events")
 const fs = require("fs")
 const path = require("path")
-Promise = require("bluebird")
-require("../../log")
-const account = require("../Account")
-const web3 = require("../web3")
-var parity = require("../parity")
+const account = require("../../Account")
+const utils = require("../../utils")
+const web3 = utils.web3
+const parity = utils.parity
+const mainAddress = utils.wallet.mainAddress
+const erc20instances = utils.erc20instances
 
-module.exports = class ERC20SendBackTask {
+console.log(erc20instances)
 
-/*
-{
-  alias: "king",
-  contractAddress: "0x53565FEbe212Fc43392Fdf01aE19CCd3d492695A",
-  mainPrivateKey:"0xe78dd8f82f884b144381fa7c722fdef191273b8955306cf0129ff8b80c5390c6",
-  estimatedGas : (ether)
-  gas:
-  gasPrice :
-  mongoose : mongoose,
-  web3: web3,
-  parity: parity,
-}
-*/
-  constructor(config) {
-    this.config = config
+let SendBack = class SendBack {
+
+  constructor(alias, instance) {
+    this.alias = alias
+    this.instance = instance
+    this.contractAddress = instance.options.address
     this.queue = new Queue(
-      config.alias,
-      config.contractAddress,
-      config.mongoose)
-    this.mainAccount = web3.eth.accounts.wallet.add(
-        config.mainPrivateKey
-    );
-    this.mainAddress = this.mainAccount.address.toLowerCase()
+      alias,
+      config.contractAddress)
     this.gas = config.gas
     this.gasPrice = config.gasPrice
     this.estimatedGas = config.estimatedGas

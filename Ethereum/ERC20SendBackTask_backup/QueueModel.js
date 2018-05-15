@@ -1,7 +1,9 @@
+const dbconnect = require("../../dbconnect")
+mongoose = require("mongoose")
+
 module.exports = class QueueModel {
 
-  constructor(alias, contractAddress, mongoose) {
-    this.mongoose = mongoose
+  constructor(alias, contractAddress) {
     this.alias = alias
     this.contractAddress = contractAddress
     const schema = new mongoose.Schema({
