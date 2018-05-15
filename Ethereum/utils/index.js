@@ -6,7 +6,7 @@ Promise = require("bluebird")
 
 let web3 = require("./web3")
 exports.web3 = web3
-// web3().eth.isSyncing().then(console.log).catch(console.log)
+// web3.eth.isSyncing().then(console.log).catch(console.log)
 
 
 
@@ -49,4 +49,4 @@ exports.config = config
 
 let erc20instances = require("./erc20instances")
 exports.erc20instances = erc20instances
-console.log(erc20instances)
+// console.log(erc20instances)

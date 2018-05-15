@@ -12,26 +12,21 @@ const parity = utils.parity
 const mainAddress = utils.wallet.mainAddress
 const erc20instances = utils.erc20instances
 
-console.log(erc20instances)
 
 let SendBack = class SendBack {
 
-  constructor(alias, instance) {
-    this.alias = alias
-    this.instance = instance
-    this.contractAddress = instance.options.address
+  constructor(erc20) {
+    this.alias = erc20.alias
+    this.symbol = erc20.symbol
+    this.name = erc20.name
+    this.erc20 = erc20
     this.queue = new Queue(
-      alias,
-      config.contractAddress)
-    this.gas = config.gas
-    this.gasPrice = config.gasPrice
-    this.estimatedGas = config.estimatedGas
-    this.contractAddress = config.contractAddress
-    this.events = new Event()
-    let abi = JSON.parse(
-      fs.readFileSync(__dirname + "/erc20.abi").toString())
-    this.contractInstance =
-      new web3.eth.Contract(abi, this.contractAddress)
+      erc20.alias,
+      erc20.address)
+    this.contractInstance = erc20.instance
+    this.gas = erc20.gas
+    this.gasPrice = erc20.gasPrice
+    this.sendBackNeededGas = erc20.sendBackNeededGas
   }
 
   /*
@@ -64,7 +59,7 @@ let SendBack = class SendBack {
     return new Promise ( (resolve, reject) => {
       let address = ""
       let nonce = 0
-      parity.nextNonce(this.mainAddress)
+      parity.nextNonce(mainAddress)
       .then(ret=>{
         nonce = ret
         return this.queue.findOneNoSentGasAddress ()
@@ -73,22 +68,22 @@ let SendBack = class SendBack {
         if(ret && ret.address) address = ret.address
         else return resolve()
         let tx = {
-            from: this.mainAddress,
+            from: mainAddress,
             to: address,
             gas: this.gas,
             gasPrice: this.gasPrice,
-            value: web3.utils.toBN(this.estimatedGas)
+            value: web3.utils.toBN(this.sendBackNeededGas)
             .mul(web3.utils.toBN(this.gasPrice)),
             nonce: nonce,
         }
         web3.eth.sendTransaction(tx)
         .on('transactionHash', function(hash){
-          console.success(`sent needed gas for ${self.config.alias} ${address}
+          console.success(`sent needed gas for ${self.alias} ${address}
             tranactionHash ${hash}`)
           self.queue.addSentGasTransaction(address, hash)
           .then(ret=>resolve()).catch(err=>{throw err})
         })
-        .on('error', err=>reject(err));
+        .on('error', err=>{reject(err)});
       })
       .catch(err=>{
         this.queue.addErrorLogs(address, err.toString())
@@ -124,7 +119,7 @@ let SendBack = class SendBack {
                 && receipt.gasUsed){
               let etherUsed = web3.utils
                 .fromWei(
-                  web3.utils.toBN(receipt.gasUsed)
+                  web3.utils.toBN(this.sendBackNeededGas)
                   .mul(web3.utils.toBN(this.gasPrice))
                 )
               let sentGasTransactionHash = receipt.transactionHash
@@ -164,15 +159,15 @@ let SendBack = class SendBack {
         return this.contractInstance.methods.balanceOf(address).call()
       })
       .then(ret=>{
-        this.contractInstance.methods.transfer(this.mainAddress,
-          web3.utils.toBN(ret) ).send({
+        this.contractInstance.methods.transfer(mainAddress,
+          web3.utils.toBN(ret).toString()).send({
           from: address,
           nonce: nonce,
-          gas: this.estimatedGas,
+          gas: this.sendBackNeededGas,
           gasPrice:this.gasPrice
         })
         .on('transactionHash', function(hash){
-          console.success(`sent back all token for ${self.config.alias} ${address}
+          console.success(`sent back all token for ${self.alias} ${address}
             transactionHash: ${hash}`)
           transactionHash = hash
           self.queue.addSentBackTransaction(address, transactionHash)
@@ -231,6 +226,7 @@ let SendBack = class SendBack {
 
 
   start() {
+    console.info(`start dealing with ${this.alias} sendbacks`)
     setInterval(()=>{
       this._findOneAndSendGas().catch(err=>console.error(err))
     }, 10000)
@@ -246,3 +242,22 @@ let SendBack = class SendBack {
   }
 
 }
+
+
+
+let sendbacks = {}
+for(var alias in erc20instances) {
+  sendbacks[alias] = new SendBack(erc20instances[alias])
+}
+
+let startAll = () =>{
+  for(var alias in sendbacks){
+    sendbacks[alias].start()
+  }
+}
+exports.startAll = startAll
+
+let addAddress = (alias, address) => {
+  return sendbacks[alias].addAddressToBeSentBack(address)
+}
+exports.addAddress = addAddress

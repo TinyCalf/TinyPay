@@ -2,24 +2,7 @@ exports.Transaction = require("./Transaction")
 exports.Account = require("./Account")
 
 
-
-var config = require("../Config")
-
-// Verify the config file of erc20 tokens is correct
-
-
-
-//start erc20 send back task
-const ERC20SendBackTask = require("./ERC20SendBackTask")
-// start king send back
-let sendback = new ERC20SendBackTask({
-    alias: "king",
-    contractAddress: config.king.contractAddress,
-    mainPrivateKey:  config.ethereum.mainPrivateKey,
-    gas:             config.king.gas,
-    gasPrice:        config.king.gasPrice,
-    estimatedGas:    "50000"
-})
-
-sendback.start()
-exports.ERC20SendBackTask = sendback
+let erc20sendback = require("./erc20/sendback")
+erc20sendback.startAll()
+// erc20sendback.addAddress("tiny", "0x4aac1c1c2e23d68c1e78f5d9ab214eb45b8288d5")
+// .then(console.log).catch(console.log)

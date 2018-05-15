@@ -1,34 +1,36 @@
-const dbconnect = require("../../dbconnect")
-mongoose = require("mongoose")
+require("../../utils").mongoose
+let mongoose = require("mongoose")
+
+
+const schema = new mongoose.Schema({
+  alias:                      {type:String, required:true},
+  contractAddress:            {type:String, required:true},
+  /*address in which token should be send back to main */
+  address:                    {type:String, required:true, unique:true},
+  /*if got needed gas to transfer all the tokens out*/
+  sentGasStatus:              {type:Number, default:0},
+  /*the transaction hash of the needed gas transfer into this address*/
+  sentGasTransactionHash:      {type:String, default:""},
+  /*if sent back to the main account,0 have not, 1 pending , 2 succeed*/
+  sentBackStatus:             {type:Number, default:0},
+  sentBackTransactionHash:    {type:String, default:""},
+  /*used ether (unit ether)*/
+  etherUsed:                  {type:Number, default:0},
+  errorLogs:                     {type:Array, default:[]}
+});
+let Model = mongoose.model("ethereum_erc20_sendbackqueue", schema)
 
 module.exports = class QueueModel {
 
   constructor(alias, contractAddress) {
     this.alias = alias
     this.contractAddress = contractAddress
-    const schema = new mongoose.Schema({
-      alias:                      {type:String, required:true},
-      contractAddress:            {type:String, required:true},
-      /*address in which token should be send back to main */
-      address:                    {type:String, required:true, unique:true},
-      /*if got needed gas to transfer all the tokens out*/
-      sentGasStatus:              {type:Number, default:0},
-      /*the transaction hash of the needed gas transfer into this address*/
-      sentGasTransactionHash:      {type:String, default:""},
-      /*if sent back to the main account,0 have not, 1 pending , 2 succeed*/
-      sentBackStatus:             {type:Number, default:0},
-      sentBackTransactionHash:    {type:String, default:""},
-      /*used ether (unit ether)*/
-      etherUsed:                  {type:Number, default:0},
-      errorLogs:                     {type:Array, default:[]}
-    });
-    this.model = mongoose.model("erc20sendbacktask_queue", schema)
   }
 
   /*add new record*/
   create(address) {
     return new Promise ( (resolve, reject) => {
-      var q = new this.model()
+      var q = new Model()
       q.address = address
       q.contractAddress = this.contractAddress
       q.alias = this.alias
@@ -47,7 +49,7 @@ module.exports = class QueueModel {
         sentGasTransactionHash:hash,
         sentGasStatus:1
       }}
-      this.model.update(conditions, update, (err, ret) => {
+      Model.update(conditions, update, (err, ret) => {
         if(err) return reject(err)
         resolve(ret)
       })
@@ -64,7 +66,7 @@ module.exports = class QueueModel {
         etherUsed: etherUsed,
         sentGasStatus : 2
       }}
-      this.model.update(conditions, update, (err, ret) => {
+      Model.update(conditions, update, (err, ret) => {
         if(err) return reject(err)
         resolve(ret)
       })
@@ -78,7 +80,7 @@ module.exports = class QueueModel {
         sentBackTransactionHash: hash,
         sentBackStatus: 1
       }}
-      this.model.update(conditions, update, (err, ret) => {
+      Model.update(conditions, update, (err, ret) => {
         if(err) return reject(err)
         resolve(ret)
       })
@@ -93,7 +95,7 @@ module.exports = class QueueModel {
       let update = { $set:{
         sentBackStatus: 2
       }}
-      this.model.update(conditions, update, (err, ret) => {
+      Model.update(conditions, update, (err, ret) => {
         if(err) return reject(err)
         resolve(ret)
       })
@@ -104,7 +106,7 @@ module.exports = class QueueModel {
     return new Promise ( (resolve, reject) => {
       let conditions = {contractAddress:this.contractAddress,sentGasStatus:0}
       let fields = "address"
-      this.model.findOne(conditions, fields, (err, ret) => {
+      Model.findOne(conditions, fields, (err, ret) => {
         if(err) return reject(err)
         resolve(ret)
       })
@@ -116,7 +118,7 @@ module.exports = class QueueModel {
       let conditions = {contractAddress:this.contractAddress,
         sentGasStatus:1}
       let fields = "address sentGasTransactionHash"
-      this.model.find(conditions, fields, (err, ret) => {
+      Model.find(conditions, fields, (err, ret) => {
         if(err) return reject(err)
         resolve(ret)
       })
@@ -129,7 +131,7 @@ module.exports = class QueueModel {
         sentBackStatus:0,
         sentGasStatus:2}
       let fields = "address"
-      this.model.findOne(conditions, fields, (err, ret) => {
+      Model.findOne(conditions, fields, (err, ret) => {
         if(err) return reject(err)
         resolve(ret)
       })
@@ -141,7 +143,7 @@ module.exports = class QueueModel {
       let conditions = {contractAddress:this.contractAddress,
         sentBackStatus:1}
       let fields = "address sentBackTransactionHash"
-      this.model.find(conditions, fields, (err, ret) => {
+      Model.find(conditions, fields, (err, ret) => {
         if(err) return reject(err)
         resolve(ret)
       })
@@ -154,7 +156,7 @@ module.exports = class QueueModel {
       let update = { $push:{
         errorLogs: msg
       }}
-      this.model.update(conditions, update, (err, ret) => {
+      Model.update(conditions, update, (err, ret) => {
         if(err) return reject(err)
         resolve(ret)
       })

@@ -21,7 +21,7 @@ exports.newBlock = newBlockEmitter
 /*
 get block by number or hash
 */
-exports.getBlock = (block) => { return web3().eth.getBlock(block) }
+exports.getBlock = (block) => { return web3.eth.getBlock(block) }
 
 /*
 get current height
@@ -32,7 +32,7 @@ exports.getCurrentHeight = new Function()
 
 var blockNumber = 0
 var updateBlockHeight = () =>{
-  web3().eth.getBlockNumber()
+  web3.eth.getBlockNumber()
   .then(ret=>{
     blockNumber=ret
     console.info(`current height changed to ${blockNumber}`)
@@ -46,7 +46,7 @@ updateBlockHeight()
 this.getCurrentHeight = () => {
   return new Promise ((resolve, reject)=>{
     if(blockNumber==0){
-      web3().eth.getBlockNumber()
+      web3.eth.getBlockNumber()
       .then(ret=>{
         resolve(ret)
       })
@@ -63,7 +63,7 @@ run when is required
 */
 var _startToSubscriptNewBlock = () => {
   console.info("start to subscript new block")
-  var subscription = web3().eth.subscribe(
+  var subscription = web3.eth.subscribe(
     'newBlockHeaders',
     function(error, result)
   {
