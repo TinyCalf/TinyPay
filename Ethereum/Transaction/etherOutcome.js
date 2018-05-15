@@ -78,6 +78,9 @@ let _transferEther = (from, to, value) => {
 
 this.transferEtherInEther = (to, amount) => {
   return new Promise ( (resolve, reject)=>{
+    if(!(typeof amount=='string')){
+      return resolve(new Error("amount should be String"))
+    }
     hash = null
     _transferEther(wallet.mainAddress, to, web3.utils.toWei(amount))
     .then(tx=>{
@@ -97,6 +100,10 @@ this.transferEtherInEther = (to, amount) => {
     .catch(err=>reject(err))
   })
 }
+
+// this.transferEtherInEther(
+// "0x1fd84e7863c4d4057cc9f23ad14becdf705ac87f","5.01")
+// .then(console.log).catch(console.log)
 
 /*
 1. check if succeed
