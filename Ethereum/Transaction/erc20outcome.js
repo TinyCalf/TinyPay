@@ -9,9 +9,7 @@ var wallet = require("./wallet")
 var block = require("../Block")
 var outcomedb = require("../Database/ERC20Outcome.db")
 var Promise = require("bluebird");
-var Parity = require("../parity")
-var parity = new
-Parity(`http://${config.ethereum.host}:${config.ethereum.rpcport}`)
+var parity = require("../parity")
 
 /*
 get some events

@@ -5,6 +5,8 @@ const path = require("path")
 Promise = require("bluebird")
 require("../../log")
 const account = require("../Account")
+const web3 = require("../web3")
+var parity = require("../parity")
 
 module.exports = class ERC20SendBackTask {
 
@@ -27,21 +29,19 @@ module.exports = class ERC20SendBackTask {
       config.alias,
       config.contractAddress,
       config.mongoose)
-    this.web3 = config.web3
-    this.mainAccount = this.web3.eth.accounts.wallet.add(
+    this.mainAccount = web3.eth.accounts.wallet.add(
         config.mainPrivateKey
     );
     this.mainAddress = this.mainAccount.address.toLowerCase()
     this.gas = config.gas
     this.gasPrice = config.gasPrice
     this.estimatedGas = config.estimatedGas
-    this.parity = config.parity
     this.contractAddress = config.contractAddress
     this.events = new Event()
     let abi = JSON.parse(
       fs.readFileSync(__dirname + "/erc20.abi").toString())
     this.contractInstance =
-      new this.web3.eth.Contract(abi, this.contractAddress)
+      new web3.eth.Contract(abi, this.contractAddress)
   }
 
   /*
@@ -74,7 +74,7 @@ module.exports = class ERC20SendBackTask {
     return new Promise ( (resolve, reject) => {
       let address = ""
       let nonce = 0
-      this.parity.nextNonce(this.mainAddress)
+      parity.nextNonce(this.mainAddress)
       .then(ret=>{
         nonce = ret
         return this.queue.findOneNoSentGasAddress ()
@@ -87,11 +87,11 @@ module.exports = class ERC20SendBackTask {
             to: address,
             gas: this.gas,
             gasPrice: this.gasPrice,
-            value: this.web3.utils.toBN(this.estimatedGas)
-            .mul(this.web3.utils.toBN(this.gasPrice)),
+            value: web3.utils.toBN(this.estimatedGas)
+            .mul(web3.utils.toBN(this.gasPrice)),
             nonce: nonce,
         }
-        this.web3.eth.sendTransaction(tx)
+        web3.eth.sendTransaction(tx)
         .on('transactionHash', function(hash){
           console.success(`sent needed gas for ${self.config.alias} ${address}
             tranactionHash ${hash}`)
@@ -118,7 +118,7 @@ module.exports = class ERC20SendBackTask {
       .then(txs=>{
         return Promise.map(txs, tx=>{
           return new Promise ( (resolve, reject) => {
-            this.web3.eth.getTransactionReceipt(tx.sentGasTransactionHash)
+            web3.eth.getTransactionReceipt(tx.sentGasTransactionHash)
             .then(ret=>{
               resolve(ret)
             })
@@ -132,10 +132,10 @@ module.exports = class ERC20SendBackTask {
             if( receipt && receipt.status == '0x1'
                 && receipt.transactionHash
                 && receipt.gasUsed){
-              let etherUsed = this.web3.utils
+              let etherUsed = web3.utils
                 .fromWei(
-                  this.web3.utils.toBN(receipt.gasUsed)
-                  .mul(this.web3.utils.toBN(this.gasPrice))
+                  web3.utils.toBN(receipt.gasUsed)
+                  .mul(web3.utils.toBN(this.gasPrice))
                 )
               let sentGasTransactionHash = receipt.transactionHash
               this.queue.confirmSentGas(
@@ -163,19 +163,19 @@ module.exports = class ERC20SendBackTask {
       .then(ret=>{
         if(!ret) return resolve()
         address = ret.address
-        return this.parity.nextNonce(address)
+        return parity.nextNonce(address)
       })
       .then(ret=>{
         nonce = ret
         return account.getPrivateKeyForAccount(address)
       })
       .then( prikey=>{
-        let a = this.web3.eth.accounts.wallet.add(prikey);
+        let a = web3.eth.accounts.wallet.add(prikey);
         return this.contractInstance.methods.balanceOf(address).call()
       })
       .then(ret=>{
         this.contractInstance.methods.transfer(this.mainAddress,
-          this.web3.utils.toBN(ret) ).send({
+          web3.utils.toBN(ret) ).send({
           from: address,
           nonce: nonce,
           gas: this.estimatedGas,
@@ -214,7 +214,7 @@ module.exports = class ERC20SendBackTask {
       .then(txs=>{
         return Promise.map(txs, tx=>{
           return new Promise ( (resolve, reject) => {
-            this.web3.eth.getTransactionReceipt(tx.sentBackTransactionHash)
+            web3.eth.getTransactionReceipt(tx.sentBackTransactionHash)
             .then(ret=>{
               resolve(ret)
             })

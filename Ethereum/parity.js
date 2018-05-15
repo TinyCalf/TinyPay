@@ -1,4 +1,5 @@
 var request = require('request')
+var config = require("../Config")
 class Parity{
   constructor(rpcuri) {
     if(!rpcuri) return new Error("no rpcuri found!")
@@ -40,7 +41,8 @@ class Parity{
 
 }
 
-module.exports = Parity
+module.exports = new
+Parity(`http://${config.ethereum.host}:${config.ethereum.rpcport}`)
 
 // var parity = new Parity("http://127.0.0.1:8545")
 

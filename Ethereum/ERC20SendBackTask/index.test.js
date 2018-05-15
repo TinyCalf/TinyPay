@@ -1,9 +1,7 @@
 var web3 = require("../web3")
 var mongoose = require("../../dbconnect").mongoose
 var config = require("../../Config")
-var Parity = require("../parity")
-var parity = new
-Parity(`http://${config.ethereum.host}:${config.ethereum.rpcport}`)
+var parity = require("../parity")
 
 const Sendback = require("./index")
 
