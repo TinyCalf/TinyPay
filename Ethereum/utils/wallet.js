@@ -7,7 +7,7 @@ var account = web3.eth.accounts.wallet.add(
 );
 assert.strictEqual(account.address.toLowerCase(), config.ethereum.mainAccount.toLowerCase());
 
-exports.mainAddress = account.address
+exports.mainAddress = account.address.toLowerCase()
 
 // console.log(account)
 // { address: '0x1351998De6246EF92a2DaC2Bc7ec62aB04aF9159',

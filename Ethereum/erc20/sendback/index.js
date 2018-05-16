@@ -3,8 +3,6 @@ erc20/sendback/index.js
 */
 const Queue = require("./QueueModel")
 const Event = require("events")
-const fs = require("fs")
-const path = require("path")
 const account = require("../../Account")
 const utils = require("../../utils")
 const web3 = utils.web3
