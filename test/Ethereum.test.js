@@ -1,4 +1,9 @@
 var Ethereum = require("../Ethereum")
+/*
+1. get all kinds of balance of the main account
+*/
+// Ethereum.getinfo().then(console.log).catch(console.log)
+
 
 
 /*

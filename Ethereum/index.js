@@ -1,5 +1,7 @@
 const utils = require("./utils")
 const config = utils.config
+const ether = require("./ether")
+const erc20 = require("./erc20")
 
 
 exports.Transaction = require("./Transaction")
@@ -33,10 +35,34 @@ Provide the funcions below:
 
 /*
 1. get all kinds of balance of the main account
+return
+[ { alias: 'king',
+    symbol: 'KING(KingCoin)',
+    name: 'KingCoin',
+    balance: '999497.344429999013367925' },
+  { alias: 'tiny',
+    symbol: 'TINY',
+    name: 'Tiny Calf',
+    balance: '1000000' },
+  { alias: 'ether',
+    symbol: 'ether',
+    name: 'ether',
+    balance: '1.540200950899799' } ]
+
 */
 exports.getinfo = () =>{
   return new Promise ((resolve, reject)=>{
-    
+    let result = []
+    erc20.getBalanceOfMain()
+    .then(ret=>{
+      result = result.concat(ret)
+      return ether.getBalanceOfMain()
+    })
+    .then(ret=>{
+      result = result.concat(ret)
+      resolve(result)
+    })
+    .catch(err=>reject(err))
   })
 }
 
@@ -74,3 +100,14 @@ exports.getNewAccount = (alias) =>{
     })
   })
 }
+
+
+/*
+3. withdraw ether of erc20 tokens from main account
+params
+  alias ether|king|tiny
+  to    address
+result
+  
+
+*/
