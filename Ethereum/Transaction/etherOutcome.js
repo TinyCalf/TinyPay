@@ -62,7 +62,6 @@ let _transferEther = (from, to, value) => {
         .catch(err=>reject(err))
       })
       .on('error', (err)=>{
-        console.error(err)
         if(err.message == "Returned error: Transaction gas price is too low. There is another transaction with same nonce in the queue. Try increasing the gas price or incrementing the nonce." ||
         err.message == "Returned error: Transaction with the same hash was already imported.")
         reject(new Error("SEND_TOO_OFTEN"))
@@ -134,7 +133,27 @@ let _checkOutcomeOnBlock = (outcome) => {
       return outcomedb.findTransactionByHash(outcome.transactionHash)
     })
     .then(ret=>{
-      getEvents.emit("outcomeSuccess", ret)
+      let obj = {}
+      obj.name = "ether"
+      obj.symbol = "ether"
+      obj.alias = "ether"
+      obj.recordTime        = ret.recordTime
+      obj.recordTimestamp   =ret.recordTimestamp
+      obj.gasPrice =ret.gasPrice
+      obj.amount=ret.amount
+      obj.value=ret.value
+      obj.receiver=ret.receiver
+      obj.localSender=ret.localSender
+      obj.transactionHash=ret.transactionHash
+      obj.success=ret.success
+      obj.confirmations=ret.confirmations
+      obj.gasUsed=ret.gasUsed
+      obj.etherUsed=ret.etherUsed
+      obj.blockHash=ret.blockHash
+      obj.blockNumber=ret.blockNumber
+      obj.blockTimestamp=ret.blockTimestamp
+      obj.blockTime=ret.blockTime
+      getEvents.emit("outcomeSuccess", obj)
       resolve()
     })
     .catch(err=>reject(err))

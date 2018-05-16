@@ -83,7 +83,7 @@ this.appendRecord = (outcome) => {
     nOutcome.symbol = outcome.symbol
     nOutcome.name = outcome.name
     /*culculate*/
-    nOutcome.recordTimestamp = Date.now()
+    nOutcome.recordTimestamp = parseInt(Date.now() / 1000)
     nOutcome.recordTime = Date()
     nOutcome.save( (err, ret) => {
       if (err) return reject(err)

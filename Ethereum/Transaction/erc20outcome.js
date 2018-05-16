@@ -56,7 +56,12 @@ exports.transferERC20InEther = new Function("to", "amount")
 
 let _transferERC20 = (alias, from, to, value) => {
   return new Promise ( (resolve, reject)=>{
-    parity.nextNonce(from)
+    contractInstances[alias].methods.balanceOf(from).call()
+    .then(ret=>{
+      if(web3.utils.toBN(ret).lt(web3.utils.toBN(value)))
+        throw new Error("Insufficient funds")
+      return parity.nextNonce(from)
+    })
     .then(nonce=>{
       contractInstances[alias].methods.transfer(to, value).send({
         from: from,

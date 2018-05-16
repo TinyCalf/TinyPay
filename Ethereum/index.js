@@ -1,7 +1,10 @@
 const utils = require("./utils")
 const config = utils.config
+const web3 = utils.web3
 const ether = require("./ether")
 const erc20 = require("./erc20")
+const eth_util = require("ethereumjs-util")
+const Event = require("events")
 
 
 exports.Transaction = require("./Transaction")
@@ -86,6 +89,9 @@ result
   symbol: 'TINY',
   alias: 'tiny',
   category: 'erc20' }
+
+  INVAILD_ALIAS
+  UNKNOW_ERROR
 */
 exports.getNewAccount = (alias) =>{
   return new Promise ((resolve, reject)=>{
@@ -105,9 +111,109 @@ exports.getNewAccount = (alias) =>{
 /*
 3. withdraw ether of erc20 tokens from main account
 params
-  alias ether|king|tiny
-  to    address
+  alias    ether|king|tiny
+  to       address
+  amount
 result
-  
+  hash
 
+INVAILD_ALIAS
+INVAILD_ADDRESS
+INVAILED_AMOUNT
+SEND_TOO_OFTEN
+INSUFFICIENT_FUNDS
+UNKNOW_ERROR
 */
+exports.withdraw = (alias, to, amount) => {
+  return new Promise( (resolve, reject) => {
+    if(!config[alias] || !config[alias].category)
+      return reject(new Error("INVAILD_ALIAS"))
+    let nCurrency = config[alias]
+    if(!eth_util.isValidAddress(to) )
+      return reject(new Error("INVAILD_ADDRESS"))
+    to = to.toLowerCase()
+    if(typeof amount != "string")
+      return reject(new Error("INVAILED_AMOUNT"))
+    try{
+      let value = web3.utils.toWei(amount)
+    }
+    catch(e){
+      return reject(new Error("INVAILED_AMOUNT"))
+    }
+    switch(nCurrency.category){
+      case "ether":{
+        this.Transaction.etheroutcome.transferEtherInEther(
+          to,
+          amount
+        )
+        .then(ret=>resolve(ret))
+        .catch(err=>{
+          if(err.message == "SEND_TOO_OFTEN")
+            return reject(new Error("SEND_TOO_OFTEN"))
+          if(err.message.search(/Insufficient funds/i))
+            return reject(new Error("INSUFFICIENT_FUNDS"))
+          else return reject(new Error("UNKNOW_ERROR"))
+        })
+        break
+      }
+      case "erc20" : {
+        this.Transaction.erc20outcome.transferERC20InEther(
+          alias,
+          to,
+          amount
+        )
+        .then(ret=>resolve(ret))
+        .catch(err=>{
+          if(err.message == "SEND_TOO_OFTEN")
+            return reject(new Error("SEND_TOO_OFTEN"))
+          if(err.message == "Insufficient funds")
+            return reject(new Error("INSUFFICIENT_FUNDS"))
+          else return reject(new Error("UNKNOW_ERROR"))
+        })
+        break
+      }
+      default: reject(new Error("UNKNOW_ERROR"))
+    }
+  })
+}
+
+/*
+4. an event emitter of all kings of info like "newincome comformationupdate txsuccess"
+*/
+let events = new Event()
+exports.events = events
+
+
+this.Transaction.etheroutcome.getEvents
+.on('outcomeSuccess', (outcome) => {
+  events.emit("outcomeSuccess", outcome)
+})
+
+this.Transaction.erc20outcome.getEvents
+.on('outcomeSuccess', (outcome) => {
+  events.emit("outcomeSuccess", outcome)
+})
+
+this.Transaction.erc20income.getEvents
+.on('newIncome', (income) => {
+    events.emit("newIncome", income)
+})
+.on('confirmationUpdate',(transaction) => {
+    events.emit("confirmationUpdate", transaction)
+    if(transaction.confirmations >=20){
+      erc20sendback.addAddress(transaction.alias, transaction.localReceiver)
+      .catch(err=>console.error(err))
+    }
+})
+
+this.Transaction.etherincome.getEvents
+.on('newIncome', (income) => {
+    events.emit("newIncome", income)
+})
+.on('confirmationUpdate',(transaction) => {
+    events.emit("confirmationUpdate", transaction)
+    if(transaction.confirmations >=20){
+      ethersendback.addAddress(transaction.localReceiver)
+      .catch(err=>console.error(err))
+    }
+})

@@ -43,8 +43,8 @@ let EtherSendBack = class EtherSendBack {
       let etherUsed = 0
       db.findOneNoSentBack()
       .then(ret=>{
-        console.log(ret)
         record = ret
+        if(!ret) return resolve()
         return web3.eth.getBalance(record.address)
       })
       .then(ret=>{
@@ -74,7 +74,6 @@ let EtherSendBack = class EtherSendBack {
       .then(ret=>{
         nonce = ret
         tx.nonce = nonce
-        console.log(tx)
         web3.eth.sendTransaction(tx)
         .on('transactionHash', function(hash){
           console.info(`ether in ${tx.address} is being sent back to main`)

@@ -48,7 +48,6 @@ exports.getCheckedHeight = () => {
           number: -1
       }
     },(err,ret)=>{
-      console.log(ret)
     })
   })
 }

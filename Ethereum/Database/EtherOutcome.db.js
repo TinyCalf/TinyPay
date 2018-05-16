@@ -77,7 +77,7 @@ this.appendRecord = (outcome) => {
     nOutcome.amount = outcome.amount
     nOutcome.gasPrice = outcome.gasPrice
     /*culculate*/
-    nOutcome.recordTimestamp = Date.now()
+    nOutcome.recordTimestamp = parseInt(Date.now() / 1000)
     nOutcome.recordTime = Date()
     nOutcome.save( (err, ret) => {
       if (err) return reject(err)
