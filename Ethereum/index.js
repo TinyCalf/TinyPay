@@ -52,6 +52,8 @@ return
     name: 'ether',
     balance: '1.540200950899799' } ]
 
+UNKNOW_ERROR
+
 */
 exports.getinfo = () =>{
   return new Promise ((resolve, reject)=>{
@@ -65,7 +67,10 @@ exports.getinfo = () =>{
       result = result.concat(ret)
       resolve(result)
     })
-    .catch(err=>reject(err))
+    .catch(err=>{
+      console.error(err)
+      reject(new Error("UNKNOW_ERROR"))
+    })
   })
 }
 

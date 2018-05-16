@@ -61,11 +61,11 @@ amount
 5. 1.672964149712974521957451974
 6. 1e-7
 */
-Ethereum.withdraw(
-  "ether",
-  "0xbf9d5dea24c3d28eb92148e3b0be28b9d77d9320",
-  "0.009"
-).then(console.log).catch(console.log)
+// Ethereum.withdraw(
+//   "ether",
+//   "0xbf9d5dea24c3d28eb92148e3b0be28b9d77d9320",
+//   "0.009"
+// ).then(console.log).catch(console.log)
 // Ethereum.withdraw(
 //   "tiny",
 //   "0xed98d0d7f35ccae826aa93bd7981ece17a1d4fd1",

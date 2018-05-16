@@ -22,4 +22,4 @@ app.use(bodyParser.json())
 app.use('/v1', v1);
 
 app.listen(config.www.port);
-console.success("Webapi listening on " + config.www.port);
+console.success("tinypay listening on " + config.www.port);
