@@ -22,7 +22,7 @@ ether:
   symbol: ether
   gasPrice: "4000000000"
   gas: "100000"
-  startHeight: 3196887
+  startHeight: 3243656
   autoSendBack: true
 
 king:
@@ -32,7 +32,7 @@ king:
   name: KingCoin            #token名称
   gasPrice: "4000000000"      #交易预定gasPrice
   gas: "100000"               #交易预定gaslimit
-  startHeight: "3196887"      #起始高度
+  startHeight: 3243656     #起始高度
   autoSendBack: true       #是否自动转回主账户（ehtereum.mainAccount）
   sendBackNeededGas: "50000"
 
@@ -43,7 +43,7 @@ tiny:
   name: Tiny Calf
   gasPrice: "4000000000"
   gas: "100000"
-  startHeight: "3196887"
+  startHeight: 3243656
   autoSendBack: true
   sendBackNeededGas: "50000"
 
