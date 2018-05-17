@@ -30,10 +30,10 @@ king:
   category: erc20           #token类别
   symbol: KING(KingCoin)    #token缩写
   name: KingCoin            #token名称
-  gasPrice: "4000000000"      #交易预定gasPrice
-  gas: "100000"               #交易预定gaslimit
-  startHeight: 3243656     #起始高度
-  autoSendBack: true       #是否自动转回主账户（ehtereum.mainAccount）
+  gasPrice: "4000000000"     #交易预定gasPrice
+  gas: "100000"             #交易预定gaslimit
+  startHeight: 3243656      #起始高度
+  autoSendBack: true        #是否自动转回主账户（ehtereum.mainAccount）
   sendBackNeededGas: "50000"
 
 tiny:
@@ -46,6 +46,14 @@ tiny:
   startHeight: 3243656
   autoSendBack: true
   sendBackNeededGas: "50000"
+
+btc:
+  category: bitcoin
+  name: bitcoin
+  host: 127.0.0.1
+  port: 8332
+  user: root
+  pass: password123
 
 
 www:
