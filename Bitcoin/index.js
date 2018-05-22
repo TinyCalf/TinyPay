@@ -1,6 +1,9 @@
 let btc = require("./Bitcoin")
 let config = require("../Config")
-
+let outcomedb = require("./bitcoin_outcome.db")
+let outcome = require("./outcome")
+let Event = require("events")
+exports.events = new Event()
 
 
 
@@ -50,11 +53,36 @@ exports.getNewAccount = () => {
 236ef5c22149ab825e9106f7b0ace4501cfcb2a27a05582e65a5e20e1e9e6df0
  */
 exports.withdraw = (to, amount) => {
-    return btc.sendToAddress(to , amount)
+  return new Promise ( (resolve, reject)=>{
+    let hash = ""
+    btc.sendToAddress(to, amount)
+    .then(ret=>{
+      hash = ret
+      return outcomedb.appendRecord({
+        transactionHash:  ret,
+        receiver:         to,
+        amount:           amount,
+        alias:            "btc",
+        symbol:           "btc",
+        localSender:      "main",
+        success:          false,
+      })
+    })
+    .then(ret=>resolve(hash))
+    .catch(err=>reject(err))
+  })
 }
 
 
+/*
+
+ */
+outcome.on("outcomeSuccess", outcome=>{
+  this.events.emit("outcomeSuccess", outcome)
+})
 
 
-this.withdraw("mmBqYHLaqp1NhnAnV31PgdkbnnNRmLZpVo","20")
-.then(console.log).catch(console.log)
+
+//
+// this.withdraw("mmBqYHLaqp1NhnAnV31PgdkbnnNRmLZpVo","20")
+// .then(console.log).catch(console.log)

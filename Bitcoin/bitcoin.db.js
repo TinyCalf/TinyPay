@@ -20,7 +20,7 @@ exports.checkHeight = () => {
   })
 }
 
-exports.update = (height) => {
+exports.updateHeight = (height) => {
   return new Promise ( (resolve, reject)=>{
     this.checkHeight()
     .then(ret=>{
@@ -43,6 +43,3 @@ exports.update = (height) => {
     })
   })
 }
-
-
-this.update(1000).then(console.log).catch(console.log)
