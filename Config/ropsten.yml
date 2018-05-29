@@ -3,7 +3,7 @@ mongodb:
   host: mongodb://localhost:27017/tinypay_ropsten
 
 ethereum:
-  host: 127.0.0.1
+  host: 47.104.86.59
   rpcport: 8545
   wsport: 8546
   available_currency_alias:
@@ -22,7 +22,7 @@ ether:
   symbol: ether
   gasPrice: "4000000000"
   gas: "100000"
-  startHeight: 3243656
+  startHeight: 3290850
   autoSendBack: true
 
 king:
@@ -32,7 +32,7 @@ king:
   name: KingCoin            #token名称
   gasPrice: "4000000000"     #交易预定gasPrice
   gas: "100000"             #交易预定gaslimit
-  startHeight: 3243656      #起始高度
+  startHeight: 3290850      #起始高度
   autoSendBack: true        #是否自动转回主账户（ehtereum.mainAccount）
   sendBackNeededGas: "50000"
 
@@ -43,17 +43,17 @@ tiny:
   name: Tiny Calf
   gasPrice: "4000000000"
   gas: "100000"
-  startHeight: 3243656
+  startHeight: 3290850
   autoSendBack: true
   sendBackNeededGas: "50000"
 
-btc:
-  category: bitcoin
-  name: bitcoin
-  host: 127.0.0.1
-  port: 8332
-  user: root
-  pass: password123
+# btc:
+#   category: bitcoin
+#   name: bitcoin
+#   host: 127.0.0.1
+#   port: 8332
+#   user: root
+#   pass: password123
 
 
 www:

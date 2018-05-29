@@ -2,7 +2,7 @@
   "name": "TinyPay",
   "version": "1.0.1",
   "description": "数字货币支付方案",
-  "main": "index.js",
+  "main": "tinypay.js",
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha --reporter mochawesome",
     "repo": "node ./openReporter",
