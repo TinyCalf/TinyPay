@@ -1,15 +1,15 @@
-var rpc = require('./RPCMethods')
-var db = require('../Database/db')
-var zmq = require('../Zeromq/zmqServer')
-var config = require('../config.js').currencies
-var log = require('../Logs/log.js')("TransactionDealer")
-var MessageStack = require('../Database/MessageStack')
+// var rpc = require('./RPCMethods')
+// var db = require('../Database/db')
+// var zmq = require('../Zeromq/zmqServer')
+// var config = require('../config.js').currencies
+// var log = require('../Logs/log.js')("TransactionDealer")
+// var MessageStack = require('../Database/MessageStack')
 
 
+let bitcoindb = require("./bitcoin.db")
+let incomedb = require("./bitcoin_income.db")
 
-//{"name":"rbtc","category":"receive","address":"mh9oXQSwPg8Fb4W3cyHBtP2UHjFq4Se9Nx"
-//,"amount":9,"confirmations":10
-//,"txid":"a19f9ed983ec170a6f69d048217596839068fb01f1fd5df9f48eea3bc161e0fb"}
+
 
 /*
 批量发送接受到的交易 TODO:node 8 以后还没有测试
@@ -50,12 +50,12 @@ var _zmqSendReceivedTxs = (name, txs) => {
 /*
 处理交易信息
 */
-var _dealer = (name) => {
+var _dealer = () => {
   return new Promise ( (resolve, reject) => {
     var transactions = [] //记录获取到的交易
     //var height = null //记录查询最后块的高度
     //获取币种已记录高度
-    db.getCheckedHeight(name)
+    bitcoindb.checkHeight()
     .then( height => {
       //查询区块链上该高度之后的相关交易
       return rpc.getTxsSinceBlock(name,height-config[name].confirmationsLimit)
@@ -107,7 +107,7 @@ var _dealerLooper = (name) => {
 
 exports.start = () => {
   return new Promise ( (resolve, reject) => {
-    log.info('Starting to deal with incoming transactions of bitcoin series...')
+    log.info('Starting to deal with incoming transactions of btc')
     var seq = [];
     for (var key in config) {
       if(config[key].category === "bitcoin" )

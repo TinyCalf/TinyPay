@@ -47,13 +47,15 @@ tiny:
   autoSendBack: true
   sendBackNeededGas: "50000"
 
-# btc:
-#   category: bitcoin
-#   name: bitcoin
-#   host: 127.0.0.1
-#   port: 8332
-#   user: root
-#   pass: password123
+btc:
+  category: bitcoin
+  name: bitcoin
+  host: 127.0.0.1
+  port: 8332
+  user: root
+  pass: password123
+  confirmations: 20
+  startHeight: 40
 
 
 www:

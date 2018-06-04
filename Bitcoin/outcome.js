@@ -14,7 +14,6 @@ exports.events = new Event()
   receiver: 'mmBqYHLaqp1NhnAnV31PgdkbnnNRmLZpVo',
   localSender: undefined,
   success: true }
-
  */
 // this.events.on("outcomeSuccess",(ret)=>console.log(ret))
 

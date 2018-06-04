@@ -82,6 +82,33 @@ let Bitcoin = class Bitcoin {
     })
   }
 
+
+
+  getHeightByBlockHash (hash) {
+    return new Promise ( (resolve, reject) => {
+      this.rpc.getBlockHeader(hash, (err, ret) => {
+        if(err) return reject(err);
+				if(!ret) return reject( new Error("no result") )
+				if(!ret.result) return reject( new Error("no result") )
+        resolve(ret.result.height);
+      });
+    });
+  }
+
+  getCurrentHeight(){
+    return new Promise ( (resolve, reject) => {
+      this.rpc.getbestblockhash( (err, ret) => {
+        if(err) return reject(err);
+				if(!ret) return reject( new Error("no result") )
+				if(!ret.result) return reject( new Error("no result") )
+        this.getHeightByBlockHash(ret.result)
+        .then(resolve)
+        .catch(reject)
+      });
+    });
+  }
+
+
 }
 
 

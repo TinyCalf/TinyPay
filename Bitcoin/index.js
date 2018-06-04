@@ -3,8 +3,14 @@ let config = require("../Config")
 let outcomedb = require("./bitcoin_outcome.db")
 let outcome = require("./outcome")
 let Event = require("events")
-exports.events = new Event()
+let bitcoindb = require("./bitcoin.db")
 
+bitcoindb.updateHeight(config.btc.startHeight)
+
+let income = require("./income")
+income.start()
+
+exports.events = new Event()
 
 
 exports.getInfo = () => {
@@ -77,7 +83,7 @@ exports.withdraw = (to, amount) => {
 /*
 
  */
-outcome.on("outcomeSuccess", outcome=>{
+outcome.events.on("outcomeSuccess", outcome=>{
   this.events.emit("outcomeSuccess", outcome)
 })
 
