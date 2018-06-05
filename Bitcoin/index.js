@@ -67,7 +67,7 @@ exports.withdraw = (to, amount) => {
       return outcomedb.appendRecord({
         transactionHash:  ret,
         receiver:         to,
-        amount:           amount,
+        amount:           Number(amount),
         alias:            "btc",
         symbol:           "btc",
         localSender:      "main",
@@ -80,9 +80,7 @@ exports.withdraw = (to, amount) => {
 }
 
 
-/*
 
- */
 outcome.events.on("outcomeSuccess", outcome=>{
   this.events.emit("outcomeSuccess", outcome)
 })
@@ -92,6 +90,6 @@ income.events
 .on("newIncome", income=>{
   this.events.emit("newIncome", income)
 })
-.on("comfirmationUpdate", income=>{
-  this.events.emit("comfirmationUpdate", income)
+.on("confirmationUpdate", income=>{
+  this.events.emit("confirmationUpdate", income)
 })

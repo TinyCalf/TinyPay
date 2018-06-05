@@ -8,5 +8,13 @@ console.log(`
 
 Digital Currencies Pay - Powered by tiny-calf.com`)
 
-var Ethereum = require("./Ethereum")
+
+var config = require("./Config")
+
+if(config.ethereum.disable != true)
+  var Ethereum = require("./Ethereum")
+
+if(config.btc.disable != true)
+  var Bitcoin = require("./Bitcoin")
+  
 var www = require("./www")

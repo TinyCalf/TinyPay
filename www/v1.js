@@ -3,6 +3,7 @@ var router = express.Router()
 var verify = require("./verify")
 var config = require("../Config")
 var Ethereum = require("../Ethereum")
+var Bitcoin = require("../Bitcoin")
 
 // middleware that is specific to this router
 router.use(function timeLog(req, res, next) {
@@ -56,9 +57,16 @@ router.use(function timeLog(req, res, next) {
 router.post('/getnewaccount', function(req, res, next) {
   if(!req.body.params || !req.body.params.alias)
     return next(new Error('INVAILD_ALIAS'))
-  Ethereum.getNewAccount(req.body.params.alias)
-  .then(ret=>res.send(ret))
-  .catch(next)
+  if(req.body.params.alias == "btc" && config.btc.disable == true)
+    return next(new Error('INVAILD_ALIAS'))
+  if(req.body.params.alias == "btc")
+    Bitcoin.getNewAccount()
+    .then(ret=>res.send(ret))
+    .catch(next)
+  else
+    Ethereum.getNewAccount(req.body.params.alias)
+    .then(ret=>res.send(ret))
+    .catch(next)
 });
 
 
@@ -93,8 +101,16 @@ router.post('/getnewaccount', function(req, res, next) {
  * {errcode:420,errmsg:"UNKNOW_ERROR"}
  */
 router.post('/getinfo', function(req, res, next) {
+  let info = []
   Ethereum.getinfo()
-  .then(ret=>res.send(ret))
+  .then(ret=>{
+    info = info.concat(ret)
+    return Bitcoin.getInfo()
+  })
+  .then(ret=>{
+    info = info.concat(ret)
+    res.send(info)
+  })
   .catch(next)
 });
 
@@ -142,20 +158,30 @@ router.post('/getinfo', function(req, res, next) {
  * {errcode:425,errmsg:"SEND_TOO_OFTEN"}
  */
 router.post('/withdraw', function(req, res, next) {
+  console.log(req.body.params)
   if(  !req.body.params
     || !req.body.params.alias
     || !req.body.params.to
     || !req.body.params.amount)
     return next(new Error('UNKOWN_ERROR'))
-  Ethereum.withdraw(
-    req.body.params.alias,
-    req.body.params.to,
-    req.body.params.amount
-  )
-  .then(ret=>{
-    res.send({transactionHash:ret})
-  })
-  .catch(next)
+  if(req.body.params.alias == "btc" && config.btc.disable == true)
+    return next(new Error('INVAILD_ALIAS'))
+  if(req.body.params.alias == "btc")
+    Bitcoin.withdraw(req.body.params.to, req.body.params.amount)
+    .then(ret=>{
+      res.send({transactionHash:ret})
+    })
+    .catch(next)
+  else
+    Ethereum.withdraw(
+      req.body.params.alias,
+      req.body.params.to,
+      req.body.params.amount
+    )
+    .then(ret=>{
+      res.send({transactionHash:ret})
+    })
+    .catch(next)
 });
 
 

@@ -33,7 +33,7 @@ let _dealerWithTx = tx=>{
         return incomedb.checkTransactionByHash(income.transactionHash)
       })
       .then(tx=>{
-        this.events.emit("comfirmationUpdate",tx)
+        this.events.emit("confirmationUpdate",tx)
       })
     }
   })
@@ -43,7 +43,6 @@ let _dealerWithTx = tx=>{
 处理交易信息
 */
 var _dealer = (name) => {
-    console.info('Starting to deal with incoming transactions of bitcoin series...')
     var transactions = [] //记录获取到的交易
     //var height = null //记录查询最后块的高度
     //获取币种已记录高度
