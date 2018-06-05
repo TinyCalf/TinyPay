@@ -15,7 +15,7 @@ exports.events = new Event()
   localSender: undefined,
   success: true }
  */
-// this.events.on("outcomeSuccess",(ret)=>console.log(ret))
+// this.events.on("outcomeSuccess",  ret=>console.log(ret) )
 
 let checkUnconfirmedTransactions = () => {
   return new Promise ( (resolve, reject)=>{
@@ -36,7 +36,7 @@ let checkUnconfirmedTransactions = () => {
               success: true,
             }
             this.events.emit("outcomeSuccess",outcome)
-            outcomedb.confirmSuccess(tx.txid)
+            outcomedb.confirmSuccess(txdetail.txid)
             .catch(console.log).then(ret=>resolve())
           }
         })

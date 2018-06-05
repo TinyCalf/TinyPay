@@ -24,7 +24,6 @@ exports.updateHeight = (height) => {
   return new Promise ( (resolve, reject)=>{
     this.checkHeight()
     .then(ret=>{
-      console.log(ret)
       if(!ret)
         Model.collection.insert({lastCheckedHeight:height,alias:"btc"}, (err, ret)=>{
           if(err) return reject(err);

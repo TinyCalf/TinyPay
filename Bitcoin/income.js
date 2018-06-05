@@ -2,7 +2,42 @@ let bitcoindb = require("./bitcoin.db")
 let incomedb = require("./bitcoin_income.db")
 let btc = require("./Bitcoin")
 let config = require("../Config")
+let Event = require("events")
+require("../log")
+exports.events = new Event()
 
+let _dealerWithTx = tx=>{
+  let income = {
+    transactionHash: tx.txid,
+    confirmations: tx.confirmations,
+    localReceiver : tx.address,
+    amount: tx.amount
+  }
+  if(income.confirmations > 20) income.confirmations = 20
+  incomedb.checkTransactionByHash(tx.txid)
+  .then(tx=>{
+    if(!tx){
+      incomedb.add(income)
+      .then(newincome=>{
+        return incomedb.checkTransactionByHash(income.transactionHash)
+      })
+      .then(tx=>{
+        this.events.emit("newIncome", tx)
+      })
+      .catch(err=>console.error(err))
+    }else if(tx.confirmations != income.confirmations){
+      incomedb.updateConfirmation(
+        income.confirmations,
+        income.transactionHash)
+      .then(ret=>{
+        return incomedb.checkTransactionByHash(income.transactionHash)
+      })
+      .then(tx=>{
+        this.events.emit("comfirmationUpdate",tx)
+      })
+    }
+  })
+}
 
 /*
 处理交易信息
@@ -32,10 +67,11 @@ var _dealer = (name) => {
       return bitcoindb.updateHeight(ret+1)
     })
     .then ( () => {
-      console.log(transactions)
+      for(let i=0; i< transactions.length; i++)
+        _dealerWithTx(transactions[i])
     })
     .catch ( err => {
-      console.log(err)
+      console.error(err)
     })
 }
 
@@ -43,6 +79,6 @@ var _dealer = (name) => {
 exports.start = () => {
   return new Promise ( (resolve, reject) => {
     console.info('Starting to deal with incoming transactions of bitcoin series...')
-    setInterval(_dealer, 1000)
+    setInterval(_dealer, 2000)
   })
 }

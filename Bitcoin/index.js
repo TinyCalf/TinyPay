@@ -88,7 +88,10 @@ outcome.events.on("outcomeSuccess", outcome=>{
 })
 
 
-
-//
-// this.withdraw("mmBqYHLaqp1NhnAnV31PgdkbnnNRmLZpVo","20")
-// .then(console.log).catch(console.log)
+income.events
+.on("newIncome", income=>{
+  this.events.emit("newIncome", income)
+})
+.on("comfirmationUpdate", income=>{
+  this.events.emit("comfirmationUpdate", income)
+})

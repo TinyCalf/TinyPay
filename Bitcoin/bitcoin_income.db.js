@@ -6,9 +6,9 @@ var schema = new mongoose.Schema({
   symbol:                  {type:String, required:true, default:"btc"},
   transactionHash:         {type:String, required:true, unique:true},
   confirmations:           {type:Number, required:true, default:0},
-  sender:                  {type:String, required:true}, // address of from
-  localReceiver:           {type:String, required:true, default:"main"},// address of to
-  amount:                  {type:String, required:true}, // 18 demicals
+  sender:                  {type:String, required:true, default:"user"}, // address of from
+  localReceiver:           {type:String, required:true},// address of to
+  amount:                  {type:String, required:true},
 });
 
 var Model = mongoose.model("bitcoin_income", schema)
@@ -16,34 +16,35 @@ var Model = mongoose.model("bitcoin_income", schema)
 /*export model*/
 exports.model = Model
 
-this.appendRecords = (incomes) => {
+this.add = (income) => {
   return new Promise( (resolve, reject)=>{
-    if(incomes.length == 0) return resolve()
-    Model.collection.insert(incomes, function(err, ret){
-      if(err && err.code != 11000) return reject(err)
-      if(err && err.code == 11000) return resolve()
-      resolve()
+        let n = new Model()
+        n.transactionHash = income.transactionHash
+        n.confirmations = income.confirmations
+        n.localReceiver = income.localReceiver
+        n.amount = income.amount
+        n.save( (err, ret) => {
+          if (err) return reject(err)
+          resolve(ret)
+        })
+  })
+}
+
+this.checkTransactionByHash = (hash) => {
+  return new Promise  ( (resolve, reject) => {
+    let conditions = {transactionHash:hash}
+    Model.findOne(conditions, function(err,ret){
+      if(err) return reject(err)
+      resolve(ret)
     })
   })
 }
 
-
-this.updateConfirmationByTransactionHash = (confirmations, transactionHash) =>{
+this.updateConfirmation = (confirmations, transactionHash) =>{
   return new Promise( (resolve, reject)=>{
     var conditions = {transactionHash : transactionHash}
     var update = {$set : { confirmations : confirmations }}
     Model.update(conditions, update,function(err, ret){
-      if(err) return reject(err)
-      resolve(ret)
-    });
-  })
-}
-
-this.findIncomesByBlockHash = (blockHash, alias) => {
-  return new Promise( (resolve, reject)=>{
-    var conditions = {blockHash : blockHash, alias:alias}
-    var fields = "-_id"
-    ERC20Income.find(conditions, fields,function(err, ret){
       if(err) return reject(err)
       resolve(ret)
     });
