@@ -198,9 +198,9 @@ var _updateConfirmations = () => {
 update  new transaction when new block discovered
 */
 let func1 = () => {
-  return _updateConfirmations()
+  _updateConfirmations()
     .finally(ret => {
-      return func1()
+      setTimeout(func1, 1000)
     })
 }
 func1()
@@ -208,7 +208,7 @@ func1()
 let func2 = () => {
   return _discoverNewTransactions()
     .finally(ret => {
-      return func2()
+      setTimeout(func2, 1000)
     })
 }
 func2()
