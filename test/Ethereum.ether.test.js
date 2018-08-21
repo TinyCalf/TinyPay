@@ -1,8 +1,11 @@
 const assert = require("assert")
-let block = require("../Ethereum/lib/block")
+
+let block = require("../Ethereum/block")
+
 let ether = require("../Ethereum/ether")
 
 let user1 = {}
+let withdrawHash = ""
 
 describe('Ethereum', function () {
 
@@ -10,7 +13,7 @@ describe('Ethereum', function () {
 
   describe('# Ethereum/lib/block', () => {
     it(`should emit a block import event`, done => {
-      block.newBlock.on("newBlock", block => {
+      block.newBlock.once("newBlock", block => {
         assert(block.number > 0,
           `expect block number to be over 0 but got ${block.number}`)
         done()
@@ -43,15 +46,19 @@ describe('Ethereum', function () {
     it(`should lauch withdraw tx correctly`, done => {
       ether.withdraw.lauchTransaction(user1.wallet.address, "0.01")
         .then(ret => {
-          console.log(ret)
-          done()
+          assert(typeof ret === "string",
+            "expect transaction hash to be a string")
+          withdrawHash = ret
+
         })
-        .catch(err => {
-          throw new Error(err)
-          assert(false, "expect to have no err")
-          done()
-        })
+      ether.withdraw.Events.once("confirmedNewTx", ret => {
+        assert(typeof ret.transactionHash === "string")
+        done()
+      })
     })
+
+
+
   })
 
   //describe("# /tools/rcsign", function() {

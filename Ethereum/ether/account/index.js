@@ -1,4 +1,4 @@
-const Account = require("../../lib/account")
+const Account = require("../../account")
 const db = require("./etheraccount.db")
 
 exports.getNew = () => {

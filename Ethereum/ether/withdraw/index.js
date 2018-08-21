@@ -1,16 +1,16 @@
 var fs = require("fs")
 var path = require("path")
-var web3 = require("../../web3")
-var account = require("../account")
 var Event = require("events")
-var db = require("./etherwithdraw.db.js")
 var Promise = require("bluebird");
 
-require("../../lib/log")
+require("../../log")
+var db = require("./etherwithdraw.db.js")
 var config = require("../../config")
 var parity = require("../../parity")
-var block = require("../../lib/block")
-var wallet = require("../../lib/wallet")
+var block = require("../../block")
+var wallet = require("../../wallet")
+var web3 = require("../../web3")
+var account = require("../account")
 
 
 /*
@@ -19,7 +19,7 @@ EXAMPLEk
 getEvents.on('outcomeSuccess', (income) => {...});
 */
 let getEvents = new Event()
-exports.getEvents = getEvents
+exports.Events = getEvents
 
 
 
@@ -84,14 +84,14 @@ exports.lauchTransaction = (to, amount) => {
         console.success(`sent out new transaction of ether:
         hash: ${tx.hash}`)
         hash = tx.hash
-        var outcome = {}
-        db.transactionHash = tx.hash
-        db.localSender = tx.from.toLowerCase()
-        db.receiver = tx.to.toLowerCase()
-        db.value = tx.value
-        db.amount = amount
-        db.gasPrice = tx.gasPrice
-        return db.add(outcome)
+        var t = {}
+        t.transactionHash = tx.hash
+        t.localSender = tx.from.toLowerCase()
+        t.receiver = tx.to.toLowerCase()
+        t.value = tx.value
+        t.amount = amount
+        t.gasPrice = tx.gasPrice
+        return db.add(t)
       })
       .then(ret => resolve(hash))
       .catch(err => reject(err))
@@ -125,18 +125,15 @@ let _checkOutcomeOnBlock = (outcome) => {
         tx.blockTimestamp = block.timestamp
         tx.blockTime = Date(block.timestamp)
         tx.transactionHash = outcome.transactionHash
-        return outcomedb.confirmSuccess(tx)
+        return db.confirmSuccess(tx)
       })
       .then(ret => {
         console.success(`ether outcome transfer successfully
         transactionHash: ${outcome.transactionHash}`)
-        return outcomedb.findTransactionByHash(outcome.transactionHash)
+        return db.findTransactionByHash(outcome.transactionHash)
       })
       .then(ret => {
         let obj = {}
-        obj.name = "ether"
-        obj.symbol = "ether"
-        obj.alias = "ether"
         obj.recordTime = ret.recordTime
         obj.recordTimestamp = ret.recordTimestamp
         obj.gasPrice = ret.gasPrice
@@ -153,8 +150,11 @@ let _checkOutcomeOnBlock = (outcome) => {
         obj.blockNumber = ret.blockNumber
         obj.blockTimestamp = ret.blockTimestamp
         obj.blockTime = ret.blockTime
-        getEvents.emit("outcomeSuccess", obj)
-        resolve()
+        return db.findTransactionByHash(ret.transactionHash)
+      })
+      .then(ret => {
+        resolve(ret)
+        getEvents.emit("confirmedNewTx", ret)
       })
       .catch(err => reject(err))
   })
@@ -168,11 +168,11 @@ let _checkOutcomeOnBlock = (outcome) => {
 */
 let _dealWithUnconfirmedTransactions = () => {
   return new Promise((resolve, reject) => {
-    outcomedb.findUnconfirmedTransactions()
+    db.findUnconfirmedTransactions()
       .then(txs => {
         var checks = []
-        txs.forEach((outcome) => {
-          checks.push(_checkOutcomeOnBlock(outcome))
+        txs.forEach(tx => {
+          checks.push(_checkOutcomeOnBlock(tx))
         })
         return Promise.all(checks)
       })
@@ -181,6 +181,6 @@ let _dealWithUnconfirmedTransactions = () => {
   })
 }
 
-block.newBlock.on('newblock', (blockHeader) => {
+block.newBlock.on('newBlock', (blockHeader) => {
   _dealWithUnconfirmedTransactions().catch(console.error)
 });

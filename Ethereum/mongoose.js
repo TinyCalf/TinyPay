@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 mongoose.Promise = require('bluebird');
-const host = require("../Config").mongodb.host;
+const host = require("./config").mongodb.host;
 mongoose.connect(host, {
   useMongoClient: true
 });
