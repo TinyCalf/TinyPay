@@ -4,7 +4,8 @@
   "description": "数字货币支付方案",
   "main": "tinypay.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha --reporter mochawesome",
+    "test": "./node_modules/.bin/mocha --exit",
+    "unittest": "./node_modules/.bin/mocha --exit",
     "repo": "node ./openReporter",
     "start": "node tinypay.js",
     "daemon": "nohup node tinypay.js &",
@@ -27,6 +28,7 @@
     "express": "4.16.2",
     "ipaddr.js": "1.5.4",
     "js-yaml": "^3.11.0",
+    "lodash": "^4.17.10",
     "mongoose": "4.13.0",
     "nodemailer": "^4.6.0",
     "open": "0.0.5",
@@ -34,13 +36,12 @@
     "tiny-logger": "0.0.2",
     "tinycalf-logger": "0.0.2-beta",
     "web3": "^1.0.0-beta.33",
-    "web3_extended": "1.0.0",
-    "zmq": "2.15.3"
+    "web3_extended": "1.0.0"
   },
   "devDependencies": {
     "bitcore-lib": "0.15.0",
-    "chai": "4.1.2",
-    "mocha": "4.0.1",
+    "chai": "^4.1.2",
+    "mocha": "^4.0.1",
     "mochawesome": "2.3.1",
     "supertest": "3.0.0"
   },

@@ -1,6 +1,6 @@
-require("../log")
-var web3 = require("./web3")
-var Event = require("events")
+require("./log")
+let web3 = require("./web3")
+let Event = require("events")
 
 
 /*
@@ -15,44 +15,40 @@ block.newBlock.on('newblock', (blockHeader) => {
   }
 });
 */
-var newBlockEmitter = new Event()
+let newBlockEmitter = new Event()
 exports.newBlock = newBlockEmitter
 
 /*
 get block by number or hash
 */
-exports.getBlock = (block) => { return web3.eth.getBlock(block) }
-
-/*
-get current height
-*/
-exports.getCurrentHeight = new Function()
+exports.getBlock = (block) => {
+  return web3.eth.getBlock(block)
+}
 
 
 
-var blockNumber = 0
-var updateBlockHeight = () =>{
+let blockNumber = 0
+updateBlockHeight = () => {
   web3.eth.getBlockNumber()
-  .then(ret=>{
-    blockNumber=ret
-    console.info(`current height changed to ${blockNumber}`)
-  })
-  .catch(err=>{
-    console.error(err)
-  })
+    .then(ret => {
+      blockNumber = ret
+      console.info(`current height changed to ${blockNumber}`)
+    })
+    .catch(err => {
+      console.error(err)
+    })
 }
 updateBlockHeight()
 
-this.getCurrentHeight = () => {
-  return new Promise ((resolve, reject)=>{
-    if(blockNumber==0){
+exports.getCurrentHeight = () => {
+  return new Promise((resolve, reject) => {
+    if (blockNumber == 0) {
       web3.eth.getBlockNumber()
-      .then(ret=>{
-        resolve(ret)
-      })
-      .catch(err=>reject(err))
-    }
-    else resolve(blockNumber)
+        .then(ret => {
+          resolve(ret)
+        })
+        .catch(err => reject(err))
+    } else resolve(blockNumber)
   })
 }
 
@@ -64,15 +60,14 @@ run when is required
 var _startToSubscriptNewBlock = () => {
   console.info("start to subscript new block")
   var subscription = web3.eth.subscribe(
-    'newBlockHeaders',
-    function(error, result)
-  {
-    if (error) console.err(error)
-  })
-  .on("data", function(blockHeader){
-    console.info(`find new block ${blockHeader.number}`)
-    newBlockEmitter.emit("newblock", blockHeader)
-    updateBlockHeight()
-  })
+      'newBlockHeaders',
+      function (error, result) {
+        if (error) console.err(error)
+      })
+    .on("data", function (blockHeader) {
+      console.info(`find new block ${blockHeader.number}`)
+      newBlockEmitter.emit("newBlock", blockHeader)
+      updateBlockHeight()
+    })
 }
 _startToSubscriptNewBlock()

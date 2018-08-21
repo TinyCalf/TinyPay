@@ -1,15 +1,15 @@
 var request = require('request')
-var config = require("../Config")
-class Parity{
+var config = require("./config")
+class Parity {
   constructor(rpcuri) {
-    if(!rpcuri) return new Error("no rpcuri found!")
+    if (!rpcuri) return new Error("no rpcuri found!")
     this.id = 1
     this.jsonrpc = "2.0"
     this.rpcuri = rpcuri
   }
 
-  _sendRequest (method, params) {
-    return new Promise ( (resolve, reject) => {
+  _sendRequest(method, params) {
+    return new Promise((resolve, reject) => {
       var data = {
         method: method,
         params: params,
@@ -25,17 +25,17 @@ class Parity{
         }
       }
       request(options, function (error, response, body) {
-        if(error) return reject(error)
+        if (error) return reject(error)
         resolve(body)
       })
     })
   }
 
   nextNonce(address) {
-    return new Promise ( (resolve, reject) =>{
-      this._sendRequest("parity_nextNonce",[address])
-      .then(ret=>resolve(ret.result))
-      .catch(err=>reject(err))
+    return new Promise((resolve, reject) => {
+      this._sendRequest("parity_nextNonce", [address])
+        .then(ret => resolve(ret.result))
+        .catch(err => reject(err))
     })
   }
 

@@ -16,22 +16,23 @@
 
 Ethereum
 |__ utils
-        |__ web3                               [x]
+        |__ web3                               []
         |__ parity                             [x]
-        |__ mongoose                           [x]
-        |__ account                            [ ]
-        |__ wallet                             [x]
+        |__ mongoose                           []
+        |__ account                            [x]
+        |__ wallet                             []
         |__ block                              [ ]
-        |__ erc20contractInstances             [x]
-        |__ config                             [x]
+        |__ erc20contractInstances             []
+        |__ config                             []
 |__ erc20
-        |__ income
-        |__ outcome
-        |__ sendback                           [x]
+        |__ recharge
+        |__ withdraw
+        |__ newaccount                           [x]
+        |__ getinfo
 |__ ether
         |__ income
         |__ outcome
-        |__ sendback                           [x]
+        |__ withdraw                           [x]
 |__ index.js  __ 抛出方法
                 |__ 获取某币新账户
                 |__ 接收交易Event

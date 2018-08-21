@@ -1,20 +1,17 @@
 # 数据库相关
 mongodb:
-  host: mongodb://localhost:27017/coolpay_dev
+  host: mongodb://localhost:27017/tinypay_dev
 
 ethereum:
   host: 127.0.0.1
-  rpcport: 8545
-  wsport: 8546
-  available_currency_alias:
-    - ether
-    - king
+  rpcport: 10001
+  wsport: 10002
+  # 冷钱包 prikey 0xae157ea229549c0d4720bef322d1cf1ee0d8d5be5b4b5372eceffa135438a696
+  coldAddress: "0x65dd104db7d570121e33bcbfde55721cf2b1018f"
+  # 热钱包
+  hotPrikey: "0xae157ea229549c0d4720bef322d1cf1ee0d8d5be5b4b5372eceffa135438a696"
+  hotAddress: "0x65dd104db7d570121e33bcbfde55721cf2b1018f"
 
 ether:
-  category: ether
-
-king:
-  contractAddress:
-  category: erc20
-  symbol: KING(KingCoin)
-  name: KingCoin
+  gas: 50000
+  gasPrice: 400000000

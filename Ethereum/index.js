@@ -55,22 +55,22 @@ return
 UNKNOW_ERROR
 
 */
-exports.getinfo = () =>{
-  return new Promise ((resolve, reject)=>{
+exports.getinfo = () => {
+  return new Promise((resolve, reject) => {
     let result = []
     erc20.getBalanceOfMain()
-    .then(ret=>{
-      result = result.concat(ret)
-      return ether.getBalanceOfMain()
-    })
-    .then(ret=>{
-      result = result.concat(ret)
-      resolve(result)
-    })
-    .catch(err=>{
-      console.error(err)
-      reject(new Error("UNKNOW_ERROR"))
-    })
+      .then(ret => {
+        result = result.concat(ret)
+        return ether.getBalanceOfMain()
+      })
+      .then(ret => {
+        result = result.concat(ret)
+        resolve(result)
+      })
+      .catch(err => {
+        console.error(err)
+        reject(new Error("UNKNOW_ERROR"))
+      })
   })
 }
 
@@ -98,17 +98,17 @@ result
   INVAILD_ALIAS
   UNKNOW_ERROR
 */
-exports.getNewAccount = (alias) =>{
-  return new Promise ((resolve, reject)=>{
-    if(!config[alias] || !config[alias].category)
+exports.getNewAccount = (alias) => {
+  return new Promise((resolve, reject) => {
+    if (!config[alias] || !config[alias].category)
       return reject(new Error("INVAILD_ALIAS"))
     let nCurrency = config[alias]
     this.Account.createNewAccount(alias)
-    .then(ret=>resolve(ret))
-    .catch(err=>{
-      console.error(err)
-      return reject(new Error("UNKNOW_ERROR"))
-    })
+      .then(ret => resolve(ret))
+      .catch(err => {
+        console.error(err)
+        return reject(new Error("UNKNOW_ERROR"))
+      })
   })
 }
 
@@ -130,54 +130,56 @@ INSUFFICIENT_FUNDS
 UNKNOW_ERROR
 */
 exports.withdraw = (alias, to, amount) => {
-  return new Promise( (resolve, reject) => {
-    if(!config[alias] || !config[alias].category)
+  return new Promise((resolve, reject) => {
+    if (!config[alias] || !config[alias].category)
       return reject(new Error("INVAILD_ALIAS"))
     let nCurrency = config[alias]
-    if(!eth_util.isValidAddress(to) )
+    if (!eth_util.isValidAddress(to))
       return reject(new Error("INVAILD_ADDRESS"))
     to = to.toLowerCase()
-    if(typeof amount != "string")
+    if (typeof amount != "string")
       return reject(new Error("INVAILED_AMOUNT"))
-    try{
+    try {
       let value = web3.utils.toWei(amount)
-    }
-    catch(e){
+    } catch (e) {
       return reject(new Error("INVAILED_AMOUNT"))
     }
-    switch(nCurrency.category){
-      case "ether":{
+    switch (nCurrency.category) {
+    case "ether":
+      {
         this.Transaction.etheroutcome.transferEtherInEther(
           to,
           amount
         )
-        .then(ret=>resolve(ret))
-        .catch(err=>{
-          if(err.message == "SEND_TOO_OFTEN")
+        .then(ret => resolve(ret))
+        .catch(err => {
+          if (err.message == "SEND_TOO_OFTEN")
             return reject(new Error("SEND_TOO_OFTEN"))
-          if(err.message.search(/Insufficient funds/i))
+          if (err.message.search(/Insufficient funds/i))
             return reject(new Error("INSUFFICIENT_FUNDS"))
           else return reject(new Error("UNKNOW_ERROR"))
         })
         break
       }
-      case "erc20" : {
+    case "erc20":
+      {
         this.Transaction.erc20outcome.transferERC20InEther(
           alias,
           to,
           amount
         )
-        .then(ret=>resolve(ret))
-        .catch(err=>{
-          if(err.message == "SEND_TOO_OFTEN")
+        .then(ret => resolve(ret))
+        .catch(err => {
+          if (err.message == "SEND_TOO_OFTEN")
             return reject(new Error("SEND_TOO_OFTEN"))
-          if(err.message == "Insufficient funds")
+          if (err.message == "Insufficient funds")
             return reject(new Error("INSUFFICIENT_FUNDS"))
           else return reject(new Error("UNKNOW_ERROR"))
         })
         break
       }
-      default: reject(new Error("UNKNOW_ERROR"))
+    default:
+      reject(new Error("UNKNOW_ERROR"))
     }
   })
 }
@@ -190,35 +192,35 @@ exports.events = events
 
 
 this.Transaction.etheroutcome.getEvents
-.on('outcomeSuccess', (outcome) => {
-  events.emit("outcomeSuccess", outcome)
-})
+  .on('outcomeSuccess', (outcome) => {
+    events.emit("outcomeSuccess", outcome)
+  })
 
 this.Transaction.erc20outcome.getEvents
-.on('outcomeSuccess', (outcome) => {
-  events.emit("outcomeSuccess", outcome)
-})
+  .on('outcomeSuccess', (outcome) => {
+    events.emit("outcomeSuccess", outcome)
+  })
 
 this.Transaction.erc20income.getEvents
-.on('newIncome', (income) => {
+  .on('newIncome', (income) => {
     events.emit("newIncome", income)
-})
-.on('confirmationUpdate',(transaction) => {
+  })
+  .on('confirmationUpdate', (transaction) => {
     events.emit("confirmationUpdate", transaction)
-    if(transaction.confirmations >=20){
+    if (transaction.confirmations >= 20) {
       erc20sendback.addAddress(transaction.alias, transaction.localReceiver)
-      .catch(err=>console.error(err))
+        .catch(err => console.error(err))
     }
-})
+  })
 
 this.Transaction.etherincome.getEvents
-.on('newIncome', (income) => {
+  .on('newIncome', (income) => {
     events.emit("newIncome", income)
-})
-.on('confirmationUpdate',(transaction) => {
+  })
+  .on('confirmationUpdate', (transaction) => {
     events.emit("confirmationUpdate", transaction)
-    if(transaction.confirmations >=20){
+    if (transaction.confirmations >= 20) {
       ethersendback.addAddress(transaction.localReceiver)
-      .catch(err=>console.error(err))
+        .catch(err => console.error(err))
     }
-})
+  })
