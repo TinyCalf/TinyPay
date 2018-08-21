@@ -15,3 +15,6 @@ exports.getNew = () => {
       .catch(reject)
   })
 }
+
+exports.getPrikeyByAddress = db.getPrikeyByAddress
+exports.selectExistedAddresses = db.selectExistedAddresses

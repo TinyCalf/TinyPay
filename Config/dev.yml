@@ -11,6 +11,7 @@ ethereum:
   # 热钱包
   hotPrikey: "0xae157ea229549c0d4720bef322d1cf1ee0d8d5be5b4b5372eceffa135438a696"
   hotAddress: "0x65dd104db7d570121e33bcbfde55721cf2b1018f"
+  confirmations: 20
 
 ether:
   gas: 50000

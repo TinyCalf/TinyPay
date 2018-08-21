@@ -39,11 +39,25 @@ describe('Ethereum', function () {
         })
     })
 
+    it(`should lauch withdraw tx and receive receipt correctly`, done => {
 
-  })
+      ether.withdraw.Events.once("confirmedNewTx", ret => {
+        console.log("confirmedNewTx")
+        console.log(ret)
+        assert(typeof ret.transactionHash === "string")
+      })
 
-  describe("# Ethereum/withdraw", function () {
-    it(`should lauch withdraw tx correctly`, done => {
+      ether.recharge.Events.on("newRecharge", ret => {
+        console.log("newRecharge")
+        console.log(ret)
+      })
+
+      ether.recharge.Events.on("confirmationUpdate", ret => {
+        console.log("confirmationUpdate")
+        console.log(ret)
+        if (ret.confirmations >= 20) done()
+      })
+
       ether.withdraw.lauchTransaction(user1.wallet.address, "0.01")
         .then(ret => {
           assert(typeof ret === "string",
@@ -51,37 +65,12 @@ describe('Ethereum', function () {
           withdrawHash = ret
 
         })
-      ether.withdraw.Events.once("confirmedNewTx", ret => {
-        assert(typeof ret.transactionHash === "string")
-        done()
-      })
-    })
 
+    })
 
 
   })
 
-  //describe("# /tools/rcsign", function() {
-  //    it(`should get signed data correctly`, function(done) {
-  //        request
-  //            .post('/tools/rcsign')
-  //            .send({
-  //                prikey: testwallet.prikey,
-  //                sha3data: testsha3data
-  //            })
-  //            .set('Accept', 'application/json')
-  //            .expect(200)
-  //            .end(function(err, res) {
-  //                if (err) return done(err)
-  //                let result = res.body
-  //                console.log(result)
-  //                assert(result.err == 0,
-  //                    "expect to have no err")
-  //                assert(typeof result.msg == "string",
-  //                    "expect signed data to be a string")
-  //                done()
-  //            })
-  //    })
-  //})
+
 
 })
