@@ -1,9 +1,11 @@
 let currencydb = require('../Currency.db')
+let config = require('../config')
 currencydb.init({
-  alias: "ether",
-  lastCheckedHeight: 20
-})
-
-exports.account = require("./account")
-exports.withdraw = require("./withdraw")
-exports.recharge = require("./recharge")
+    alias: "ether",
+    lastCheckedHeight: config.ether.startHeight
+  })
+  .then(ret => {
+    exports.account = require("./account")
+    exports.withdraw = require("./withdraw")
+    exports.recharge = require("./recharge")
+  })
