@@ -14,5 +14,5 @@ ethereum:
   confirmations: 20
 
 ether:
-  gas: 50000
-  gasPrice: 400000000
+  gas: "50000"
+  gasPrice: "3000000000"

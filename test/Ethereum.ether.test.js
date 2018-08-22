@@ -42,19 +42,12 @@ describe('Ethereum', function () {
     it(`should lauch withdraw tx and receive receipt correctly`, done => {
 
       ether.withdraw.Events.once("confirmedNewTx", ret => {
-        console.log("confirmedNewTx")
-        console.log(ret)
         assert(typeof ret.transactionHash === "string")
       })
 
-      ether.recharge.Events.on("newRecharge", ret => {
-        console.log("newRecharge")
-        console.log(ret)
-      })
+      ether.recharge.Events.on("newRecharge", ret => {})
 
       ether.recharge.Events.on("confirmationUpdate", ret => {
-        console.log("confirmationUpdate")
-        console.log(ret)
         if (ret.confirmations >= 20) done()
       })
 
@@ -63,10 +56,24 @@ describe('Ethereum', function () {
           assert(typeof ret === "string",
             "expect transaction hash to be a string")
           withdrawHash = ret
-
         })
 
     })
+
+    it(`should get events of sendback`, done => {
+      ether.recharge.Events.on("newSendback", ret => {
+        assert(typeof ret === "string",
+          'expect transactionHash to be a string')
+      })
+
+      ether.recharge.Events.on('confirmedSendback', ret => {
+        assert(typeof ret === 'string',
+          'expect transactionHash to be a string')
+        done()
+      })
+
+    })
+
 
 
   })

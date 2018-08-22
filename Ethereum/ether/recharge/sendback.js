@@ -4,16 +4,18 @@ ether/sendback/index.js
 const db = require("./ethersendback.db")
 const Event = require("events")
 const account = require("../account")
-const web3 = require('../web3')
-const parity = require('../parity')
-const wallet = require('../wallet')
-const mainAddress = wallet.mainAddress
-const config = require('../config')
+const web3 = require('../../web3')
+const parity = require('../../parity')
+const wallet = require('../../wallet')
+const config = require('../../config')
+const coldAddress = config.ethereum.coldAddress
+const Promise = require("bluebird")
 
 let EtherSendBack = class EtherSendBack {
   constructor(gas, gasPrice) {
     this.gas = gas
     this.gasPrice = gasPrice
+    this.Events = new Event()
   }
 
   addAddressToBeSentBack(address) {
@@ -23,7 +25,7 @@ let EtherSendBack = class EtherSendBack {
       web3.eth.getBalance(address)
         .then(ret => {
           if (ret <= 0) return reject(new Error("NO_TOKEN_IN_THIS_ADDRESS"))
-          return account.getPrivateKeyForAccount(address)
+          return account.getPrikeyByAddress(address)
         })
         .then(ret => {
           if (!ret) return reject(new Error("INVAILED_ADDRESS"))
@@ -41,6 +43,7 @@ let EtherSendBack = class EtherSendBack {
       let nonce = 0
       let tx = {}
       let etherUsed = 0
+      let localAddress = ""
       db.findOneNoSentBack()
         .then(ret => {
           record = ret
@@ -48,11 +51,12 @@ let EtherSendBack = class EtherSendBack {
           return web3.eth.getBalance(record.address)
         })
         .then(ret => {
+          console.log(ret)
           tx.value = ret
           tx.gas = self.gas
           tx.gasPrice = self.gasPrice
           tx.from = record.address
-          tx.to = mainAddress
+          tx.to = coldAddress
           return web3.eth.estimateGas(tx)
         })
         .then(ret => {
@@ -65,10 +69,11 @@ let EtherSendBack = class EtherSendBack {
           tx.value = actualValue.toString(10)
           tx.gas = gasBN.toString(10)
           tx.gasPrice = this.gasPrice
-          return account.getPrivateKeyForAccount(tx.from)
+          localAddress = tx.from
+          return account.getPrikeyByAddress(tx.from)
         })
         .then(ret => {
-          let a = web3.eth.accounts.wallet.add(ret)
+          let a = web3.eth.accounts.wallet.add("0x" + ret)
           return parity.nextNonce(tx.from)
         })
         .then(ret => {
@@ -76,14 +81,20 @@ let EtherSendBack = class EtherSendBack {
           tx.nonce = nonce
           web3.eth.sendTransaction(tx)
             .on('transactionHash', function (hash) {
-              console.info(`ether in ${tx.address} is being sent back to main`)
+              console.success(`ether in ${tx.from} is being sent back to main`)
               db.addSentBackTransaction(tx.from, hash, etherUsed)
                 .then(ret => resolve()).catch(err => {
                   throw err
                 })
+              self.Events.emit("newSendback", hash)
+              web3.eth.accounts.wallet.remove(localAddress)
             })
             .on('error', err => {
-              throw err
+              reject(err)
+            })
+            .then(ret => {})
+            .catch(err => {
+              reject(err)
             })
         })
         .catch(err => {
@@ -110,9 +121,10 @@ let EtherSendBack = class EtherSendBack {
         .then(ret => {
           return Promise.map(ret, receipt => {
             return new Promise((resolve, reject) => {
-              if (receipt && receipt.status == '0x1' &&
+              if (receipt &&
                 receipt.transactionHash) {
                 let sentBackTransactionHash = receipt.transactionHash
+                this.Events.emit("confirmedSendback", receipt.transactionHash)
                 db.confirmSentBack(
                   sentBackTransactionHash,
                 ).then(ret => resolve()).catch(err => reject(err))
@@ -147,3 +159,4 @@ let addAddress = (address) => {
 }
 exports.start = start
 exports.addAddress = addAddress
+exports.Events = sendback.Events

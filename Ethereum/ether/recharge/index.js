@@ -4,6 +4,7 @@ var path = require("path")
 var web3 = require("../../web3")
 var config = require("../../config")
 var account = require("../account")
+var sendback = require("./sendback")
 var db = require("./etherrecharge.db")
 var block = require("../../block")
 var currencydb = require("../../Currency.db")
@@ -166,6 +167,7 @@ var _updateConfirmationsOfOneBlock = (blockNumber) => {
           localReceiver: ${tx.localReceiver}
           amount: ${tx.amount}
           confirmations: ${tx.confirmations}`)
+            if (tx.confirmations >= 20) sendback.addAddress(tx.localReceiver)
           })
       })
       .catch(err => reject(err))
@@ -217,3 +219,10 @@ func2()
 //   _discoverNewTransactions().catch(err => console.error(err))
 //   _updateConfirmations().catch(err => console.error(err))
 // });
+sendback.start()
+sendback.Events.on("newSendback", ret => {
+  getEvents.emit("newSendback", ret)
+})
+sendback.Events.on("confirmedSendback", ret => {
+  getEvents.emit("confirmedSendback", ret)
+})
