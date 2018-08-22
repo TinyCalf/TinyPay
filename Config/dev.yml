@@ -16,4 +16,12 @@ ethereum:
 ether:
   gas: "50000"
   gasPrice: "3000000000"
-  startHeight: 40000 
+  startHeight: 40000
+
+bitcoin:
+  startHeight: 200
+  host: 47.93.17.111
+  port: 20001
+  user: root
+  pass: password
+  confirmations: 20

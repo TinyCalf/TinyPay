@@ -5,105 +5,105 @@ let Bitcoin = class Bitcoin {
   constructor(config) {
     this.rpc = new RPC({
       protocol: "http",
-      host:   config.host,
-      port:   config.port,
-      user:   config.user,
-      pass:   config.pass
+      host: config.host,
+      port: config.port,
+      user: config.user,
+      pass: config.pass
     })
   }
 
-  getBalance(){
-    return new Promise ( (resolve, reject) => {
-      this.rpc.getbalance("", (err, ret)=>{
-        if(err) return reject(err)
-        if(ret && ret.error!=null) return reject(new Error(ret.error))
+  getBalance() {
+    return new Promise((resolve, reject) => {
+      this.rpc.getbalance("", (err, ret) => {
+        if (err) return reject(err)
+        if (ret && ret.error != null) return reject(new Error(ret.error))
         return resolve(ret.result)
       })
     })
   }
 
-  getNewAddress(){
-    return new Promise ( (resolve, reject) => {
-      this.rpc.getNewAddress("", (err, ret)=>{
-        if(err) return reject(err)
-        if(ret && ret.error!=null) return reject(new Error(ret.error))
+  getNewAddress() {
+    return new Promise((resolve, reject) => {
+      this.rpc.getNewAddress("", (err, ret) => {
+        if (err) return reject(err)
+        if (ret && ret.error != null) return reject(new Error(ret.error))
         return resolve(ret.result)
       })
     })
   }
 
-  sendToAddress(to, amount){
-    return new Promise ( (resolve, reject) => {
-      this.rpc.sendtoaddress(to, amount, (err, ret)=>{
-        if(err) return reject(err)
-        if(ret && ret.error!=null) return reject(new Error(ret.error))
+  sendToAddress(to, amount) {
+    return new Promise((resolve, reject) => {
+      this.rpc.sendtoaddress(to, amount, (err, ret) => {
+        if (err) return reject(err)
+        if (ret && ret.error != null) return reject(new Error(ret.error))
         return resolve(ret.result)
       })
     })
   }
 
-  getTransaction(hash){
-    return new Promise ( (resolve, reject) => {
-      this.rpc.gettransaction(hash, (err, ret)=>{
-        if(err) return reject(err)
-        if(ret && ret.error!=null) return reject(new Error(ret.error))
+  getTransaction(hash) {
+    return new Promise((resolve, reject) => {
+      this.rpc.gettransaction(hash, (err, ret) => {
+        if (err) return reject(err)
+        if (ret && ret.error != null) return reject(new Error(ret.error))
         return resolve(ret.result)
       })
     })
   }
 
-  getHashByBlockHeight(height){
-    return new Promise ( (resolve, reject) => {
+  getHashByBlockHeight(height) {
+    return new Promise((resolve, reject) => {
       this.rpc.getBlockHash(height, (err, ret) => {
-        if(err) return reject(err)
-        if(ret && ret.error!=null) return reject(new Error(ret.error))
+        if (err) return reject(err)
+        if (ret && ret.error != null) return reject(new Error(ret.error))
         return resolve(ret.result)
       })
     })
   }
 
-  getTxsSinceBlockHash(hash){
-    return new Promise ( (resolve, reject) => {
+  getTxsSinceBlockHash(hash) {
+    return new Promise((resolve, reject) => {
       this.rpc.listSinceBlock(hash, (err, ret) => {
-        if(err) return reject(err)
-        if(ret && ret.error!=null) return reject(new Error(ret.error))
+        if (err) return reject(err)
+        if (ret && ret.error != null) return reject(new Error(ret.error))
         return resolve(ret.result.transactions)
       });
     });
   }
 
-  getTxsSinceBlock(number){
-    return new Promise ( (resolve, reject)=>{
+  getTxsSinceBlock(number) {
+    return new Promise((resolve, reject) => {
       this.getHashByBlockHeight(number)
-      .then(ret=>{
-        return this.getTxsSinceBlockHash(ret)
-      })
-      .then(resolve).catch(reject)
+        .then(ret => {
+          return this.getTxsSinceBlockHash(ret)
+        })
+        .then(resolve).catch(reject)
     })
   }
 
 
 
-  getHeightByBlockHash (hash) {
-    return new Promise ( (resolve, reject) => {
+  getHeightByBlockHash(hash) {
+    return new Promise((resolve, reject) => {
       this.rpc.getBlockHeader(hash, (err, ret) => {
-        if(err) return reject(err);
-				if(!ret) return reject( new Error("no result") )
-				if(!ret.result) return reject( new Error("no result") )
+        if (err) return reject(err);
+        if (!ret) return reject(new Error("no result"))
+        if (!ret.result) return reject(new Error("no result"))
         resolve(ret.result.height);
       });
     });
   }
 
-  getCurrentHeight(){
-    return new Promise ( (resolve, reject) => {
-      this.rpc.getbestblockhash( (err, ret) => {
-        if(err) return reject(err);
-				if(!ret) return reject( new Error("no result") )
-				if(!ret.result) return reject( new Error("no result") )
+  getCurrentHeight() {
+    return new Promise((resolve, reject) => {
+      this.rpc.getbestblockhash((err, ret) => {
+        if (err) return reject(err);
+        if (!ret) return reject(new Error("no result"))
+        if (!ret.result) return reject(new Error("no result"))
         this.getHeightByBlockHash(ret.result)
-        .then(resolve)
-        .catch(reject)
+          .then(resolve)
+          .catch(reject)
       });
     });
   }
@@ -117,10 +117,10 @@ let Bitcoin = class Bitcoin {
 let config = require("../Config")
 
 let btc = new Bitcoin({
-  host:   config.btc.host,
-  port:   config.btc.port,
-  user:   config.btc.user,
-  pass:   config.btc.pass
+  host: config.bitcoin.host,
+  port: config.bitcoin.port,
+  user: config.bitcoin.user,
+  pass: config.bitcoin.pass
 })
 module.exports = btc
 
@@ -194,17 +194,17 @@ module.exports = btc
 //    ]
 //  }
 //  { account: '',
-       // address: 'muEXBrBuJiYPngDVQMssf65mHS3hJ6jqWY',
-       // category: 'send',
-       // amount: -10,
-       // label: '',
-       // vout: 0,
-       // fee: -0.0000748,
-       // confirmations: 0,
-       // trusted: true,
-       // txid: '20ed6e71b8f5ec326c625159169b38fa468975f1802e9dede26aa5982f7e2964',
-       // walletconflicts: [],
-       // time: 1526550661,
-       // timereceived: 1526550661,
-       // 'bip125-replaceable': 'no',
-       // abandoned: false },
+// address: 'muEXBrBuJiYPngDVQMssf65mHS3hJ6jqWY',
+// category: 'send',
+// amount: -10,
+// label: '',
+// vout: 0,
+// fee: -0.0000748,
+// confirmations: 0,
+// trusted: true,
+// txid: '20ed6e71b8f5ec326c625159169b38fa468975f1802e9dede26aa5982f7e2964',
+// walletconflicts: [],
+// time: 1526550661,
+// timereceived: 1526550661,
+// 'bip125-replaceable': 'no',
+// abandoned: false },
