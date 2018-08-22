@@ -1,4 +1,4 @@
-require("../../utils").mongoose
+const dbconnect = require("../../mongoose")
 let mongoose = require("mongoose")
 
 const schema = new mongoose.Schema({
@@ -26,7 +26,7 @@ const schema = new mongoose.Schema({
     default: []
   }
 })
-let Model = mongoose.model("ethereum_ether_sendbackqueue", schema)
+let Model = mongoose.model("EtherSendback", schema)
 
 let EtherSendBackModel = class EtherSendBackModel {
   /*add new record*/
