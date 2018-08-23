@@ -68,5 +68,25 @@ describe('Example App', function () {
     })
   })
 
+  before(done => {
+    setTimeout(done, 2000)
+  })
+
+  describe("# /ticker", () => {
+    it(`should get ticker of btc and eth`, done => {
+      request
+        .get('/ticker')
+        .set('Accept', 'application/json')
+        .expect(200)
+        .end((err, res) => {
+          if (err) return done(err)
+          let result = res.body
+
+          console.log(result)
+          done()
+        })
+    })
+  })
+
 
 })

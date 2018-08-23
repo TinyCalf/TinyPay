@@ -10,7 +10,9 @@
     "repo": "node ./openReporter",
     "start": "node tinypay.js",
     "daemon": "nohup node tinypay.js &",
-    "generatedoc": "./node_modules/apidoc/bin/apidoc  -i www/ -o doc/ && node ./openDoc"
+    "generatedoc": "./node_modules/apidoc/bin/apidoc  -i www/ -o doc/ && node ./openDoc",
+    "startapp" : "node ExampleApp/index.js",
+    "app:docs" : "./node_modules/.bin/apidoc -i ExampleApp/ -o appdoc/"
   },
   "author": "Jonathan-ZHU",
   "license": "ISC",
