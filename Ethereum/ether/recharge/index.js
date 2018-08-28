@@ -1,12 +1,12 @@
-require("../../log")
+require("../../lib/log")
 var fs = require("fs")
 var path = require("path")
-var web3 = require("../../web3")
+var web3 = require("../../lib/web3")
 var config = require("../../config")
 var account = require("../account")
 var sendback = require("./sendback")
 var db = require("./etherrecharge.db")
-var block = require("../../block")
+var block = require("../../lib/block")
 var currencydb = require("../../Currency.db")
 var Event = require("events")
 var Promise = require("bluebird")
@@ -74,7 +74,7 @@ var _getTransactions = (lastCheckedHeight, currentHeight) => {
 /* culculate blockheight return 0-20*/
 var _culConfirmations = (currentHeight, blockNumber) => {
   var res = currentHeight - blockNumber
-  var con = config.ethereum.confirmations
+  var con = config.confirmations
   if (res > con) res = con
   if (res < 0) res = 0
   return res
@@ -178,7 +178,7 @@ var _updateConfirmationsOfOneBlock = (blockNumber) => {
 var _updateConfirmations = () => {
   return new Promise((resolve, reject) => {
     var checkedHeight = null
-    var confirmations = config.ethereum.confirmations
+    var confirmations = config.confirmations
     currencydb.checkHeight("ether")
       .then(ret => {
         checkedHeight = ret

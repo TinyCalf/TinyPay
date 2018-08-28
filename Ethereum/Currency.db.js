@@ -1,5 +1,4 @@
-const dbconnect = require("./mongoose")
-mongoose = require("mongoose")
+const mongoose = require("./mongoose")
 
 var schema = new mongoose.Schema({
   alias: {
@@ -14,7 +13,7 @@ var schema = new mongoose.Schema({
   },
 });
 
-var Currency = mongoose.model("Currency", schema);
+var Currency = mongoose.model("Ethereum", schema);
 
 exports.model = Currency
 
@@ -34,9 +33,17 @@ check currency height
 exports.checkHeight = new Function("alias")
 
 
-this.init = (currencies) => {
+this.init = (height) => {
   return new Promise((resolve, reject) => {
-    Currency.collection.insert(currencies, function (err, ret) {
+    // Currency.collection.insert(currencies, function (err, ret) {
+    //   if (err && err.code != 11000) return reject(err)
+    //   if (err && err.code == 11000) return resolve(ret)
+    //   resolve(ret)
+    // })
+    let currency = new Currency()
+    currency.alias = "ether"
+    currency.lastCheckedHeight = height
+    currency.save((err, ret) => {
       if (err && err.code != 11000) return reject(err)
       if (err && err.code == 11000) return resolve(ret)
       resolve(ret)

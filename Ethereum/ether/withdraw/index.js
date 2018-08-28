@@ -3,13 +3,13 @@ var path = require("path")
 var Event = require("events")
 var Promise = require("bluebird");
 
-require("../../log")
+require("../../lib/log")
 var db = require("./etherwithdraw.db.js")
 var config = require("../../config")
-var parity = require("../../parity")
-var block = require("../../block")
-var wallet = require("../../wallet")
-var web3 = require("../../web3")
+var parity = require("../../lib/parity")
+var block = require("../../lib/block")
+var wallet = require("../../lib/wallet")
+var web3 = require("../../lib/web3")
 var account = require("../account")
 
 

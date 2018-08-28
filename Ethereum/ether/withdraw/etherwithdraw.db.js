@@ -1,5 +1,4 @@
-const dbconnect = require("../../mongoose")
-mongoose = require("mongoose")
+const mongoose = require("../../mongoose")
 
 let schema = new mongoose.Schema({
 

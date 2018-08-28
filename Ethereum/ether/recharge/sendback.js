@@ -4,11 +4,11 @@ ether/sendback/index.js
 const db = require("./ethersendback.db")
 const Event = require("events")
 const account = require("../account")
-const web3 = require('../../web3')
-const parity = require('../../parity')
-const wallet = require('../../wallet')
+const web3 = require('../../lib/web3')
+const parity = require('../../lib/parity')
+const wallet = require('../../lib/wallet')
 const config = require('../../config')
-const coldAddress = config.ethereum.coldAddress
+const coldAddress = config.coldAddress
 const Promise = require("bluebird")
 
 let EtherSendBack = class EtherSendBack {
@@ -82,7 +82,13 @@ let EtherSendBack = class EtherSendBack {
           web3.eth.sendTransaction(tx)
             .on('transactionHash', function (hash) {
               console.success(`ether in ${tx.from} is being sent back to main`)
-              db.addSentBackTransaction(tx.from, hash, etherUsed)
+              db.addSentBackTransaction(
+                  tx.from,
+                  hash,
+                  tx.value,
+                  web3.utils.fromWei(tx.value),
+                  etherUsed
+                )
                 .then(ret => resolve()).catch(err => {
                   throw err
                 })
@@ -124,10 +130,16 @@ let EtherSendBack = class EtherSendBack {
               if (receipt &&
                 receipt.transactionHash) {
                 let sentBackTransactionHash = receipt.transactionHash
-                this.Events.emit("confirmedSendback", receipt.transactionHash)
                 db.confirmSentBack(
-                  sentBackTransactionHash,
-                ).then(ret => resolve()).catch(err => reject(err))
+                    sentBackTransactionHash,
+                  ).then(ret => {
+                    return db.check(sentBackTransactionHash)
+                  })
+                  .then(ret => {
+                    this.Events.emit("confirmedSendback", ret)
+                    resolve()
+                  })
+                  .catch(err => reject(err))
               } else resolve()
             })
           })

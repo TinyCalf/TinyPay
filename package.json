@@ -11,8 +11,8 @@
     "start": "node tinypay.js",
     "daemon": "nohup node tinypay.js &",
     "generatedoc": "./node_modules/apidoc/bin/apidoc  -i www/ -o doc/ && node ./openDoc",
-    "startapp" : "node ExampleApp/index.js",
-    "app:docs" : "./node_modules/.bin/apidoc -i ExampleApp/ -o appdoc/"
+    "startapp": "node ExampleApp/index.js",
+    "app:docs": "./node_modules/.bin/apidoc -i ExampleApp/ -o appdoc/"
   },
   "author": "Jonathan-ZHU",
   "license": "ISC",
@@ -24,7 +24,8 @@
     "bluebird": "^3.5.1",
     "body-parser": "1.18.2",
     "chalk": "2.3.0",
-    "commander": "^2.15.1",
+    "commander": "^2.17.1",
+    "convict": "^4.3.2",
     "ethereumjs-tx": "^1.3.4",
     "ethereumjs-util": "^5.2.0",
     "ethereumjs-wallet": "^0.6.0",

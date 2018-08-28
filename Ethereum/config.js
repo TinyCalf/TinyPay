@@ -1,2 +1,1 @@
-var config = require("../Config")
-module.exports = config
+module.exports = require("../config").get().get("ethereum")

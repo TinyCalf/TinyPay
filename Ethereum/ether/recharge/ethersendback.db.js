@@ -1,12 +1,15 @@
-const dbconnect = require("../../mongoose")
-let mongoose = require("mongoose")
+const mongoose = require("../../mongoose")
 
 const schema = new mongoose.Schema({
   /*address in which token should be send back to main */
   address: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
+  },
+  localSender: {
+    type: String,
+    required: true
   },
   /*if sent back to the main account,0 have not, 1 pending , 2 succeed*/
   sentBackStatus: {
@@ -21,6 +24,14 @@ const schema = new mongoose.Schema({
     type: String,
     default: 0
   },
+  value: {
+    type: String,
+    default: ""
+  },
+  amount: {
+    type: String,
+    default: ""
+  },
   errorLogs: {
     type: Array,
     default: []
@@ -34,6 +45,7 @@ let EtherSendBackModel = class EtherSendBackModel {
     return new Promise((resolve, reject) => {
       var q = new Model()
       q.address = address
+      q.localSender = address
       q.save((err, ret) => {
         if (err) return reject(err)
         resolve(ret)
@@ -41,7 +53,7 @@ let EtherSendBackModel = class EtherSendBackModel {
     })
   }
 
-  addSentBackTransaction(address, hash, etherUsed) {
+  addSentBackTransaction(address, hash, value, amount, etherUsed) {
     return new Promise((resolve, reject) => {
       let conditions = {
         address: address
@@ -51,6 +63,8 @@ let EtherSendBackModel = class EtherSendBackModel {
           sentBackTransactionHash: hash,
           sentBackStatus: 1,
           etherUsed: etherUsed,
+          value: value,
+          amount: amount
         }
       }
       Model.update(conditions, update, (err, ret) => {
@@ -67,7 +81,8 @@ let EtherSendBackModel = class EtherSendBackModel {
       }
       let update = {
         $set: {
-          sentBackStatus: 2
+          sentBackStatus: 2,
+          address: sentBackTransactionHash
         }
       }
       Model.update(conditions, update, (err, ret) => {
@@ -114,6 +129,19 @@ let EtherSendBackModel = class EtherSendBackModel {
         }
       }
       Model.update(conditions, update, (err, ret) => {
+        if (err) return reject(err)
+        resolve(ret)
+      })
+    })
+  }
+
+  check(sentBackTransactionHash) {
+    return new Promise((resolve, reject) => {
+      let conditions = {
+        sentBackTransactionHash: sentBackTransactionHash
+      }
+      let fields = "etherUsed amount localSender sentBackTransactionHash"
+      Model.findOne(conditions, fields, (err, ret) => {
         if (err) return reject(err)
         resolve(ret)
       })

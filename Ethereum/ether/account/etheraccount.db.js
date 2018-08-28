@@ -1,5 +1,4 @@
-const dbconnect = require("../../mongoose")
-mongoose = require("mongoose")
+const mongoose = require("../../mongoose")
 
 var schema = new mongoose.Schema({
   address: {
@@ -24,7 +23,6 @@ var schema = new mongoose.Schema({
     type: String,
     required: true
   },
-
 });
 
 let EtherAccount = mongoose.model("EtherAccount", schema)
@@ -46,7 +44,7 @@ exports.add = (params) => {
   })
 }
 
-this.getPrikeyByAddress = (address) => {
+exports.getPrikeyByAddress = (address) => {
   return new Promise((resolve, reject) => {
     EtherAccount.findOne({
       address: address
@@ -59,7 +57,7 @@ this.getPrikeyByAddress = (address) => {
   })
 }
 
-this.selectExistedAddresses = (addresses) => {
+exports.selectExistedAddresses = (addresses) => {
   return new Promise((resolve, reject) => {
     var conditions = {
       address: {
