@@ -79,12 +79,12 @@ exports.lauchTransaction = (to, amount) => {
       return resolve(new Error("amount should be String"))
     }
     let hash = null
+    let t = {}
     _transferEther(wallet.mainAddress, to, web3.utils.toWei(amount))
       .then(tx => {
         console.success(`sent out new transaction of ether:
         hash: ${tx.hash}`)
         hash = tx.hash
-        var t = {}
         t.transactionHash = tx.hash
         t.localSender = tx.from.toLowerCase()
         t.receiver = tx.to.toLowerCase()
@@ -93,7 +93,10 @@ exports.lauchTransaction = (to, amount) => {
         t.gasPrice = tx.gasPrice
         return db.add(t)
       })
-      .then(ret => resolve(hash))
+      .then(ret => {
+        t.transactionHash = ret.transactionHash
+        resolve(t)
+      })
       .catch(err => reject(err))
   })
 }

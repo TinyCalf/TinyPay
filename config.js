@@ -17,7 +17,7 @@ let dev = {
     ether: {
       gas: "50000",
       gasPrice: "3000000000",
-      startHeight: 40000,
+      startHeight: 80000,
     },
   },
   bitcoin: {
