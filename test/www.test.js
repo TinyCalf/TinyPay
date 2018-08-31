@@ -46,11 +46,30 @@ describe('Ether', function () {
           if (err) return done(err)
           let result = res.body
           console.log(result)
-          user1 = result.msg
           done()
         })
     })
   })
 
+  describe("# ether/getbalance", function () {
+    it(`should get balance correctly`, done => {
+      request
+        .post('/ether/getbalance')
+        .send({
+          address: user1.address,
+        })
+        .set('Accept', 'application/json')
+        .expect(200)
+        .end(function (err, res) {
+          if (err) return done(err)
+          let result = res.body
+          console.log(result)
+          assert(result.err == 0,
+            `expect result to have no err`)
+          assert(typeof result.msg === "string")
+          done()
+        })
+    })
+  })
 
 })

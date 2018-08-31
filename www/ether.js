@@ -32,7 +32,7 @@ router.get('/getnewaccount', (req, res, next) => {
 })
 
 /**
- * @api  {post} /ether/withdraw 2.withdraw
+ * @api  {post} /ether/withdraw 2. withdraw
  * @apiVersion 2.0.0
  * @apiGroup Ether
  * @apiDescription
@@ -77,5 +77,36 @@ router.post('/withdraw', (req, res, next) => {
     })
     .catch(next)
 })
+
+/**
+ * @api {post} /ether/getbalance 2. getBalance
+ * @apiVersion 2.0.0
+ * @apiGroup Ether
+ * @apiDescription
+ * 获取某地址的ether余额
+ *
+ * @apiParam {String} address 某地址，不一定是用户的，任何地址都可以
+ * @apiParamExample {json} 请求示例
+ * {
+ address: "0x051ca4ca0132f59fc18367587483b4e72ee8ba94"
+}
+ *
+ * @apiSuccess {String} balance 余额，单位ether
+ * @apiSuccessExample {json} 返回示例
+ { err: 0, msg: '0' }
+ */
+router.post('/getbalance', (req, res, next) => {
+  if (!req.body.address)
+    return next(new Error("INVAILD_PARAMS"))
+  ether.getBalance(req.body.address)
+    .then(ret => {
+      res.send({
+        err: 0,
+        msg: ret
+      })
+    })
+    .catch(next)
+})
+
 
 module.exports = router
