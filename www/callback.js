@@ -1,6 +1,31 @@
 let ether = require("../Ethereum/ether")
 let db = require("./Database/Callbackqueue.db")
+let config = require("../config").get().get("www")
+var request = require("request")
 
+let findOneAndSend = () => {
+  db.findOneUnreceived()
+    .then(ret => {
+      if (!ret) return
+      console.info(`callback queue sending new message id:${ret.id}`)
+      let msg = ret.message
+      msg.type = ret.type
+      var options = {
+        uri: config.callback,
+        method: 'POST',
+        timeout: 2000,
+        json: msg
+      };
+      request(options, function (error, response, body) {
+        if (error) return console.warn(error)
+        //has got response, indicating that this message is solved
+        db.markReceived(ret._id).catch(err => console.warn(err))
+        console.info(`new message received by client id:${ret.id}`)
+      });
+    })
+    .catch(err => console.warn(err))
+}
+setInterval(findOneAndSend, 2000)
 
 
 /**

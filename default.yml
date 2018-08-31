@@ -23,3 +23,6 @@ bitcoin:
   user: root
   pass: password
   confirmations: 20
+
+www:
+  callback: http://127.0.0.1:3333/ether/testcallback

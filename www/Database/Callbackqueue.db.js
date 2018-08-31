@@ -8,7 +8,7 @@ mongoose.connect(host, {
 
 var schema = new mongoose.Schema({
   message: {
-    type: String,
+    type: Object,
     required: true
   },
   uuid: {

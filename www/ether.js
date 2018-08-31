@@ -108,5 +108,11 @@ router.post('/getbalance', (req, res, next) => {
     .catch(next)
 })
 
+router.post("/testcallback", (req, res, next) => {
+  console.log(`TEST CALLBACK`)
+  console.log(req.body)
+  res.send("done")
+})
+
 
 module.exports = router

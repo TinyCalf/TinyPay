@@ -28,6 +28,9 @@ let dev = {
     pass: "password",
     confirmations: 20,
   },
+  www: {
+    callback: "http://127.0.0.1:3333/ether/testcallback"
+  }
 }
 
 prod = {}
@@ -122,6 +125,13 @@ let config = convict({
       doc: "default confirmations that the system will listen for every transaction",
       format: Number,
       default: 20
+    }
+  },
+  www: {
+    callback: {
+      doc: "the callback url",
+      format: String,
+      default: 20,
     }
   }
 })
