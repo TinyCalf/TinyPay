@@ -3,7 +3,7 @@ let router = express.Router()
 const ether = require("../Ethereum/ether")
 
 /**
- * @api {get} /ether/getNewAccount 1. getNewAccount
+ * @api {get} /ether/getnewaccount 1. getNewAccount
  * @apiVersion 2.0.0
  * @apiGroup Ether
  * @apiDescription
@@ -36,7 +36,7 @@ router.get('/getnewaccount', (req, res, next) => {
  * @apiVersion 2.0.0
  * @apiGroup Ether
  * @apiDescription
- * 从热钱包中发起提现交易，会收到交易hash值，交易确认后会通过回调的方式通知接入方
+ * 从系统热钱包中发起提现交易，会收到交易hash值，交易确认后会通过回调的方式通知接入方
  *
  * @apiParam {String} address 目标账号地址
  * @apiParam {String} amount  单位为ether的转账数量,字符串形式如 "0.28399"
@@ -93,7 +93,7 @@ router.post('/withdraw', (req, res, next) => {
  *
  * @apiSuccess {String} balance 余额，单位ether
  * @apiSuccessExample {json} 返回示例
- { err: 0, msg: '0' }··
+ { err: 0, msg: '0' }
  */
 router.post('/getbalance', (req, res, next) => {
   if (!req.body.address)
