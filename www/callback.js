@@ -1,184 +1,129 @@
-require("../log")
-var Ethereum = require("../Ethereum")
-var Bitcoin = require("../Bitcoin")
-var config = require("../Config")
-var db = require("./Database/Callbackqueue.db")
-var request = require("request")
+let ether = require("../Ethereum/ether")
+let db = require("./Database/Callbackqueue.db")
 
-var findOneAndSend = () => {
-  db.findOneUnreceived()
-  .then(ret=>{
-    if(!ret) return
-    console.info(`callback queue sending new message id:${ret.id}`)
-    var options = {
-      uri: config.www.callbackUri,
-      method: 'POST',
-      timeout: 2000,
-      json: {
-        type:ret.type,
-        msg:JSON.parse(ret.message)
-      }
-    };
-    request(options, function (error, response, body) {
-      if(error) return console.warn(error)
-      //has got response, indicating that this message is solved
-      db.markReceived(ret._id).catch(err=>console.warn(err))
-      console.info(`new message received by client id:${ret.id}`)
-    });
-  })
-  .catch(err=>console.warn(err))
+
+/**
+ * @api {post} callback_url  1. ether/NewRecharge
+ * @apiVersion 2.0.0
+ * @apiGroup Callback
+ * @apiDescription
+ * 回调通知 - 接收到新的充值交易但尚未达到指定确认数
+ *
+ * @apiParam {String} type 标记消息类型，这里为 NewRecharge
+ * @apiParam {String} TransactionHash 新交易的哈希值
+ * @apiParam {String} sender 发送方地址，即为用户自己的钱包地址
+ * @apiParam {String} localReceiver 系统为用户创建的地址,即接收到充值交易的账号
+ * @apiParam {String} amount  发送ether的数量，单位为ether
+ * @apiParamExample {json} 请求示例
+ {
+"type" : "ether/NewRecharge",
+"transactionHash" : "0xdcff7c18eba240650007e948d974a30167399692f38b70d66072ccedc7433e42",
+"sender" : "0x65dd104db7d570121e33bcbfde55721cf2b1018f",
+"localReceiver" : "0xa29daaa3d5e9d3df1ad96fa854e9eb9f25427e0f",
+"amount" : "0.01"
 }
-setInterval(findOneAndSend, 2000)
-
-Ethereum.events
-/**
- * @api {post} your_callback_url outcomeSuccess
- * @apiVersion 1.0.1
- * @apiName 出帐成功确认
- * @apiGroup Callback
- * @apiDescription
- * 出帐成功确认，与Request中的withdraw对应。TinyPay将会主动向接入方指定url推送该回调信息。
-
- * @apiParam {String} alias 币种的代称
- * @apiParam {String} name 币种全称
- * @apiParam {String} symbol 币种缩写
- * @apiParam {String} amount 出账数量
- * @apiParam {String} receiver withdraw指定的目标地址
- * @apiParam {String} localSender 固定为钱包主账户
- * @apiParam {String} transactionHash 交易hash值，与withdraw的返回参数对应
- * @apiParamExample {json} Callback-Example:
-{ recordTime: 2018-05-16T10:19:49.000Z,
-  recordTimestamp: 1526465989,
-  name: 'Tiny Calf',
-  symbol: 'TINY',
-  alias: 'tiny',
-  gasPrice: 4000000000,
-  amount: '10',
-  value: '10000000000000000000',
-  receiver: '0xed98d0d7f35ccae826aa93bd7981ece17a1d4fd1',
-  localSender: '0xee6a7a60f2f8d1e45a15eebb91eec41886d4fa08',
-  transactionHash: '0xad09c447e514393c29f2518d53ab1d53520e8fcde5e3116b6a32265ded077e64',
-  success: true,
-  confirmations: 0,
-  __v: 0,
-  gasUsed: 38827,
-  etherUsed: 0.000155308,
-  blockHash: '0xb5e8dccc8206e3c146496e607553c50bef1afb830c3eac1da52f67cb607662e6',
-  blockNumber: 3245159,
-  blockTimestamp: 1526466023,
-  blockTime: 2018-05-16T10:20:28.000Z }
- */
-.on("outcomeSuccess", msg=>{
-  db.add(JSON.stringify(msg), "outcomeSuccess").catch(console.warn)
-})
-/**
- * @api {post} your_callback_url newIncome
- * @apiVersion 1.0.1
- * @apiName newIncome
- * @apiGroup Callback
- * @apiDescription
- * 新的入账信息。用户获取getnewaccount中的地址后，如果向地址汇入货币，接入方即会收到该推送
+ * @apiSuccessExample {json} 返回示例
+ done
  *
- * @apiParam {String} alias 币种的代称
- * @apiParam {String} symbol 币种缩写
- * @apiParam {String} amount 入账数量
- * @apiParam {String} sender 交易发起人，即用户自己的地址
- * @apiParam {String} localReceiver 从getnewaccount中为用户绑定的地址
- * @apiParam {String} transactionHash 交易hash值
- * @apiParam {String} confirmations   交易确认数
- * @apiParamExample {json} Callback-Example:
-{ alias: 'tiny',
-  symbol: 'TINY',
-  transactionHash: '0xad09c447e514393c29f2518d53ab1d53520e8fcde5e3116b6a32265ded077e64',
-  confirmations: 0,
-  sender: '0xee6a7a60f2f8d1e45a15eebb91eec41886d4fa08',
-  localReceiver: '0xed98d0d7f35ccae826aa93bd7981ece17a1d4fd1',
-  blockHash: '0xb5e8dccc8206e3c146496e607553c50bef1afb830c3eac1da52f67cb607662e6',
-  blockNumber: 3245159,
-  value: '10000000000000000000',
-  amount: '10' }
  */
-.on("newIncome", msg=>{
-  db.add(JSON.stringify(msg), "newIncome").catch(console.warn)
+ether.recharge.Events.on("newRecharge", ret => {
+  db.add(
+    ret,
+    "ether/newRecharge",
+    "ether/newRecharge_" + ret.transactionHash)
 })
+
 /**
- * @api {post} your_callback_url confirmationUpdate
- * @apiVersion 1.0.1
- * @apiName confirmationUpdate
+ * @api {post} callback_url  2. ether/ConfirmRecharge
+ * @apiVersion 2.0.0
  * @apiGroup Callback
  * @apiDescription
- * 交易确认数更新，参数和newIncome一模一样，只是确认数有变化
+ * 回调通知 - 确认充值交易已经达到指定确认数
  *
- * @apiParam {String} alias 币种的代称
- * @apiParam {String} symbol 币种缩写
- * @apiParam {String} amount 入账数量
- * @apiParam {String} sender 交易发起人，即用户自己的地址
- * @apiParam {String} localReceiver 从getnewaccount中为用户绑定的地址
- * @apiParam {String} transactionHash 交易hash值
- * @apiParam {String} confirmations   交易确认数
- * @apiParamExample {json} Callback-Example:
-{ alias: 'ether',
-  symbol: 'ether',
-  transactionHash: '0xe01c43e1d7926d884945f393c5c33d8cd665a56b810edad92cc80e3f8f67a051',
-  confirmations: 3,
-  sender: '0xee6a7a60f2f8d1e45a15eebb91eec41886d4fa08',
-  localReceiver: '0xbf9d5dea24c3d28eb92148e3b0be28b9d77d9320',
-  blockHash: '0xb5e8dccc8206e3c146496e607553c50bef1afb830c3eac1da52f67cb607662e6',
-  blockNumber: 3245159,
-  value: '9000000000000000',
-  amount: '0.009' }
+ * @apiParam {String} type 标记消息类型，这里为 ConfirmRecharge
+ * @apiParam {String} TransactionHash 新交易的哈希值
+ * @apiParam {String} sender 发送方地址，即为用户自己的钱包地址
+ * @apiParam {String} localReceiver 系统为用户创建的地址,即接收到充值交易的账号
+ * @apiParam {String} amount  发送ether的数量，单位为ether
+ * @apiParamExample {json} 请求示例
+ {
+"type" : "ether/ConfirmRecharge"
+"transactionHash" : "0xdcff7c18eba240650007e948d974a30167399692f38b70d66072ccedc7433e42",
+"sender" : "0x65dd104db7d570121e33bcbfde55721cf2b1018f",
+"localReceiver" : "0xa29daaa3d5e9d3df1ad96fa854e9eb9f25427e0f",
+"amount" : "0.01"
+}
+
+ * @apiSuccessExample {json} 返回示例
+ done
  */
-.on("confirmationUpdate", msg=>{
-  db.add(JSON.stringify(msg), "confirmationUpdate").catch(console.warn)
+ether.recharge.Events.on("confirmationUpdate", ret => {
+  if (ret.confirmations >= 6)
+    db.add(
+      ret,
+      "ether/confirmRecharge",
+      "ether/confirmRecharge_" + ret.transactionHash
+    )
 })
 
 
-
-
-Bitcoin.events
 /**
- * @api {post} your_callback_url outcomeSuccess
- * @apiVersion 1.0.1
- * @apiName 出帐成功确认
+ * @api {post} callback_url  3. ether/ConfirmWithdraw
+ * @apiVersion 2.0.0
  * @apiGroup Callback
  * @apiDescription
- * 出帐成功确认，与Request中的withdraw对应。TinyPay将会主动向接入方指定url推送该回调信息。
+ * 回调通知 - 确认提现交易已成功
+ *
+ * @apiParam {String} type 标记消息类型，这里为 ConfirmWithdraw
+ * @apiParam {String} TransactionHash 提币交易的哈希值
+ * @apiParam {String} localSender 发送方地址，即为系统为用户创建的地址
+ * @apiParam {String} receiver 用户自己提供的目标钱包地址
+ * @apiParam {String} amount  发送ether的数量，单位为ether
+ * @apiParam {String} etherUsed 系统支付的矿工费，单位为ether
+ * @apiParamExample {json} 请求示例
+ {
+"type" : "ether/ConfirmWithdraw"
+"transactionHash" : "0xdcff7c18eba240650007e948d974a30167399692f38b70d66072ccedc7433e42",
+"sender" : "0x65dd104db7d570121e33bcbfde55721cf2b1018f",
+"localReceiver" : "0xa29daaa3d5e9d3df1ad96fa854e9eb9f25427e0f",
+"amount" : "0.01",
+"etherUsed" : "0.000063"
+}
 
- * @apiParam {String} alias 币种的代称
- * @apiParam {String} name 币种全称
- * @apiParam {String} symbol 币种缩写
- * @apiParam {String} amount 出账数量
- * @apiParam {String} receiver withdraw指定的目标地址
- * @apiParam {String} localSender 固定为钱包主账户
- * @apiParam {String} transactionHash 交易hash值，与withdraw的返回参数对应
- * @apiParamExample {json} Callback-Example:
-{ recordTime: 2018-05-16T10:19:49.000Z,
-  recordTimestamp: 1526465989,
-  name: 'Tiny Calf',
-  symbol: 'TINY',
-  alias: 'tiny',
-  gasPrice: 4000000000,
-  amount: '10',
-  value: '10000000000000000000',
-  receiver: '0xed98d0d7f35ccae826aa93bd7981ece17a1d4fd1',
-  localSender: '0xee6a7a60f2f8d1e45a15eebb91eec41886d4fa08',
-  transactionHash: '0xad09c447e514393c29f2518d53ab1d53520e8fcde5e3116b6a32265ded077e64',
-  success: true,
-  confirmations: 0,
-  __v: 0,
-  gasUsed: 38827,
-  etherUsed: 0.000155308,
-  blockHash: '0xb5e8dccc8206e3c146496e607553c50bef1afb830c3eac1da52f67cb607662e6',
-  blockNumber: 3245159,
-  blockTimestamp: 1526466023,
-  blockTime: 2018-05-16T10:20:28.000Z }
+ * @apiSuccessExample {json} 返回示例
+ done
  */
-.on("outcomeSuccess", msg=>{
-  db.add(JSON.stringify(msg), "outcomeSuccess").catch(console.warn)
+ether.withdraw.Events.on("confirmedNewTx", ret => {
+  db.add(
+    ret,
+    "ether/confirmWithdraw",
+    "ether/confirmWithdraw_" + ret.transactionHash
+  )
 })
-.on("newIncome", msg=>{
-  db.add(JSON.stringify(msg), "newIncome").catch(console.warn)
-})
-.on("confirmationUpdate", msg=>{
-  db.add(JSON.stringify(msg), "confirmationUpdate").catch(console.warn)
-})
+
+/**
+ * @api {post} callback_url  4. ether/SendBack
+ * @apiVersion 2.0.0
+ * @apiGroup Callback
+ * @apiDescription
+ * 回调通知 - 系统分配的用户账号中的充值余额已回传给主账户（以太坊独有,主来用来计算交易转账损失的矿工费）
+ *
+ * @apiParam {String} type 标记消息类型，这里为 SendBack
+ * @apiParam {String} TransactionHash 提币交易的哈希值
+ * @apiParam {String} localSender 系统分配给用户的地址
+ * @apiParam {String} receiver 即为系统主钱包地址
+ * @apiParam {String} amount  发送ether的数量，单位为ether
+ * @apiParam {String} etherUsed 系统支付的矿工费，单位为ether
+ * @apiParamExample {json} 请求示例
+ {
+"type" : "ether/SendBack"
+"transactionHash" : "0xdcff7c18eba240650007e948d974a30167399692f38b70d66072ccedc7433e42",
+"localSender" : "0x65dd104db7d570121e33bcbfde55721cf2b1018f",
+"receiver" : "0xa29daaa3d5e9d3df1ad96fa854e9eb9f25427e0f",
+"amount" : "0.01",
+"etherUsed": "0.000063"
+}
+
+ * @apiSuccessExample {json} 返回示例
+ done
+ */

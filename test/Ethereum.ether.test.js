@@ -2,6 +2,8 @@ const assert = require("assert")
 
 let ether = require("../Ethereum/ether")
 
+let callback = require("../www/callback")
+
 let user1 = {}
 let withdrawHash = ""
 let localSender = ""

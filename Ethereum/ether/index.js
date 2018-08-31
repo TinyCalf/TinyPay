@@ -3,10 +3,12 @@ let config = require('../config')
 let web3 = require('../lib/web3')
 currencydb.init(config.ether.startHeight)
   .then(ret => {
-    exports.account = require("./account")
-    exports.withdraw = require("./withdraw")
-    exports.recharge = require("./recharge")
+
   })
+
+exports.account = require("./account")
+exports.withdraw = require("./withdraw")
+exports.recharge = require("./recharge")
 
 exports.getBalance = address => {
   return new Promise((resolve, reject) => {

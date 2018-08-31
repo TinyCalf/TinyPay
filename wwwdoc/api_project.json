@@ -1,0 +1,1 @@
+{  "name": "TinyPay",  "version": "2.0.0",  "description": "数字货币支付工具",  "title": "TinyPay",  "url": "",  "template": {    "withCompare": false  },  "sampleUrl": false,  "defaultVersion": "0.0.0",  "apidoc": "0.3.0",  "generator": {    "name": "apidoc",    "time": "2018-08-31T06:25:04.054Z",    "url": "http://apidocjs.com",    "version": "0.17.6"  }}

@@ -1,6 +1,6 @@
 {
   "name": "TinyPay",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "数字货币支付方案",
   "main": "tinypay.js",
   "scripts": {
@@ -12,7 +12,7 @@
     "daemon": "nohup node tinypay.js &",
     "generatedoc": "./node_modules/apidoc/bin/apidoc  -i www/ -o doc/ && node ./openDoc",
     "startapp": "node ExampleApp/index.js",
-    "app:docs": "./node_modules/.bin/apidoc -i ExampleApp/ -o appdoc/"
+    "www:docs": "./node_modules/.bin/apidoc -i www/ -o wwwdoc/"
   },
   "author": "Jonathan-ZHU",
   "license": "ISC",

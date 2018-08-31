@@ -93,7 +93,7 @@ router.post('/withdraw', (req, res, next) => {
  *
  * @apiSuccess {String} balance 余额，单位ether
  * @apiSuccessExample {json} 返回示例
- { err: 0, msg: '0' }
+ { err: 0, msg: '0' }··
  */
 router.post('/getbalance', (req, res, next) => {
   if (!req.body.address)

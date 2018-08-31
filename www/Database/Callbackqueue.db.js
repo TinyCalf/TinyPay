@@ -1,11 +1,35 @@
-const dbconnect = require("../../dbconnect")
-mongoose = require("mongoose")
+const mongoose = require("mongoose");
+mongoose.Promise = require('bluebird');
+const host = require("../../config").get().get("mongodb");
+console.log(host)
+mongoose.connect(host, {
+  useMongoClient: true
+});
 
 var schema = new mongoose.Schema({
-  message:               {type:String, required:true},
-  type:                  {type:String, required:true},
-  times:                 {type:Number, required:true, default:0},
-  received:              {type:Boolean,required:true, default:false}
+  message: {
+    type: String,
+    required: true
+  },
+  uuid: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  type: {
+    type: String,
+    required: true
+  },
+  times: {
+    type: Number,
+    required: true,
+    default: 0
+  },
+  received: {
+    type: Boolean,
+    required: true,
+    default: false
+  }
 });
 
 var Callbackqueue = mongoose.model("Callbackqueue", schema);
@@ -15,7 +39,7 @@ exports.model = Callbackqueue
 /*
 add new line
 */
-exports.add = new Function("message","type")
+exports.add = new Function("message", "type")
 
 /*
 find the last one that is unreceived
@@ -28,33 +52,42 @@ update the received state to true
 exports.markReceived = new Function("id")
 
 
-this.add = (message,type) => {
-  return new Promise( (resolve, reject)=>{
-    Callbackqueue.collection.insert([{message:message,type:type,received:false}], function(err, ret){
-      if(err) return reject(err)
+this.add = (message, type, uuid) => {
+  return new Promise((resolve, reject) => {
+    Callbackqueue.collection.insert([{
+      message: message,
+      type: type,
+      uuid: uuid,
+      received: false
+    }], function (err, ret) {
+      if (err) return reject(err)
       resolve()
     })
   })
 }
 
-this.findOneUnreceived = ()=>{
-  return new Promise( (resolve, reject)=>{
-    Callbackqueue.findOne({received:false}, "_id message type", (err,ret)=>{
-      if(err) return reject(err);
+this.findOneUnreceived = () => {
+  return new Promise((resolve, reject) => {
+    Callbackqueue.findOne({
+      received: false
+    }, "_id message type", (err, ret) => {
+      if (err) return reject(err);
       resolve(ret);
     })
   })
 }
 
 this.markReceived = (id) => {
-  return new Promise( (resolve, reject)=>{
+  return new Promise((resolve, reject) => {
     var data = {
-          $set:{
-            received:true
-          }
-        }
-    Callbackqueue.findOneAndUpdate({_id:id}, data,(err,ret)=>{
-      if(err) return reject(err);
+      $set: {
+        received: true
+      }
+    }
+    Callbackqueue.findOneAndUpdate({
+      _id: id
+    }, data, (err, ret) => {
+      if (err) return reject(err);
       resolve();
     })
   })
