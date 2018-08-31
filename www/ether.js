@@ -3,7 +3,7 @@ let router = express.Router()
 const ether = require("../Ethereum/ether")
 
 /**
- * @api {get} /ether/getNewAccount 1.getNewAccount
+ * @api {get} /ether/getNewAccount 1. getNewAccount
  * @apiVersion 2.0.0
  * @apiGroup Ether
  * @apiDescription
@@ -79,7 +79,7 @@ router.post('/withdraw', (req, res, next) => {
 })
 
 /**
- * @api {post} /ether/getbalance 2. getBalance
+ * @api {post} /ether/getbalance 3. getBalance
  * @apiVersion 2.0.0
  * @apiGroup Ether
  * @apiDescription

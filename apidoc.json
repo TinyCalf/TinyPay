@@ -10,6 +10,6 @@
 
   "url" : "",
   "template": {
-     "withCompare": false
+     "withCompare": true
    }
 }
