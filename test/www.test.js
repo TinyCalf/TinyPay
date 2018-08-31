@@ -22,6 +22,7 @@ describe('Ether', function () {
           if (err) return done(err)
           let result = res.body
           console.log(result)
+          assert(result.err == 0)
           assert(typeof result.msg.address === 'string',
             `expect address to be a string`)
           assert(typeof result.msg.prikey === 'string',
@@ -45,6 +46,7 @@ describe('Ether', function () {
         .end(function (err, res) {
           if (err) return done(err)
           let result = res.body
+          assert(result.err == 0)
           console.log(result)
           done()
         })
@@ -69,6 +71,12 @@ describe('Ether', function () {
           assert(typeof result.msg === "string")
           done()
         })
+    })
+  })
+
+  describe("# ether/callback", () => {
+    it(`should emit callbacks`, done => {
+
     })
   })
 

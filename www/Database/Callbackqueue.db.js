@@ -60,6 +60,7 @@ this.add = (message, type, uuid) => {
       uuid: uuid,
       received: false
     }], function (err, ret) {
+      if (err && err.code == 11000) return resolve()
       if (err) return reject(err)
       resolve()
     })

@@ -10,7 +10,7 @@ let db = require("./Database/Callbackqueue.db")
  * @apiDescription 回调通知 - 接收到新的充值交易但尚未达到指定确认数
  *
  * @apiParam {String} type 标记消息类型，这里为 NewRecharge
- * @apiParam {String} TransactionHash 新交易的哈希值
+ * @apiParam {String} transactionHash 新交易的哈希值
  * @apiParam {String} sender 发送方地址，即为用户自己的钱包地址
  * @apiParam {String} localReceiver 系统为用户创建的地址,即接收到充值交易的账号
  * @apiParam {String} amount  发送ether的数量，单位为ether
@@ -28,10 +28,16 @@ let db = require("./Database/Callbackqueue.db")
 
 
 ether.recharge.Events.on("newRecharge", ret => {
+  let msg = {
+    transactionHash: ret.transactionHash,
+    sender: ret.sender,
+    localReceiver: ret.localReceiver,
+    amount: ret.amount,
+  }
   db.add(
-    ret,
-    "ether/newRecharge",
-    "ether/newRecharge_" + ret.transactionHash)
+    msg,
+    "ether/NewRecharge",
+    "ether/NewRecharge_" + msg.transactionHash)
 })
 
 
@@ -42,7 +48,7 @@ ether.recharge.Events.on("newRecharge", ret => {
  * @apiDescription 回调通知 - 确认充值交易已经达到指定确认数
  *
  * @apiParam {String} type 标记消息类型，这里为 ConfirmRecharge
- * @apiParam {String} TransactionHash 新交易的哈希值
+ * @apiParam {String} transactionHash 新交易的哈希值
  * @apiParam {String} sender 发送方地址，即为用户自己的钱包地址
  * @apiParam {String} localReceiver 系统为用户创建的地址,即接收到充值交易的账号
  * @apiParam {String} amount  发送ether的数量，单位为ether
@@ -58,12 +64,21 @@ ether.recharge.Events.on("newRecharge", ret => {
  done
  */
 ether.recharge.Events.on("confirmationUpdate", ret => {
-  if (ret.confirmations >= 6)
+  if (ret.confirmations >= 6) {
+    let msg = {
+      transactionHash: ret.transactionHash,
+      sender: ret.sender,
+      localReceiver: ret.localReceiver,
+      amount: ret.amount
+    }
     db.add(
-      ret,
-      "ether/confirmRecharge",
-      "ether/confirmRecharge_" + ret.transactionHash
+      msg,
+      "ether/ConfirmRecharge",
+      "ether/ConfirmRecharge_" + msg.transactionHash
     )
+
+  }
+
 })
 
 
@@ -74,7 +89,7 @@ ether.recharge.Events.on("confirmationUpdate", ret => {
  * @apiDescription 回调通知 - 确认提现交易已成功
  *
  * @apiParam {String} type 标记消息类型，这里为 ConfirmWithdraw
- * @apiParam {String} TransactionHash 提币交易的哈希值
+ * @apiParam {String} transactionHash 提币交易的哈希值
  * @apiParam {String} localSender 发送方地址，即为系统为用户创建的地址
  * @apiParam {String} receiver 用户自己提供的目标钱包地址
  * @apiParam {String} amount  发送ether的数量，单位为ether
@@ -93,10 +108,17 @@ ether.recharge.Events.on("confirmationUpdate", ret => {
  done
  */
 ether.withdraw.Events.on("confirmedNewTx", ret => {
+  let msg = {
+    transactionHash: ret.transactionHash,
+    localSender: ret.localSender,
+    receiver: ret.receiver,
+    amount: ret.amount,
+    etherUsed: ret.etherUsed
+  }
   db.add(
-    ret,
-    "ether/confirmWithdraw",
-    "ether/confirmWithdraw_" + ret.transactionHash
+    msg,
+    "ether/ConfirmWithdraw",
+    "ether/ConfirmWithdraw_" + msg.transactionHash
   )
 })
 
@@ -107,7 +129,7 @@ ether.withdraw.Events.on("confirmedNewTx", ret => {
  * @apiDescription 回调通知 - 系统分配的用户账号中的充值余额已回传给主账户（以太坊独有,主要用来计算交易转账损失的矿工费）
  *
  * @apiParam {String} type 标记消息类型，这里为 SendBack
- * @apiParam {String} TransactionHash 提币交易的哈希值
+ * @apiParam {String} transactionHash 提币交易的哈希值
  * @apiParam {String} localSender 系统分配给用户的地址
  * @apiParam {String} receiver 即为系统主钱包地址
  * @apiParam {String} amount  发送ether的数量，单位为ether
@@ -125,3 +147,17 @@ ether.withdraw.Events.on("confirmedNewTx", ret => {
  * @apiSuccessExample {json} 返回示例
  done
  */
+ether.recharge.Events.on("confirmedSendback", ret => {
+  let msg = {
+    transactionHash: ret.sentBackTransactionHash,
+    localSender: ret.localSender,
+    receiver: ret.receiver,
+    amount: ret.amount,
+    etherUsed: ret.etherUsed
+  }
+  db.add(
+    msg,
+    "ether/SendBack",
+    "ether/SendBack_" + msg.transactionHash
+  )
+})

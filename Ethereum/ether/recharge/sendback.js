@@ -136,6 +136,7 @@ let EtherSendBack = class EtherSendBack {
                     return db.check(sentBackTransactionHash)
                   })
                   .then(ret => {
+                    ret.receiver = coldAddress
                     this.Events.emit("confirmedSendback", ret)
                     resolve()
                   })

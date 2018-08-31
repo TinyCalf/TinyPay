@@ -5,7 +5,7 @@
   "main": "tinypay.js",
   "scripts": {
     "test": "./node_modules/.bin/mocha --exit",
-    "testbtc": "./node_modules/.bin/mocha --exit test/Bitcoin.test.js",
+    "www:test": "./node_modules/.bin/mocha test/www.test.js",
     "unittest": "./node_modules/.bin/mocha --exit",
     "repo": "node ./openReporter",
     "start": "node tinypay.js",
