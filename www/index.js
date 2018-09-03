@@ -4,6 +4,7 @@ const express = require("express");
 var app = express();
 //var v1 = require('./v1');
 let ether = require("./ether")
+let bitcoin = require("./bitcoin")
 //var config = require("../Config")
 require("./callback")
 
@@ -22,7 +23,8 @@ app.use(bodyParser.json())
 
 //app.use('/v1', v1);
 
-app.use('/ether', ether);
+app.use('/ether', ether)
+app.use('/bitcoin', bitcoin)
 
 app.use((err, req, res, next) => {
   console.error(err)

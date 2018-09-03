@@ -1,11 +1,11 @@
 let btc = require("./Bitcoin")
-let config = require("../Config")
+let config = require("./config")
 let outcomedb = require("./bitcoin_outcome.db")
 let outcome = require("./outcome")
 let Event = require("events")
 let bitcoindb = require("./bitcoin.db")
 
-bitcoindb.updateHeight(config.bitcoin.startHeight)
+bitcoindb.updateHeight(config.startHeight)
 
 let income = require("./income")
 income.start()
@@ -13,17 +13,11 @@ income.start()
 exports.events = new Event()
 
 
-exports.getInfo = () => {
+exports.getBalance = (address) => {
   return new Promise((resolve, reject) => {
-    btc.getBalance()
+    btc.getBalance(address)
       .then(ret => {
-        let data = {
-          alias: "btc",
-          symbol: "btc",
-          name: "btc",
-          balance: ret.toString(10)
-        }
-        resolve(data)
+        resolve(ret.toString(10))
       })
       .catch(reject)
   })

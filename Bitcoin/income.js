@@ -1,7 +1,7 @@
 let bitcoindb = require("./bitcoin.db")
 let incomedb = require("./bitcoin_income.db")
 let btc = require("./Bitcoin")
-let config = require("../Config")
+let config = require("./config")
 let Event = require("events")
 require("../log")
 exports.events = new Event()
@@ -49,7 +49,7 @@ var _dealer = (name) => {
   bitcoindb.checkHeight()
     .then(ret => {
       //查询区块链上该高度之后的相关交易
-      let height = ret.lastCheckedHeight - config.bitcoin.confirmations
+      let height = ret.lastCheckedHeight - config.confirmations
       console.log(height)
       return btc.getTxsSinceBlock(height)
     })

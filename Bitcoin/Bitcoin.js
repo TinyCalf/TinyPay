@@ -12,9 +12,9 @@ let Bitcoin = class Bitcoin {
     })
   }
 
-  getBalance() {
+  getBalance(address) {
     return new Promise((resolve, reject) => {
-      this.rpc.getbalance("", (err, ret) => {
+      this.rpc.getbalance(address, (err, ret) => {
         if (err) return reject(err)
         if (ret && ret.error != null) return reject(new Error(ret.error))
         return resolve(ret.result)
@@ -114,13 +114,14 @@ let Bitcoin = class Bitcoin {
 
 
 
-let config = require("../Config")
+let config = require("./config")
+console.log(config)
 
 let btc = new Bitcoin({
-  host: config.bitcoin.host,
-  port: config.bitcoin.port,
-  user: config.bitcoin.user,
-  pass: config.bitcoin.pass
+  host: config.host,
+  port: config.port,
+  user: config.user,
+  pass: config.pass
 })
 module.exports = btc
 
