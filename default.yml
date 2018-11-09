@@ -14,7 +14,7 @@ ethereum:
   ether:
     gas: "50000"
     gasPrice: "3000000000"
-    startHeight: 40000
+    startHeight: 20
 
 # bitcoin:
 #   startHeight: 200

@@ -62,7 +62,7 @@ var _startToSubscriptNewBlock = () => {
   var subscription = web3.eth.subscribe(
       'newBlockHeaders',
       function (error, result) {
-        if (error) console.err(error)
+        if (error) console.error(error)
       })
     .on("data", function (blockHeader) {
       console.info(`find new block ${blockHeader.number}`)

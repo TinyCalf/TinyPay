@@ -1,5 +1,5 @@
 var logger = require("tinycalf-logger")
-var config = require("./Config")
+//var config = require("./Config")
 logger.init({
   // mongodb:config.mongodb.host,
   // email:{
