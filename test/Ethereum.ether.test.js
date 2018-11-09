@@ -57,7 +57,7 @@ describe('Ethereum', function () {
       ether.withdraw.lauchTransaction(user1.wallet.address, "0.01")
         .then(ret => {
           console.log(ret)
-          assert(typeof ret === "string",
+          assert(typeof ret.transactionHash === "string",
             "expect transaction hash to be a string")
           withdrawHash = ret
         })

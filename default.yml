@@ -3,26 +3,26 @@ mongodb: mongodb://localhost:27017/tinypay_dev
 
 ethereum:
   host: 127.0.0.1
-  rpcport: 10001
-  wsport: 10002
-  # 冷钱包 prikey 0xae157ea229549c0d4720bef322d1cf1ee0d8d5be5b4b5372eceffa135438a696
-  coldAddress: "0x65dd104db7d570121e33bcbfde55721cf2b1018f"
+  rpcport: 30001
+  wsport: 30002
+  # 冷钱包 prikey
+  coldAddress: "0xA033A1f0Bd6fEeC6dBbb240b28309CA80CeC4386"
   # 热钱包
-  hotPrikey: "0xae157ea229549c0d4720bef322d1cf1ee0d8d5be5b4b5372eceffa135438a696"
-  hotAddress: "0x65dd104db7d570121e33bcbfde55721cf2b1018f"
+  hotPrikey: "0x76e0619bd7da29f829b6842a3865b5d4c4d22ba8cf8e1648b5fac7f365355435"
+  hotAddress: "0xA033A1f0Bd6fEeC6dBbb240b28309CA80CeC4386"
   confirmations: 20
   ether:
     gas: "50000"
     gasPrice: "3000000000"
     startHeight: 40000
 
-bitcoin:
-  startHeight: 200
-  host: 47.93.17.111
-  port: 20001
-  user: root
-  pass: password
-  confirmations: 20
+# bitcoin:
+#   startHeight: 200
+#   host: 47.93.17.111
+#   port: 20001
+#   user: root
+#   pass: password
+#   confirmations: 20
 
 www:
   callback: http://127.0.0.1:3333/ether/testcallback

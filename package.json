@@ -5,16 +5,16 @@
   "main": "tinypay.js",
   "scripts": {
     "test": "./node_modules/.bin/mocha --exit",
-    "www:test": "./node_modules/.bin/mocha test/www.bitcoin.test.js --exit",
-    "unittest": "./node_modules/.bin/mocha --exit",
+    "www:test": "./node_modules/.bin/mocha test/www.test.js --exit",
+    "unittest": "./node_modules/.bin/mocha test/Ethereum.ether.test.js --exit",
     "repo": "node ./openReporter",
-    "start": "node tinypay.js",
+    "start": "node tinypay.js -c ./default.yml",
     "daemon": "nohup node tinypay.js &",
     "generatedoc": "./node_modules/apidoc/bin/apidoc  -i www/ -o doc/ && node ./openDoc",
     "startapp": "node ExampleApp/index.js",
     "www:docs": "./node_modules/.bin/apidoc -i www/ -o wwwdoc/"
   },
-  "author": "Jonathan-ZHU",
+  "author": "TinyCalf",
   "license": "ISC",
   "dependencies": {
     "apidoc": "^0.17.6",
@@ -41,8 +41,7 @@
     "string": "^3.3.3",
     "tiny-logger": "0.0.2",
     "tinycalf-logger": "0.0.2-beta",
-    "web3": "^1.0.0-beta.33",
-    "web3_extended": "1.0.0"
+    "web3": "^1.0.0-beta.33"
   },
   "devDependencies": {
     "bitcore-lib": "0.15.0",

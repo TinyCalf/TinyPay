@@ -25,3 +25,5 @@ let output = program.output || "./tinypay.log"
 
 let config = require('./config.js')
 config.setPath(program.config)
+
+require("./www/index")
